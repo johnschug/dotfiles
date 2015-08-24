@@ -1,0 +1,113 @@
+#compdef dfm
+
+function _dfm_install() {
+  _arguments \
+    '(--quiet)--verbose' \
+    '(--verbose)--quiet' \
+    '--dry-run'
+}
+
+function _dfm_import() {
+  _arguments \
+    '(--quiet)--verbose' \
+    '(--verbose)--quiet' \
+    '--dry-run' \
+    '--no-commit' \
+    '--message:' \
+    '*::files:_files'
+}
+
+function _dfm_uninstall() {
+  _arguments \
+    '(--quiet)--verbose' \
+    '(--verbose)--quiet' \
+    '--dry-run'
+}
+
+function _dfm_updates() {
+  _arguments \
+    '(--quiet)--verbose' \
+    '(--verbose)--quiet' \
+    '--dry-run' \
+    '--no-fetch'
+}
+
+function _dfm_mergeandinstall() {
+  _arguments \
+    '(--quiet)--verbose' \
+    '(--verbose)--quiet' \
+    '--dry-run' \
+    '(--rebase)--merge' \
+    '(--merge)--rebase'
+}
+
+function _dfm_updatemergeandinstall() {
+  _arguments \
+    '(--quiet)--verbose' \
+    '(--verbose)--quiet' \
+    '--dry-run' \
+    '(--rebase)--merge' \
+    '(--merge)--rebase' \
+    '--no-fetch'
+}
+
+function _dfm_help() {
+  local -a commands
+  commands=(
+    "install"
+    "import"
+    "uninstall"
+    "updates"
+    "mergeandinstall"
+    "updatemergeandinstall"
+    "umi"
+    "mi"
+    "im"
+    "un"
+  )
+  compadd -a "$@" -- commands
+}
+
+function _dfm() {
+  local curcontext="$curcontext" state lstate line
+  local -a commands
+  commands=(
+    install:'install dotfiles'
+    import:'add a new dotfile to repo'
+    im:'add a new dotfile to repo'
+    uninstall:'uninstall dotfiles'
+    un:'uninstall dotfiles'
+    updates:'fetch updates'
+    mergeandinstall:'merge in updates and install'
+    mi:'merge in updates and install'
+    updatemergeandinstall:'fetch updates, merge in and install'
+    umi:'fetch updates, merge in and install'
+    help:'show help'
+  )
+
+  _arguments -C \
+    '(- :)--version[display version information]'\
+    '*:: :->subcommand' && return
+
+  if [[ ${state} == "subcommand" ]]; then
+    if (( CURRENT == 1 )); then
+      _describe -t commands 'dfm commands' commands
+    else
+      cmd="${words[1]}"
+
+      case $cmd in
+        im) cmd="import";;
+        mi) cmd="mergeandinstall";;
+        umi) cmd="updatemergeandinstall";;
+      esac
+
+      if (( ${+functions[_dfm_$cmd]} )); then
+        _call_function ret _dfm_$cmd || _message 'no more arguments'
+      else
+        pushd "${HOME}/.dotfiles"
+        _dispatch git git
+        popd
+      fi
+    fi
+  fi
+}

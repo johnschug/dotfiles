@@ -1,0 +1,113 @@
+#compdef pass
+
+_pass() {
+  local curcontext="$curcontext" state lstate line
+  typeset -A opt_args
+
+  _arguments \
+    '(-c --clip :)'{-c,--clip}'[copy to clipboard]: :_password' \
+    '*::pass command:_pass_command'
+}
+
+_password() {
+  _path_files -/ -f -W "${HOME}/.password-store" -g "*.gpg(:r)"
+}
+
+_gpg_keys() {
+  local expl
+  _wanted secret-keys expl 'secret key' compadd \
+    ${${(Mo)$(_call_program secret-keys gpg --list-secret-keys --list-options no-show-photos 2>/dev/null):%<*>}//(<|>)/}
+}
+
+(( $+functions[_pass_command] )) || _pass_command() {
+  local -a commands
+  commands=(
+    init:'initialize password store'
+    ls:'list passwords'
+    show:'show a password'
+    insert:'insert new password'
+    edit:'edit an existing password'
+    generate:'generate a new password'
+    rm:'remove a password'
+    git:'execute a git command'
+    help:'show help'
+    version:'show version'
+  )
+
+  if (( CURRENT == 1 )); then
+    _describe -t commands 'password store command' commands
+    _password
+  else
+    cmd="${${commands[(r)$words[1]:*]%%:*}}"
+    if (( $#cmd )); then
+      _call_function ret _pass_$cmd || _message 'no more arguments'
+    fi
+    return ret
+  fi
+}
+
+(( $+fucntions[_pass_init] )) || _pass_init() {
+  local curcontext="$curcontext" state lstate line
+
+  _arguments -A "-*" \
+    '(-e --reencrypt)'{-e,--reencrypt}'[reencrypt an existing password store]' \
+    ': :_gpg_keys'
+}
+
+(( $+functions[_pass_generate] )) || _pass_generate() {
+  local curcontext="$curcontext" state lstate line
+
+  _arguments -A "-*" \
+    '(-n --no-symbols)'{-n,--no-symbols}'[no symbols in password]' \
+    '(-c --clip)'{-c,--clip}'[copy to clipboard]' \
+    '(-f --force)'{-f,--force}'[force overwrite]' \
+    ': : ' \
+    ': : '
+}
+
+(( $+functions[_pass_insert] )) || _pass_insert() {
+  local curcontext="$curcontext" state lstate line
+
+  _arguments -A "-*" \
+    '(-n --no-echo -m --multiline)'{-n,--no-echo}'[don'"'"'t echo to console]' \
+    '(-m --multiline -n --no-echo)'{-m,--multiline}'[insert multiline password]' \
+    '(-f --force)'{-f,--force}'[force overwrite]' \
+    ': : '
+}
+
+(( $+functions[_pass_edit] )) || _pass_edit() {
+  if (( CURRENT == 2 )); then
+    _password
+  fi
+}
+
+(( $+fcuntions[_pass_ls] )) || _pass_ls() {
+  if (( CURRENT == 2 )); then
+    _path_files -/ -W "${HOME}/.password-store"
+  fi
+}
+
+(( $+functions[_pass_show] )) || _pass_show() {
+  local curcontext="$curcontext" state lstate line
+
+  _arguments -A "-*" \
+    '(-c --clip)'{-c,--clip}'[copy to clipboard]' \
+    ': :_password'
+}
+
+(( $+functions[_pass_git] )) || _pass_git() {
+  pushd -q "${HOME}/.password-store"
+  _dispatch git git
+  popd -q
+}
+
+(( $+functions[_pass_rm] )) || _pass_rm() {
+  local curcontext="$curcontext" state lstate line
+
+  _arguments -A "-*" \
+    '(-r --recursive)'{-r,--recursive}'[recurse into directories]' \
+    '(-f --force)'{-f,--force}'[force removal]' \
+    ': :_password'
+}
+
+_pass "$@"

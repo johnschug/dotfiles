@@ -1,0 +1,16 @@
+#!/bin/zsh
+srcdir="$HOME/Pictures/shared"
+bgdir="$HOME/Pictures/wallpapers"
+blacklist="$bgdir/.blacklist"
+
+find -H "$bgdir" -type f -o -type l -delete
+selection=("${(@f)$(find -H $srcdir -type f -name '*.jpg' -o -name '*.png')}")
+counter=1
+for bg in ${selection:A}; do
+  if grep -q "$bg" "$blacklist"; then
+    continue
+  fi
+  ln -s "$bg" "$bgdir/wallpaper_${(l:4::0:)counter}.${bg:e}"
+  counter=$((counter+1))
+done
+rotate-bg

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+if [ $EUID -ne 0 ]; then
+  echo "This script must be run as root" 1>&2
+  exit 1
+fi
+
+if [ -z "$BTRFS" ]; then
+  BTRFS="btrfs"
+fi
+
+if ! hash "$BTRFS" &> /dev/null; then
+  echo "The btrfs command could not be located" 1>&2
+  exit 1
+fi
+
+SNAPSHOT_VOL="/"
+MAX_SNAPSHOTS=3
+while getopts ":p:m:c:" opt; do
+  case $opt in
+    p)
+      SNAPSHOT_PREFIX="$OPTARG"
+      ;;
+    m)
+      SNAPSHOT_VOL="${OPTARG%/}/"
+      ;;
+    c)
+      MAX_SNAPSHOTS="$OPTARG"
+      ;;
+    y)
+      ASSUME_YES="true"
+      ;;
+  esac
+done
+
+SNAPSHOTS=`$BTRFS subvolume list -s "$SNAPSHOT_VOL"  | cut -d " " -f14 | grep "^$SNAPSHOT_PREFIX"`
+NUM_SNAPSHOTS=`echo "$SNAPSHOTS" | wc -l`
+if [ -z "$SNAPSHOTS" ]; then
+  NUM_SNAPSHOTS=0
+fi
+if [ $NUM_SNAPSHOTS -le $MAX_SNAPSHOTS ]; then
+  echo "No cleaning needed"
+  exit 0
+fi
+echo "Cleaning: "
+SNAPSHOTS=`echo "$SNAPSHOTS" | head -n -$MAX_SNAPSHOTS`
+for sv in $SNAPSHOTS; do
+  echo "${SNAPSHOT_VOL}${sv}"
+done
+echo ""
+if [ "$ASSUME_YES" == "true" ]; then
+  echo "Continue (y/N)? y"
+else
+  read -p "Continue (y/N)? "
+  [ "$REPLY" == "y" -o "$REPLY" == "Y" ] ||  exit 0
+fi
+for sv in $SNAPSHOTS; do
+  $BTRFS subvolume delete "${SNAPSHOT_VOL}${sv}"
+done

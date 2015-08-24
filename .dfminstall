@@ -1,0 +1,5 @@
+README.md skip
+.vim recurse
+.vim/autoload recurse
+.vim/bin recurse
+.vim/bundle recurse

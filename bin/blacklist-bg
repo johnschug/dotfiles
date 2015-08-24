@@ -1,0 +1,22 @@
+#!/bin/zsh
+srcdir="$HOME/Pictures/shared"
+bgdir="$HOME/Pictures/wallpapers"
+blacklist="$bgdir/.blacklist"
+
+function addfile() {
+  local file
+  file="${1:A}"
+  if [ ! -f "$file" ] || ([ -f "$blacklist" ] && grep -q "$file" "$blacklist"); then
+    return
+  fi
+  echo "$file" | tee -a "$blacklist"
+}
+
+if [ $# -eq 0 ]; then
+  addfile "${(Q)$(gsettings get org.gnome.desktop.background picture-uri):s/file\:\/\///}"
+else
+  for file in $@; do
+    addfile "$(echo $bgdir/wallpaper_${(l:4::0:)file}.(png|jpg))"
+  done
+fi
+renumber-bg
