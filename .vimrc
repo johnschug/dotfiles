@@ -44,7 +44,7 @@ scriptencoding utf-8
   endif
 " }}}
 
-" Editting {{{
+" Editing {{{
   set nowrap
   set expandtab
   set shiftwidth=2
@@ -64,14 +64,17 @@ scriptencoding utf-8
 " }}}
 
 " Commands {{{
-  autocmd InsertEnter * :set norelativenumber
-  autocmd InsertLeave * :set relativenumber
+  augroup Numbers
+    autocmd!
+    autocmd InsertEnter * :set norelativenumber
+    autocmd InsertLeave * :set relativenumber
+  augroup END
   if ! has('gui_running')
     set ttimeoutlen=10
     augroup FastEscape
       autocmd!
-      au InsertEnter * set timeoutlen=0
-      au InsertLeave * set timeoutlen=1000
+      autocmd InsertEnter * set timeoutlen=0
+      autocmd InsertLeave * set timeoutlen=1000
     augroup END
   endif
 
@@ -87,9 +90,8 @@ scriptencoding utf-8
 " Mappings {{{
   nnoremap j gj
   nnoremap k gk
-
-  nnoremap <silent> <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
   nnoremap <silent> gb <C-^>
+  nnoremap <silent> <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
   nnoremap <silent> <leader>h :set list!<CR>
   nnoremap <silent> <leader>n :set relativenumber!<CR>
   nnoremap <silent> <leader>o :set paste!<CR>
@@ -101,10 +103,13 @@ scriptencoding utf-8
   nnoremap <silent> <leader>f :silent! grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
   nnoremap <silent> <F3> :TagbarToggle<CR>
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
-  cnoremap w!! w !sudo tee >/dev/null %
-  cnoremap <C-d> <C-r>=expand("%:h")<CR>/
 
-  xnoremap <silent> <C-k> :pyf ~/bin/clang-format.py<CR>
+  xnoremap <silent> <C-K> :pyf ~/bin/clang-format.py<CR>
+
+  onoremap ae :<C-U>keepjumps normal! ggVG<CR>
+
+  cnoremap w!! w !sudo tee >/dev/null %
+  cnoremap <C-D> <C-R>=expand("%:h")<CR>/
 " }}}
 
 " Plugins {{{
