@@ -16,7 +16,7 @@ _password() {
 _gpg_keys() {
   local expl
   _wanted secret-keys expl 'secret key' compadd \
-    ${${(Mo)$(_call_program secret-keys gpg --list-secret-keys --list-options no-show-photos 2>/dev/null):%<*>}//(<|>)/}
+    ${${(Mo)$(_call_program secret-keys gpg2 --list-secret-keys --list-options no-show-photos 2>/dev/null):%<*>}//(<|>)/}
 }
 
 (( $+functions[_pass_command] )) || _pass_command() {

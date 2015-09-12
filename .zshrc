@@ -11,18 +11,31 @@ if hash tmux &> /dev/null; then
   fi
 fi
 
+# Bindings
 export KEYTIMEOUT=5
 bindkey -v
+bindkey "^k" insert-composed-char
+bindkey "^v" insert-unicode-char
+bindkey "^p" history-search-backward
+bindkey "^n" history-search-forward
+bindkey "^[s" insert-sudo
+bindkey -M vicmd "q" push-line
 bindkey -M vicmd "u" undo
 bindkey -M vicmd "^r" redo
 bindkey -M vicmd "~" vi-swap-case
 bindkey -M vicmd '?' history-incremental-search-backward
 bindkey -M vicmd '/' history-incremental-search-forward
-bindkey "^k" history-search-backward
-bindkey "^j" history-search-forward
-bindkey "^[s" insert-sudo
 
-function insert-sudo { zle beginning-of-line; zle -U "sudo " }
+autoload -Uz insert-composed-char insert-unicode-char
+function insert-sudo {
+  if [[ "$BUFFER" != su(do|)\ * ]]; then
+    BUFFER="sudo $BUFFER"
+    (( CURSOR += 5 ))
+  fi
+}
+
+zle -N insert-composed-char
+zle -N insert-unicode-char
 zle -N insert-sudo
 
 # Aliases

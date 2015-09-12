@@ -19,6 +19,7 @@ scriptencoding utf-8
   set relativenumber
   set cursorline
   set cursorcolumn
+  set colorcolumn=+1
   set showcmd
   set noshowmode
   set laststatus=2
@@ -50,6 +51,7 @@ scriptencoding utf-8
   set shiftwidth=2
   set softtabstop=2
   set tabstop=2
+  set textwidth=80
 
   set nohlsearch
   set incsearch
@@ -103,6 +105,7 @@ scriptencoding utf-8
   nnoremap <silent> <leader>f :silent! grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
   nnoremap <silent> <F3> :TagbarToggle<CR>
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
+  nmap ga <Plug>(UnicodeGA)
 
   xnoremap <silent> <C-K> :pyf ~/bin/clang-format.py<CR>
 
@@ -119,14 +122,17 @@ scriptencoding utf-8
   Plug 'tpope/vim-surround'
   Plug 'tomtom/tcomment_vim'
   Plug 'SirVer/ultisnips'
+  Plug 'chrisbra/unicode.vim'
   Plug 'Yggdroot/indentLine'
   Plug 'scrooloose/syntastic'
   Plug 'majutsushi/tagbar'
   Plug 'bling/vim-airline'
   Plug 'editorconfig/editorconfig-vim'
+  Plug 'vim-pandoc/vim-pandoc'
+  Plug 'vim-pandoc/vim-pandoc-syntax'
   Plug 'rust-lang/rust.vim', { 'for': 'rust' }
   Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --clang-completer --system-libclang' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --system-libclang' }
   call plug#end()
 
   " airline {{{
