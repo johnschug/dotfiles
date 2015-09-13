@@ -48,6 +48,7 @@ alias fgrep="fgrep --color=auto"
 alias cp="cp --reflink=auto --sparse=always"
 alias cpv="rsync -pogh --progress"
 alias zcp="zmv -C"
+alias zln="zmv -L"
 
 # Options
 setopt autocd

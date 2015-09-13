@@ -90,19 +90,42 @@ scriptencoding utf-8
 " }}}
 
 " Mappings {{{
-  nnoremap j gj
-  nnoremap k gk
-  nnoremap <silent> gb <C-^>
-  nnoremap <silent> <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
-  nnoremap <silent> <leader>h :set list!<CR>
-  nnoremap <silent> <leader>n :set relativenumber!<CR>
-  nnoremap <silent> <leader>o :set paste!<CR>
-  nnoremap <silent> <leader>j :setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4<CR>
-  nnoremap <silent> <leader>J :setlocal expandtab tabstop=8 shiftwidth=8 softtabstop=4<CR>
-  nnoremap <silent> <leader>M :setlocal noexpandtab tabstop=8 shiftwidth=4 softtabstop=4<CR>
-  nnoremap <silent> <leader>m :setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2<CR>
-  nnoremap <silent> <leader>g :YcmCompleter GoTo<CR>
-  nnoremap <silent> <leader>f :silent! grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+  " Navigation {{{
+    nnoremap j gj
+    nnoremap k gk
+    nnoremap gb <C-^>
+    nnoremap <silent> <expr> [a ':<C-U>' . v:count1 . 'prev<CR>'
+    nnoremap <silent> <expr> ]a ':<C-U>' . v:count1 . 'next<CR>'
+    nnoremap <silent> <expr> [A ':<C-U>' . v:count1 . 'first<CR>'
+    nnoremap <silent> <expr> ]A ':<C-U>' . v:count1 . 'last<CR>'
+    nnoremap <silent> <expr> [b ':<C-U>' . v:count1 . 'bprev<CR>'
+    nnoremap <silent> <expr> ]b ':<C-U>' . v:count1 . 'bnext<CR>'
+    nnoremap <silent> <expr> [B ':<C-U>' . v:count1 . 'bfirst<CR>'
+    nnoremap <silent> <expr> ]B ':<C-U>' . v:count1 . 'blast<CR>'
+    nnoremap <silent> <expr> [t ':<C-U>' . v:count1 . 'tprev<CR>'
+    nnoremap <silent> <expr> ]t ':<C-U>' . v:count1 . 'tnext<CR>'
+    nnoremap <silent> <expr> [T ':<C-U>' . v:count1 . 'tfirst<CR>'
+    nnoremap <silent> <expr> ]T ':<C-U>' . v:count1 . 'tlast<CR>'
+    nnoremap <silent> <expr> [q ':<C-U>' . v:count1 . 'cprev<CR>'
+    nnoremap <silent> <expr> ]q ':<C-U>' . v:count1 . 'cnext<CR>'
+    nnoremap <silent> <expr> [Q ':<C-U>' . v:count1 . 'cfirst<CR>'
+    nnoremap <silent> <expr> ]Q ':<C-U>' . v:count1 . 'clast<CR>'
+    nnoremap <silent> <expr> [l ':<C-U>' . v:count1 . 'lprev<CR>'
+    nnoremap <silent> <expr> ]l ':<C-U>' . v:count1 . 'lnext<CR>'
+    nnoremap <silent> <expr> [L ':<C-U>' . v:count1 . 'lfirst<CR>'
+    nnoremap <silent> <expr> ]L ':<C-U>' . v:count1 . 'llast<CR>'
+  " }}}
+  nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
+  nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
+  nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
+  nnoremap <silent> <Leader>n :set relativenumber!<CR>
+  nnoremap <silent> <Leader>o :set paste!<CR>
+  nnoremap <silent> <Leader>j :setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4<CR>
+  nnoremap <silent> <Leader>J :setlocal expandtab tabstop=8 shiftwidth=8 softtabstop=4<CR>
+  nnoremap <silent> <Leader>M :setlocal noexpandtab tabstop=8 shiftwidth=4 softtabstop=4<CR>
+  nnoremap <silent> <Leader>m :setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2<CR>
+  nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
+  nnoremap <silent> <Leader>f :silent! grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
   nnoremap <silent> <F3> :TagbarToggle<CR>
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
   nmap ga <Plug>(UnicodeGA)
