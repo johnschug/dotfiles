@@ -30,6 +30,16 @@ scriptencoding utf-8
   set conceallevel=2
   set concealcursor=vin
 
+  set foldenable
+  set foldmethod=syntax
+  set foldcolumn=2
+  set foldminlines=5
+
+  set hlsearch
+  set incsearch
+  set ignorecase
+  set smartcase
+
   set wildmenu
   set wildmode=longest,list,full
 
@@ -37,12 +47,11 @@ scriptencoding utf-8
   set t_Co=16
   colorscheme solarized
 
-  if has('folding')
-    set foldenable
-    set foldmethod=syntax
-    set foldcolumn=2
-    set foldminlines=5
-  endif
+  augroup Numbers
+    autocmd!
+    autocmd InsertEnter * :set norelativenumber
+    autocmd InsertLeave * :set relativenumber
+  augroup END
 " }}}
 
 " Editing {{{
@@ -53,24 +62,13 @@ scriptencoding utf-8
   set tabstop=2
   set textwidth=80
 
-  set nohlsearch
-  set incsearch
-  set ignorecase
-  set smartcase
   set formatoptions+=j
   set backspace=indent,eol,start
   set autoindent
   set copyindent
   set completeopt=longest,menuone,menu
   set spelllang=en_us
-" }}}
 
-" Commands {{{
-  augroup Numbers
-    autocmd!
-    autocmd InsertEnter * :set norelativenumber
-    autocmd InsertLeave * :set relativenumber
-  augroup END
   if ! has('gui_running')
     set ttimeoutlen=10
     augroup FastEscape
@@ -79,8 +77,9 @@ scriptencoding utf-8
       autocmd InsertLeave * set timeoutlen=1000
     augroup END
   endif
+" }}}
 
-  command! Clear let @/=""
+" Commands {{{
   command! -range Copy <line1>,<line2>!xclip -f -sel clip
   command! Paste :read !xclip -o -sel clip
 
@@ -126,6 +125,7 @@ scriptencoding utf-8
   nnoremap <silent> <Leader>m :setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
   nnoremap <silent> <Leader>f :silent! grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+  nnoremap <silent> <C-L> :nohl<CR><C-L>
   nnoremap <silent> <F3> :TagbarToggle<CR>
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
   nmap ga <Plug>(UnicodeGA)

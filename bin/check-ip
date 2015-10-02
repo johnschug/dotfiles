@@ -1,10 +1,10 @@
 #!/bin/sh
 currentv4=$(wget -4 -q -O - http://api.ipify.org|sed 's/[^0-9.]//g')
 if [ -n "$currentv4" ]; then
-  echo $currentv4
+  echo "$currentv4"
 fi
 
 currentv6=$(ip -6 -o addr show scope global | head -n1 | awk '{ print $4 }' | cut -d/ -f1)
 if [ -n "$currentv6" ]; then
-  echo $currentv6
+  echo "$currentv6"
 fi
