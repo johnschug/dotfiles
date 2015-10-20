@@ -1,14 +1,12 @@
 #!/bin/sh
-if [ $EUID -ne 0 ]; then
+set -euf
+
+if [ "$(id -u)" -ne 0 ]; then
   echo "This script must be run as root" 1>&2
   exit 1
 fi
 
-if [ -z "$BTRFS" ]; then
-  BTRFS="btrfs"
-fi
-
-if ! hash "$BTRFS" > /dev/null 2>&1; then
+if ! hash "${BTRFS:=btrfs}" > /dev/null 2>&1; then
   echo "The btrfs command could not be located" 1>&2
   exit 1
 fi
@@ -37,22 +35,27 @@ NUM_SNAPSHOTS=$(echo "$SNAPSHOTS" | wc -l)
 if [ -z "$SNAPSHOTS" ]; then
   NUM_SNAPSHOTS=0
 fi
+
 if [ "$NUM_SNAPSHOTS" -le "$MAX_SNAPSHOTS" ]; then
   echo "No cleaning needed"
   exit 0
 fi
-echo "Cleaning: "
+
 SNAPSHOTS=$(echo "$SNAPSHOTS" | head -n -"$MAX_SNAPSHOTS")
+echo "Cleaning: "
 for sv in $SNAPSHOTS; do
   echo "${SNAPSHOT_VOL}${sv}"
 done
 echo ""
+
+printf "\nContinue (y/N)? "
 if [ "$ASSUME_YES" = "true" ]; then
-  echo "Continue (y/N)? y"
+  echo "y"
 else
-  read -p "Continue (y/N)? "
+  read || exit 1
   [ "$REPLY" = "y" -o "$REPLY" = "Y" ] ||  exit 0
 fi
+
 for sv in $SNAPSHOTS; do
   $BTRFS subvolume delete "${SNAPSHOT_VOL}${sv}"
 done

@@ -11,7 +11,7 @@ scriptencoding utf-8
   set fileformats=unix,dos,mac
 " }}}
 
-" UI {{{
+" Interface {{{
   set scrolloff=5
   set list
   set listchars=tab:▸\ ,eol:¬
@@ -32,7 +32,7 @@ scriptencoding utf-8
 
   set foldenable
   set foldmethod=syntax
-  set foldcolumn=2
+  set foldcolumn=1
   set foldminlines=5
 
   set hlsearch
@@ -57,6 +57,7 @@ scriptencoding utf-8
 " Editing {{{
   set nowrap
   set expandtab
+  set smarttab
   set shiftwidth=2
   set softtabstop=2
   set tabstop=2
@@ -64,19 +65,14 @@ scriptencoding utf-8
 
   set formatoptions+=j
   set backspace=indent,eol,start
+  set virtualedit=block
   set autoindent
   set copyindent
   set completeopt=longest,menuone,menu
   set spelllang=en_us
 
-  if ! has('gui_running')
-    set ttimeoutlen=10
-    augroup FastEscape
-      autocmd!
-      autocmd InsertEnter * set timeoutlen=0
-      autocmd InsertLeave * set timeoutlen=1000
-    augroup END
-  endif
+  set ttimeout
+  set ttimeoutlen=100
 " }}}
 
 " Commands {{{
@@ -130,34 +126,12 @@ scriptencoding utf-8
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
   nmap ga <Plug>(UnicodeGA)
 
-  xnoremap <silent> <C-K> :pyf ~/bin/clang-format.py<CR>
-
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
-  cnoremap w!! w !sudo tee >/dev/null %
   cnoremap <C-D> <C-R>=expand("%:h")<CR>/
 " }}}
 
 " Plugins {{{
-  call plug#begin('~/.vim/bundle')
-  Plug 'Valloric/ListToggle'
-  Plug 'Raimondi/delimitMate'
-  Plug 'tpope/vim-surround'
-  Plug 'tomtom/tcomment_vim'
-  Plug 'SirVer/ultisnips'
-  Plug 'chrisbra/unicode.vim'
-  Plug 'Yggdroot/indentLine'
-  Plug 'scrooloose/syntastic'
-  Plug 'majutsushi/tagbar'
-  Plug 'bling/vim-airline'
-  Plug 'editorconfig/editorconfig-vim'
-  Plug 'vim-pandoc/vim-pandoc'
-  Plug 'vim-pandoc/vim-pandoc-syntax'
-  Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-  Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --system-libclang' }
-  call plug#end()
-
   " airline {{{
     let g:airline_left_sep = ''
     let g:airline_left_alt_sep = ''
@@ -208,18 +182,44 @@ scriptencoding utf-8
     let g:racer_cmd = expand('~/.vim/bundle/racer/target/release/racer')
   " }}}
 
-  " Ctags {{{
-    set tags=./tags;/,~/.vimtags
+  " tags {{{
+    set tags+=~/.vim/tags
 
     let gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
     if gitroot != ''
       let &tags = &tags . ',' . gitroot . '/.git/tags'
     endif
   " }}}
+
+  " vim-plug {{{
+    let g:plug_window = 'vertical belowright new'
+  " }}}
+
+  call plug#begin('~/.vim/bundle')
+  Plug 'Valloric/ListToggle'
+  Plug 'Raimondi/delimitMate'
+  Plug 'tpope/vim-surround'
+  Plug 'tomtom/tcomment_vim'
+  Plug 'SirVer/ultisnips'
+  Plug 'chrisbra/unicode.vim'
+  Plug 'Yggdroot/indentLine'
+  Plug 'scrooloose/syntastic'
+  Plug 'majutsushi/tagbar'
+  Plug 'bling/vim-airline'
+  Plug 'editorconfig/editorconfig-vim'
+  Plug 'vim-pandoc/vim-pandoc'
+  Plug 'vim-pandoc/vim-pandoc-syntax'
+  Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+  Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
+  Plug 'racer-rust/vim-racer', { 'for': 'rust' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --system-libclang' }
+  call plug#end()
 " }}}
 
 if filereadable(expand('~/.vimrc.local'))
-  source ~/.vimrc.local
+  execute 'source' expand('~/.vimrc.local')
+elseif filereadable(expand('~/_vimrc.local'))
+  execute 'source' expand('~/_vimrc.local')
 endif
 
 " vim:foldmethod=marker:foldlevel=0
