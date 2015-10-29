@@ -128,7 +128,7 @@ scriptencoding utf-8
 
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
-  cnoremap <C-D> <C-R>=expand("%:h")<CR>/
+  cnoremap <C-O> <C-R>=expand("%:h")<CR>/
 " }}}
 
 " Plugins {{{
@@ -183,12 +183,17 @@ scriptencoding utf-8
   " }}}
 
   " tags {{{
-    set tags+=~/.vim/tags
+    set tags=./tags;,tags
 
     let gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
     if gitroot != ''
       let &tags = &tags . ',' . gitroot . '/.git/tags'
     endif
+
+    augroup Tags
+      autocmd!
+      autocmd FileType * :let &l:tags = &tags . ',' . expand('~/.vim/tags/') . &ft
+    augroup END
   " }}}
 
   " vim-plug {{{
@@ -208,7 +213,7 @@ scriptencoding utf-8
   Plug 'bling/vim-airline'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'vim-pandoc/vim-pandoc'
-  Plug 'vim-pandoc/vim-pandoc-syntax'
+  Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
   Plug 'rust-lang/rust.vim', { 'for': 'rust' }
   Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
   Plug 'racer-rust/vim-racer', { 'for': 'rust' }

@@ -42,10 +42,10 @@ flags = [
 '-Wall',
 '-Wextra',
 '-pedantic',
-'-isystem', '/usr/include/c++/4.9.2'
-'-isystem', '/usr/include/c++/4.9.2/x86_64-redhat-linux'
-'-isystem', '/usr/include/c++/4.9.2/backward'
-'-isystem', '/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include',
+'-isystem', '/usr/include/c++/5.1.1'
+'-isystem', '/usr/include/c++/5.1.1/x86_64-redhat-linux'
+'-isystem', '/usr/include/c++/5.1.1/backward'
+'-isystem', '/usr/lib/gcc/x86_64-redhat-linux/5.1.1/include',
 '-isystem', '/usr/include'
 ]
 
