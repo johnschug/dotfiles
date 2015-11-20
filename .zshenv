@@ -18,8 +18,8 @@ export EDITOR="vim"
 export PAGER="less -R"
 
 # Start gpg-agent
-if hash gpg-connect-agent &> /dev/null; then
-  gpg-connect-agent /bye
+if hash gpg-connect-agent &>/dev/null; then
+  gpg-connect-agent /bye &>/dev/null
   export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 fi
 

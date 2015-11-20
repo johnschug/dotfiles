@@ -1,9 +1,3 @@
-if [ "$TERM" = "xterm" ]; then
-  export TERM=xterm-16color
-elif [ "$TERM" = "screen" ]; then
-  export TERM=screen-16color
-fi
-
 # Start tmux
 if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
