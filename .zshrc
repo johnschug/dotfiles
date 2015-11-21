@@ -58,7 +58,6 @@ colors
 add-zsh-hook chpwd chpwd_recent_dirs
 
 # Completion
-compdef _yum dnf
 compdef gpg2=gpg
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' verbose yes
@@ -126,9 +125,10 @@ function zman {
   PAGER="less -g -s '+/^       "$1"'" man zshall
 }
 
-if [ -f ~/.zshrc.local ]; then
-  source ~/.zshrc.local
-fi
 if [ -f ~/.zsh/plugins/plugins.zsh ]; then
   source ~/.zsh/plugins/plugins.zsh
+fi
+
+if [ -f ~/.zshrc.local ]; then
+  source ~/.zshrc.local
 fi
