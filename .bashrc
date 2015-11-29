@@ -31,10 +31,10 @@ if [ -f ~/.git-prompt.sh ]; then
   export GIT_PS1_SHOWDIRTYSTATE=1
   source ~/.git-prompt.sh
   export PS1="${YellowBold}\# [${Yellow}\u${YellowBold}@${Magenta}\h ${BlueBold}\
-    \$(__git_ps1 '([%s]) ')${Blue}\w${YellowBold}]\\$ ${White}"
+\$(__git_ps1 '([%s]) ')${Blue}\w${YellowBold}]\\$ ${White}"
 else
   export PS1="${YellowBold}\# [${Yellow}\u${YellowBold}@${Magenta}\h \
-    ${Blue}\w${YellowBold}]\\$ ${White}"
+${Blue}\w${YellowBold}]\\$ ${White}"
 fi
 trap "echo -ne '\e[0m'" DEBUG
 

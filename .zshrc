@@ -13,14 +13,15 @@ bindkey "^v" insert-unicode-char
 bindkey "^p" history-search-backward
 bindkey "^n" history-search-forward
 bindkey "^[s" insert-sudo
-bindkey -M vicmd "q" push-line
+bindkey -M vicmd "v" edit-command-line
+bindkey -M vicmd "q" push-input
 bindkey -M vicmd "u" undo
 bindkey -M vicmd "^r" redo
 bindkey -M vicmd "~" vi-swap-case
 bindkey -M vicmd '?' history-incremental-search-backward
 bindkey -M vicmd '/' history-incremental-search-forward
 
-autoload -Uz insert-composed-char insert-unicode-char
+autoload -Uz edit-command-line insert-composed-char insert-unicode-char
 function insert-sudo {
   if [[ "$BUFFER" != su(do|)\ * ]]; then
     BUFFER="sudo $BUFFER"
@@ -28,6 +29,7 @@ function insert-sudo {
   fi
 }
 
+zle -N edit-command-line
 zle -N insert-composed-char
 zle -N insert-unicode-char
 zle -N insert-sudo
@@ -36,6 +38,8 @@ zle -N insert-sudo
 alias ls="ls --color=auto"
 alias less="less -R"
 alias view="vim -R"
+alias bvim="vim -b"
+alias bview="vim -Rb"
 alias grep="grep --color=auto"
 alias egrep="egrep --color=auto"
 alias fgrep="fgrep --color=auto"
@@ -45,12 +49,13 @@ alias zcp="zmv -C"
 alias zln="zmv -L"
 
 # Options
-setopt autocd
+setopt auto_cd
+setopt complete_aliases
 setopt correct
-setopt extendedglob
+setopt extended_glob
 setopt glob_complete
+setopt interactive_comments
 setopt notify
-setopt completealiases
 
 autoload -Uz compinit colors vcs_info zmv chpwd_recent_dirs cdr add-zsh-hook
 compinit
@@ -95,7 +100,7 @@ precmd() {
     xterm*)
       {print -Pn '\e]0;%n@%m:%1~\a'}
       ;;
-    screen*)
+    screen* | tmux*)
       {print -Pn '\e]2;%n@%m:%1~\a'}
       ;;
   esac
@@ -122,7 +127,7 @@ function mkcd {
 }
 
 function zman {
-  PAGER="less -g -s '+/^       "$1"'" man zshall
+  PAGER="less -g -s '+/^       $1'" man zshall
 }
 
 if [ -f ~/.zsh/plugins/plugins.zsh ]; then

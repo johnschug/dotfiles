@@ -1,6 +1,8 @@
 scriptencoding utf-8
 
 " Plugins {{{
+  runtime! macros/matchit.vim
+
   " airline {{{
     let g:airline_left_sep = ''
     let g:airline_left_alt_sep = ''
@@ -36,9 +38,6 @@ scriptencoding utf-8
     if filereadable(expand('~/.ycm_extra_conf.py'))
       let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
     endif
-    let g:ycm_semantic_triggers = {
-          \ 'rust' : ['.', '::'],
-          \ }
   " }}}
 
   " UltiSnips {{{
@@ -50,7 +49,6 @@ scriptencoding utf-8
   " Racer {{{
     let g:racer_cmd = expand('~/.vim/bundle/racer/target/release/racer')
   " }}}
-
 
   " vim-plug {{{
     let g:plug_window = 'vertical belowright new'
@@ -83,6 +81,7 @@ scriptencoding utf-8
   set autoread
   set hidden
   set backupdir=~/.vim/backup//,~/_vim/backup//,~/tmp//,.
+  set path+=**
   set encoding=utf-8
   set fileformats=unix,dos,mac
   set shortmess+=a
@@ -111,6 +110,7 @@ scriptencoding utf-8
   set foldmethod=syntax
   set foldcolumn=1
   set foldminlines=5
+  set foldopen=hor,insert,mark,quickfix,search,tag,undo
 
   set hlsearch
   set incsearch
@@ -118,7 +118,12 @@ scriptencoding utf-8
   set smartcase
 
   set wildmenu
-  set wildmode=longest,list,full
+  set wildmode=longest:full,full
+  set wildignorecase
+  set wildignore+=*.swp,*.bak,*~
+  set wildignore+=*.pyc,*.rlib,*.class,*.o,*.obj,*.a,*.lib,*.so,*.dll,*.pdb
+  set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+  set wildignore+=tags,cscope.*
 
   set background=dark
   colorscheme solarized
@@ -137,14 +142,13 @@ scriptencoding utf-8
   set shiftwidth=2
   set softtabstop=2
   set tabstop=2
-  set textwidth=80
 
-  set formatoptions+=j
+  set formatoptions+=j1
   set backspace=indent,eol,start
   set virtualedit=block
   set autoindent
   set copyindent
-  set completeopt=longest,menuone,menu
+  set completeopt+=longest,menuone
   set spelllang=en_us
 
   set ttimeout
@@ -162,40 +166,30 @@ scriptencoding utf-8
   augroup END
 
   if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor
+    set grepprg=ag\ --nogroup\ --nocolor\ --column\ --vimgrep
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+  else
+    set grepprg=grep\ -rnH
   endif
 " }}}
 
 " Mappings {{{
   " Navigation {{{
-    nnoremap j gj
-    nnoremap k gk
     nnoremap gb <C-^>
-    nnoremap <silent> <expr> [a ':<C-U>' . v:count1 . 'prev<CR>'
-    nnoremap <silent> <expr> ]a ':<C-U>' . v:count1 . 'next<CR>'
-    nnoremap <silent> <expr> [A ':<C-U>' . v:count1 . 'first<CR>'
-    nnoremap <silent> <expr> ]A ':<C-U>' . v:count1 . 'last<CR>'
-    nnoremap <silent> <expr> [b ':<C-U>' . v:count1 . 'bprev<CR>'
-    nnoremap <silent> <expr> ]b ':<C-U>' . v:count1 . 'bnext<CR>'
-    nnoremap <silent> <expr> [B ':<C-U>' . v:count1 . 'bfirst<CR>'
-    nnoremap <silent> <expr> ]B ':<C-U>' . v:count1 . 'blast<CR>'
-    nnoremap <silent> <expr> [t ':<C-U>' . v:count1 . 'tprev<CR>'
-    nnoremap <silent> <expr> ]t ':<C-U>' . v:count1 . 'tnext<CR>'
-    nnoremap <silent> <expr> [T ':<C-U>' . v:count1 . 'tfirst<CR>'
-    nnoremap <silent> <expr> ]T ':<C-U>' . v:count1 . 'tlast<CR>'
-    nnoremap <silent> <expr> [q ':<C-U>' . v:count1 . 'cprev<CR>'
-    nnoremap <silent> <expr> ]q ':<C-U>' . v:count1 . 'cnext<CR>'
-    nnoremap <silent> <expr> [Q ':<C-U>' . v:count1 . 'cfirst<CR>'
-    nnoremap <silent> <expr> ]Q ':<C-U>' . v:count1 . 'clast<CR>'
-    nnoremap <silent> <expr> [l ':<C-U>' . v:count1 . 'lprev<CR>'
-    nnoremap <silent> <expr> ]l ':<C-U>' . v:count1 . 'lnext<CR>'
-    nnoremap <silent> <expr> [L ':<C-U>' . v:count1 . 'lfirst<CR>'
-    nnoremap <silent> <expr> ]L ':<C-U>' . v:count1 . 'llast<CR>'
+    nnoremap gB :ls<CR>:b<Space>
+    nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+    nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+    for cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
+      execute "nnoremap <silent> <expr> [".cmd[0]." ':<C-U>'.v:count1.'".cmd[1]."prev<CR>'"
+      execute "nnoremap <silent> <expr> ]".cmd[0]." ':<C-U>'.v:count1.'".cmd[1]."next<CR>'"
+      execute "nnoremap <silent> [".toupper(cmd[0])." :<C-U>".cmd[1]."first<CR>"
+      execute "nnoremap <silent> ]".toupper(cmd[0])." :<C-U>".cmd[1]."last<CR>"
+    endfor
   " }}}
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
-  nnoremap <silent> K :silent! lgrep! "\b<C-R><C-W>\b"<CR>
+  nnoremap <silent> K :silent! grep! "\b<C-R><C-W>\b"<CR>
   nnoremap <silent> <Leader>n :set relativenumber!<CR>
   nnoremap <silent> <Leader>o :set paste!<CR>
   nnoremap <silent> <Leader>j :setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4<CR>
@@ -208,6 +202,7 @@ scriptencoding utf-8
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
   nmap ga <Plug>(UnicodeGA)
 
+  xnoremap ae :<C-U>normal! ggVG<CR>
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
   cnoremap <C-O> <C-R>=expand("%:h")<CR>/
