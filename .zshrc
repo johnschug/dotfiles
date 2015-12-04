@@ -1,25 +1,35 @@
 # Start tmux
 if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
-    exec tmux new -A -s "default"
+    exec tmux new -A -s default
   fi
 fi
+
+# Options
+setopt auto_cd
+setopt complete_aliases
+setopt correct
+setopt extended_glob
+setopt glob_complete
+setopt interactive_comments
+setopt notify
 
 # Bindings
 export KEYTIMEOUT=5
 bindkey -v
-bindkey "^k" insert-composed-char
-bindkey "^v" insert-unicode-char
-bindkey "^p" history-search-backward
-bindkey "^n" history-search-forward
-bindkey "^[s" insert-sudo
-bindkey -M vicmd "v" edit-command-line
-bindkey -M vicmd "q" push-input
-bindkey -M vicmd "u" undo
-bindkey -M vicmd "^r" redo
-bindkey -M vicmd "~" vi-swap-case
-bindkey -M vicmd '?' history-incremental-search-backward
-bindkey -M vicmd '/' history-incremental-search-forward
+bindkey '^f' edit-command-line
+bindkey '^k' insert-composed-char
+bindkey '^v' insert-unicode-char
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey '^[s' insert-sudo
+bindkey -M vicmd 'v' edit-command-line
+bindkey -M vicmd 'q' push-input
+bindkey -M vicmd 'u' undo
+bindkey -M vicmd '^r' redo
+bindkey -M vicmd '~' vi-swap-case
+bindkey -M vicmd '/' history-incremental-search-backward
+bindkey -M vicmd '?' history-incremental-search-forward
 
 autoload -Uz edit-command-line insert-composed-char insert-unicode-char
 function insert-sudo {
@@ -34,30 +44,7 @@ zle -N insert-composed-char
 zle -N insert-unicode-char
 zle -N insert-sudo
 
-# Aliases
-alias ls="ls --color=auto"
-alias less="less -R"
-alias view="vim -R"
-alias bvim="vim -b"
-alias bview="vim -Rb"
-alias grep="grep --color=auto"
-alias egrep="egrep --color=auto"
-alias fgrep="fgrep --color=auto"
-alias cp="cp --reflink=auto --sparse=always"
-alias cpv="rsync -pogh --progress"
-alias zcp="zmv -C"
-alias zln="zmv -L"
-
-# Options
-setopt auto_cd
-setopt complete_aliases
-setopt correct
-setopt extended_glob
-setopt glob_complete
-setopt interactive_comments
-setopt notify
-
-autoload -Uz compinit colors vcs_info zmv chpwd_recent_dirs cdr add-zsh-hook
+autoload -Uz add-zsh-hook cdr chpwd_recent_dirs colors compinit vcs_info zmv
 compinit
 colors
 add-zsh-hook chpwd chpwd_recent_dirs
@@ -66,8 +53,8 @@ add-zsh-hook chpwd chpwd_recent_dirs
 compdef gpg2=gpg
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' verbose yes
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' menu select=2
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' '+l:|=* r:|=*'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
@@ -117,18 +104,33 @@ PROMPT="%{$fg_bold[yellow]%}%1v%h [%b%F{yellow}%n%f%{$fg_bold[yellow]%}@%b%F{mag
 RPROMPT="%{$fg_bold[yellow]%}[%b%(0?.%F{green}%?.%F{red}%?)%f %{$fg_bold[yellow]%}%j %l]%b%f"
 
 function clear-clipboard {
-  echo "" | xclip -sel clip &>/dev/null
-  gpaste empty &>/dev/null
+  printf '\\n' | xclip -sel clip &>/dev/null
+  gpaste-client empty &>/dev/null
   qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
-}
-
-function mkcd {
-  mkdir -p $1 && cd $1
 }
 
 function zman {
   PAGER="less -g -s '+/^       $1'" man zshall
 }
+
+# Aliases
+alias ls='ls --color=auto'
+alias l.='ls --color=auto -d .*'
+alias ll='ls --color=auto -l'
+alias ll.='ls --color=auto -l -d .*'
+alias less='less -Rgi'
+alias view='vim -R'
+alias bvim='vim -b'
+alias bview='vim -Rb'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias mkdir='mkdir -p'
+alias cp='cp --reflink=auto --sparse=always'
+alias cpv='rsync -pogh --progress'
+alias zcp='zmv -C'
+alias zln='zmv -L'
+alias sudop='sudo env PATH="$PATH"'
 
 if [ -f ~/.zsh/plugins/plugins.zsh ]; then
   source ~/.zsh/plugins/plugins.zsh

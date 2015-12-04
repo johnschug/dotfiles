@@ -1,0 +1,23 @@
+[color]
+	ui = auto
+[diff]
+	algorithm = histogram
+	tool = vimdiff
+[difftool]
+	prompt = false
+[mergetool]
+	prompt = false
+[rebase]
+	autostash = true
+[push]
+	default = simple
+[gpg]
+	program = gpg2
+[user]
+	signingkey = 85E21985
+	name = John Schug
+	email = john.ips.schug@gmail.com
+[alias]
+	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+[include]
+	path = ~/.gitconfig.local

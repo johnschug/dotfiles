@@ -3,12 +3,12 @@ set editing-mode vi
 set completion-ignore-case on
 set show-mode-in-prompt on
 set keymap vi-command
-Control-k: history-search-backward
-Control-j: history-search-forward
+Control-p: history-search-backward
+Control-n: history-search-forward
 Control-e: emacs-editing-mode
 set keymap vi-insert
-Control-k: history-search-backward
-Control-j: history-search-forward
+Control-p: history-search-backward
+Control-n: history-search-forward
 Control-e: emacs-editing-mode
 set keymap emacs
 Control-e: vi-editing-mode

@@ -29,6 +29,9 @@ scriptencoding utf-8
   " }}}
 
   " syntastic {{{
+    let g:syntastic_check_on_open = 1
+    let g:syntastic_check_on_wq = 0
+    let g:syntastic_aggregate_errors = 1
     let g:syntastic_always_populate_loc_list = 1
     let g:syntastic_python_python_exec = 'python3'
   " }}}
@@ -148,6 +151,7 @@ scriptencoding utf-8
   set virtualedit=block
   set autoindent
   set copyindent
+  set complete+=kspell
   set completeopt+=longest,menuone
   set spelllang=en_us
 
@@ -192,10 +196,10 @@ scriptencoding utf-8
   nnoremap <silent> K :silent! grep! "\b<C-R><C-W>\b"<CR>
   nnoremap <silent> <Leader>n :set relativenumber!<CR>
   nnoremap <silent> <Leader>o :set paste!<CR>
-  nnoremap <silent> <Leader>j :setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4<CR>
-  nnoremap <silent> <Leader>J :setlocal expandtab tabstop=8 shiftwidth=8 softtabstop=4<CR>
-  nnoremap <silent> <Leader>M :setlocal noexpandtab tabstop=8 shiftwidth=4 softtabstop=4<CR>
-  nnoremap <silent> <Leader>m :setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2<CR>
+  nnoremap <silent> <Leader>m :setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=2<CR>
+  nnoremap <silent> <Leader>M :setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
+  nnoremap <silent> <Leader>j :setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
+  nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
   nnoremap <silent> <F3> :TagbarToggle<CR>
@@ -222,10 +226,17 @@ scriptencoding utf-8
   augroup END
 " }}}
 
+" File Types {{{
+  augroup RcFileTypes
+    autocmd!
+    autocmd FileType gitcommit,text,markdown,pandoc setlocal spell
+  augroup END
+" }}}
+
 if filereadable(expand('~/.vimrc.local'))
-  execute 'source' expand('~/.vimrc.local')
+  source ~/.vimrc.local
 elseif filereadable(expand('~/_vimrc.local'))
-  execute 'source' expand('~/_vimrc.local')
+  source ~/_vimrc.local
 endif
 
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker:foldlevel=0:sw=2:sts=2:ts=2:expandtab

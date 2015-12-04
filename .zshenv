@@ -1,21 +1,12 @@
 umask 077
 
-typeset -U fpath
-if [ -d ~/.zsh/functions ]; then
-  fpath+=(~/.zsh/functions)
-fi
-
-typeset -U path
-path+=("$HOME/bin" "$HOME/.local/bin")
-
-typeset -U manpath
-manpath+=("$HOME/.local/share/man")
-
-export -TU CLASSPATH classpath
-classpath+=("$HOME/lib/*" "$HOME/.local/lib/*" "./")
+typeset -U path fpath
+path=(~/.local/bin ~/bin $path)
+fpath=(~/.zsh/functions $fpath)
 
 export EDITOR="vim"
-export PAGER="less -R"
+export VISUAL="$EDITOR"
+export PAGER="less -Rgi"
 
 # Start gpg-agent
 if hash gpg-connect-agent &>/dev/null; then
