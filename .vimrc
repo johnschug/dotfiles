@@ -90,6 +90,7 @@ scriptencoding utf-8
   set encoding=utf-8
   set fileformats=unix,dos,mac
   set shortmess+=a
+  set viminfo=
 " }}}
 
 " Interface {{{
@@ -209,7 +210,7 @@ scriptencoding utf-8
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
   nnoremap <Leader>gs :Gstatus<CR>
-  nnoremap <Leader>gb :leftabove Gblame<CR><C-W>l
+  nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
   nnoremap <Leader>gl :silent! Gllog!<CR>
   nnoremap <Leader>gw :Gwrite<CR>
 
