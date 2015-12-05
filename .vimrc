@@ -33,6 +33,7 @@ scriptencoding utf-8
     let g:syntastic_check_on_wq = 0
     let g:syntastic_aggregate_errors = 1
     let g:syntastic_always_populate_loc_list = 1
+    let g:syntastic_auto_loc_list = 0
     let g:syntastic_python_python_exec = 'python3'
   " }}}
 
@@ -60,8 +61,9 @@ scriptencoding utf-8
   call plug#begin('~/.vim/bundle')
   Plug 'Valloric/ListToggle'
   Plug 'Raimondi/delimitMate'
-  Plug 'tpope/vim-surround'
   Plug 'tomtom/tcomment_vim'
+  Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-fugitive'
   Plug 'SirVer/ultisnips'
   Plug 'chrisbra/unicode.vim'
   Plug 'Yggdroot/indentLine'
@@ -165,8 +167,8 @@ scriptencoding utf-8
 
   augroup QuickFix
     autocmd!
-    autocmd QuickFixCmdPost [^l]* nested cwindow|redraw!
-    autocmd QuickFixCmdPost    l* nested lwindow|redraw!
+    autocmd QuickFixCmdPost [^l]* nested :botright cwindow|redraw!
+    autocmd QuickFixCmdPost    l* nested :lwindow|redraw!
   augroup END
 
   if executable('ag')
@@ -193,7 +195,12 @@ scriptencoding utf-8
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
-  nnoremap <silent> K :silent! grep! "\b<C-R><C-W>\b"<CR>
+  nnoremap <silent> K :silent! lgrep! "\b<C-R><C-W>\b"<CR>
+  nmap ga <Plug>(UnicodeGA)
+  nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
+  nnoremap <silent> <F3> :TagbarToggle<CR>
+  nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
+  nnoremap <silent> <Leader>d :bd<CR>
   nnoremap <silent> <Leader>n :set relativenumber!<CR>
   nnoremap <silent> <Leader>o :set paste!<CR>
   nnoremap <silent> <Leader>m :setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=2<CR>
@@ -201,10 +208,10 @@ scriptencoding utf-8
   nnoremap <silent> <Leader>j :setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
-  nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-  nnoremap <silent> <F3> :TagbarToggle<CR>
-  nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
-  nmap ga <Plug>(UnicodeGA)
+  nnoremap <Leader>gs :Gstatus<CR>
+  nnoremap <Leader>gb :leftabove Gblame<CR><C-W>l
+  nnoremap <Leader>gl :silent! Gllog!<CR>
+  nnoremap <Leader>gw :Gwrite<CR>
 
   xnoremap ae :<C-U>normal! ggVG<CR>
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>

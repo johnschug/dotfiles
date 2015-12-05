@@ -1,0 +1,9 @@
+.*
+!.gitconfig
+!.gitignore
+!.gitmodules
+
+*~
+*.orig
+*.diff
+tmp*

@@ -1,14 +1,14 @@
 [color]
 	ui = auto
+	excludesfile = ~/.gitignore
 [diff]
 	algorithm = histogram
+	renames = copies
 	tool = vimdiff
 [difftool]
 	prompt = false
 [mergetool]
 	prompt = false
-[rebase]
-	autostash = true
 [push]
 	default = simple
 [gpg]
@@ -19,5 +19,8 @@
 	email = john.ips.schug@gmail.com
 [alias]
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+	assume = "update-index --assume-unchanged -- "
+	unassume = "update-index --no-assume-unchanged -- "
+	assumed = "!git ls-files -v | grep ^h | cut -c 3-"
 [include]
 	path = ~/.gitconfig.local
