@@ -1,4 +1,5 @@
 .*
+!.gitattributes
 !.gitconfig
 !.gitignore
 !.gitmodules

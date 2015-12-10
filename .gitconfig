@@ -18,9 +18,11 @@
 	name = John Schug
 	email = john.ips.schug@gmail.com
 [alias]
+	amend = "commit --amend -C HEAD"
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
 	assume = "update-index --assume-unchanged -- "
 	unassume = "update-index --no-assume-unchanged -- "
 	assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+	tree-log = "log --graph --decorate --oneline"
 [include]
 	path = ~/.gitconfig.local

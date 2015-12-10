@@ -73,7 +73,7 @@ scriptencoding utf-8
   Plug 'editorconfig/editorconfig-vim'
   Plug 'vim-pandoc/vim-pandoc'
   Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
-  Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+  Plug 'rust-lang/rust.vim'
   Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
   Plug 'racer-rust/vim-racer', { 'for': 'rust' }
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --system-libclang' }
@@ -81,8 +81,6 @@ scriptencoding utf-8
 " }}}
 
 " General {{{
-  filetype plugin indent on
-  syntax on
   set autoread
   set hidden
   set backupdir=~/.vim/backup//,~/_vim/backup//,~/tmp//,.
@@ -196,7 +194,7 @@ scriptencoding utf-8
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
-  nnoremap <silent> K :silent! lgrep! "\b<C-R><C-W>\b"<CR>
+  nnoremap <silent> K :silent! grep! "\b<C-R><C-W>\b"<CR>
   nmap ga <Plug>(UnicodeGA)
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
   nnoremap <silent> <F3> :TagbarToggle<CR>
