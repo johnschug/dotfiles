@@ -6,7 +6,8 @@ fpath=(~/.zsh/functions $fpath)
 
 export EDITOR="vim"
 export VISUAL="$EDITOR"
-export PAGER="less -Rgi"
+export PAGER="less"
+export LESS="-Rgi"
 
 # Start gpg-agent
 if hash gpg-connect-agent &>/dev/null; then

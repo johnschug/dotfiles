@@ -44,6 +44,12 @@ scriptencoding utf-8
     endif
   " }}}
 
+  " delimitMate {{{
+    let g:delimitMate_expand_space = 1
+    let g:delimitMate_expand_cr = 2
+    let g:delimitMate_jump_expansion = 1
+  " }}}
+
   " UltiSnips {{{
     let g:UltiSnipsExpandTrigger = "<c-j>"
     let g:UltiSnipsJumpForwardTrigger = "<c-j>"
@@ -64,19 +70,20 @@ scriptencoding utf-8
   Plug 'tomtom/tcomment_vim'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-fugitive'
+  Plug 'tommcdo/vim-lion'
   Plug 'SirVer/ultisnips'
   Plug 'chrisbra/unicode.vim'
   Plug 'Yggdroot/indentLine'
   Plug 'scrooloose/syntastic'
   Plug 'majutsushi/tagbar'
-  Plug 'bling/vim-airline'
+  Plug 'mhinz/vim-signify'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'vim-pandoc/vim-pandoc'
   Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
   Plug 'rust-lang/rust.vim'
-  Plug 'phildawes/racer', { 'for': 'rust', 'do': 'cargo build --release' }
-  Plug 'racer-rust/vim-racer', { 'for': 'rust' }
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --system-libclang' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
   call plug#end()
 " }}}
 
@@ -106,9 +113,6 @@ scriptencoding utf-8
   set display+=lastline
 
   set splitbelow splitright
-
-  set conceallevel=2
-  set concealcursor=vin
 
   set nofoldenable
   set foldmethod=syntax
@@ -194,7 +198,7 @@ scriptencoding utf-8
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
-  nnoremap <silent> K :silent! grep! "\b<C-R><C-W>\b"<CR>
+  nnoremap <silent> gs :silent! grep! "\b<C-R><C-W>\b"<CR>
   nmap ga <Plug>(UnicodeGA)
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
   nnoremap <silent> <F3> :TagbarToggle<CR>
@@ -207,15 +211,18 @@ scriptencoding utf-8
   nnoremap <silent> <Leader>j :setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
+  nnoremap <silent> <Leader>s :set spell!<CR>
   nnoremap <Leader>gs :Gstatus<CR>
   nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
   nnoremap <Leader>gl :silent! Gllog!<CR>
+  nnoremap <Leader>gd :Gvdiff<CR>
   nnoremap <Leader>gw :Gwrite<CR>
 
   xnoremap ae :<C-U>normal! ggVG<CR>
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
-  cnoremap <C-O> <C-R>=expand("%:h")<CR>/
+  cabbrev %% <C-R>=fnameescape(expand('%'))<CR>
+  cabbrev :: <C-R>=fnameescape(expand('%:p:h'))<CR>
 " }}}
 
 " Tags {{{
@@ -235,7 +242,8 @@ scriptencoding utf-8
 " File Types {{{
   augroup RcFileTypes
     autocmd!
-    autocmd FileType gitcommit,text,markdown,pandoc setlocal spell
+    autocmd FileType vim setlocal keywordprg=:help
+    autocmd FileType gitcommit,text,markdown,pandoc,c,cpp,rust setlocal spell
   augroup END
 " }}}
 

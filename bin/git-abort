@@ -1,0 +1,13 @@
+#!/bin/sh
+
+GIT_DIR="$(git rev-parse --git-dir)"
+
+if   [ -f "${GIT_DIR}/rebase-apply/applying" ] ; then git am          --abort "$@"
+elif [ -d "${GIT_DIR}/rebase-merge" ] ||
+     [ -d "${GIT_DIR}/rebase-apply" ]          ; then git rebase      --abort "$@"
+elif [ -f "${GIT_DIR}/MERGE_HEAD" ]            ; then git merge       --abort "$@"
+elif [ -f "${GIT_DIR}/CHERRY_PICK_HEAD" ]      ; then git cherry-pick --abort "$@"
+elif [ -f "${GIT_DIR}/REVERT_HEAD" ]           ; then git revert      --abort "$@"
+elif [ -f "${GIT_DIR}/BISECT_LOG" ]            ; then git bisect reset "$@"
+else exit -1
+fi

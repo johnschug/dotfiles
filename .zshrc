@@ -1,7 +1,9 @@
 # Start tmux
 if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
-    exec tmux new -A -s default
+    if hash systemd-run &> /dev/null; then
+      exec systemd-run --user --scope -q tmux new -A -s default
+    fi
   fi
 fi
 
@@ -54,7 +56,7 @@ compdef gpg2=gpg
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' menu select=2
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' '+l:|=* r:|=*'
+zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
@@ -110,7 +112,7 @@ function clear-clipboard {
 }
 
 function zman {
-  PAGER="less -g -s '+/^       $1'" man zshall
+  PAGER="less -Rgis '+/^       $1'" man zshall
 }
 
 # Aliases
@@ -118,7 +120,6 @@ alias ls='ls --color=auto'
 alias l.='ls --color=auto -d .*'
 alias ll='ls --color=auto -l'
 alias ll.='ls --color=auto -l -d .*'
-alias less='less -Rgi'
 alias view='vim -R'
 alias bvim='vim -b'
 alias bview='vim -Rb'

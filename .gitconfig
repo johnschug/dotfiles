@@ -1,10 +1,14 @@
+[core]
+	excludesfile = ~/.gitignore
 [color]
 	ui = auto
-	excludesfile = ~/.gitignore
 [diff]
 	algorithm = histogram
+	compactionHeuristic = true
 	renames = copies
 	tool = vimdiff
+[submodule]
+	fetchJobs = 4
 [difftool]
 	prompt = false
 [mergetool]
@@ -24,5 +28,6 @@
 	unassume = "update-index --no-assume-unchanged -- "
 	assumed = "!git ls-files -v | grep ^h | cut -c 3-"
 	tree-log = "log --graph --decorate --oneline"
+	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo "$1" >>.gitignore
 [include]
 	path = ~/.gitconfig.local
