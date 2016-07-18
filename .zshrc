@@ -3,8 +3,15 @@ if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
     if hash systemd-run &> /dev/null; then
       exec systemd-run --user --scope -q tmux new -A -s default
+    else
+      exec tmux new -A -s default
     fi
   fi
+fi
+
+# Plugins
+if [ -f ~/.zsh/plugins/plugins.zsh ]; then
+  source ~/.zsh/plugins/plugins.zsh
 fi
 
 # Options
@@ -123,6 +130,7 @@ alias ll.='ls --color=auto -l -d .*'
 alias view='vim -R'
 alias bvim='vim -b'
 alias bview='vim -Rb'
+alias info='info --vi-keys'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
@@ -133,10 +141,6 @@ alias ln='ln -v'
 alias zcp='zmv -C'
 alias zln='zmv -L'
 alias sudop='sudo env PATH="$PATH"'
-
-if [ -f ~/.zsh/plugins/plugins.zsh ]; then
-  source ~/.zsh/plugins/plugins.zsh
-fi
 
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local

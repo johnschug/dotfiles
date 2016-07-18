@@ -18,7 +18,7 @@
 [gpg]
 	program = gpg2
 [user]
-	signingkey = 85E21985
+	signingkey = A7D81D8297B90E18
 	name = John Schug
 	email = john.ips.schug@gmail.com
 [alias]

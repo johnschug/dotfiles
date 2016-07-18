@@ -77,9 +77,11 @@ scriptencoding utf-8
   Plug 'scrooloose/syntastic'
   Plug 'majutsushi/tagbar'
   Plug 'mhinz/vim-signify'
+  Plug 'tpope/vim-dispatch'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'editorconfig/editorconfig-vim'
+  Plug 'cespare/vim-toml'
   Plug 'vim-pandoc/vim-pandoc'
   Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
   Plug 'rust-lang/rust.vim'
@@ -99,6 +101,8 @@ scriptencoding utf-8
 " }}}
 
 " Interface {{{
+  set ttyfast
+  set lazyredraw
   set scrolloff=5
   set list
   set listchars=tab:▸\ ,eol:¬
@@ -222,7 +226,7 @@ scriptencoding utf-8
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
   cabbrev %% <C-R>=fnameescape(expand('%'))<CR>
-  cabbrev :: <C-R>=fnameescape(expand('%:p:h'))<CR>
+  cabbrev :: <C-R>=fnameescape(expand('%:h'))<CR>
 " }}}
 
 " Tags {{{
