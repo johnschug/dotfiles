@@ -26,6 +26,10 @@ setopt notify
 # Bindings
 export KEYTIMEOUT=5
 bindkey -v
+bindkey '^h' backward-delete-char
+bindkey '^?' backward-delete-char
+bindkey '^w' backward-kill-word
+bindkey '^u' backward-kill-line
 bindkey '^f' edit-command-line
 bindkey '^k' insert-composed-char
 bindkey '^v' insert-unicode-char
@@ -141,6 +145,9 @@ alias ln='ln -v'
 alias zcp='zmv -C'
 alias zln='zmv -L'
 alias sudop='sudo env PATH="$PATH"'
+if hash nvim &>/dev/null; then
+  alias vim='nvim'
+fi
 
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local

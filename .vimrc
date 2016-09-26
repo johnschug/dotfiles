@@ -1,40 +1,62 @@
+set encoding=utf-8
 scriptencoding utf-8
+
+augroup vimrc
+  autocmd!
+augroup END
 
 " Plugins {{{
   runtime! macros/matchit.vim
 
-  " airline {{{
-    let g:airline_left_sep = ''
-    let g:airline_left_alt_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_right_alt_sep = ''
-    let g:airline#extensions#tabline#enabled = 1
-    let g:airline#extensions#tabline#buffer_nr_show = 1
-    let g:airline#extensions#tabline#fnamemod = ':t'
+  " lightline {{{
+    let g:lightline = {
+          \ 'colorscheme': 'solarized',
+          \ 'active': {
+          \   'left': [ [ 'mode', 'paste' ],
+          \             [ 'fugitive', 'filename', 'readonly', 'modified'  ] ],
+          \   'right': [ [ 'neomake', 'lineinfo' ],
+          \              [ 'percent' ],
+          \              [ 'fileformat', 'fileencoding', 'filetype' ] ],
+          \ },
+          \ 'component_function': {
+          \   'fugitive': 'LightLineFugitive',
+          \   'fileformat': 'LightLineFileformat',
+          \   'filetype': 'LightLineFiletype',
+          \   'fileencoding': 'LightLineFileencoding',
+          \ },
+          \ 'component_expand': {
+          \   'neomake': 'neomake#statusline#LoclistStatus',
+          \ },
+          \ 'component_type': { 'neomake': 'error' },
+          \ }
+
+    function! LightLineFugitive()
+      if exists('*fugitive#head')
+        let l:branch = fugitive#head()
+        return l:branch !=# '' ? l:branch : ''
+      endif
+      return ''
+    endfunction
+
+    function! LightLineFileformat()
+      return winwidth(0) > 70 ? &fileformat : ''
+    endfunction
+
+    function! LightLineFiletype()
+      return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : '') : ''
+    endfunction
+
+    function! LightLineFileencoding()
+      return winwidth(0) > 70 ? (&fileencoding !=# '' ? &fileencoding : &encoding) : ''
+    endfunction
   " }}}
 
-  " indentLine {{{
-    let g:indentLine_first_char = '│'
-    let g:indentLine_char = '│'
-    let g:indentLine_color_term = 245
-    let g:indentLine_showFirstIndentLevel = 1
-  " }}}
+  " Neomake {{{
+    autocmd vimrc BufWritePost * Neomake
+    autocmd vimrc User NeomakeCountsChanged call lightline#update()
 
-  " tagbar {{{
-    let g:tagbar_compact = 1
-    let g:tagbar_autofocus = 1
-    let g:tagbar_foldlevel = 1
-    let g:tagbar_autoshowtag = 1
-    let g:tagbar_sort = 1
-  " }}}
-
-  " syntastic {{{
-    let g:syntastic_check_on_open = 1
-    let g:syntastic_check_on_wq = 0
-    let g:syntastic_aggregate_errors = 1
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_auto_loc_list = 0
-    let g:syntastic_python_python_exec = 'python3'
+    let g:neomake_warning_sign = { 'text': '>>' }
+    let g:neomake_error_sign = { 'text': '>>' }
   " }}}
 
   " YouCompleteMe {{{
@@ -51,20 +73,16 @@ scriptencoding utf-8
   " }}}
 
   " UltiSnips {{{
-    let g:UltiSnipsExpandTrigger = "<c-j>"
-    let g:UltiSnipsJumpForwardTrigger = "<c-j>"
-    let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
-  " }}}
-
-  " Racer {{{
-    let g:racer_cmd = expand('~/.vim/bundle/racer/target/release/racer')
+    let g:UltiSnipsExpandTrigger = '<c-j>'
+    let g:UltiSnipsJumpForwardTrigger = '<c-j>'
+    let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
   " }}}
 
   " vim-plug {{{
     let g:plug_window = 'vertical belowright new'
   " }}}
 
-  call plug#begin('~/.vim/bundle')
+  call plug#begin('~/.vim/plugins')
   Plug 'Valloric/ListToggle'
   Plug 'Raimondi/delimitMate'
   Plug 'tomtom/tcomment_vim'
@@ -72,14 +90,12 @@ scriptencoding utf-8
   Plug 'tpope/vim-fugitive'
   Plug 'tommcdo/vim-lion'
   Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
   Plug 'chrisbra/unicode.vim'
-  Plug 'Yggdroot/indentLine'
-  Plug 'scrooloose/syntastic'
-  Plug 'majutsushi/tagbar'
+  Plug 'neomake/neomake'
   Plug 'mhinz/vim-signify'
   Plug 'tpope/vim-dispatch'
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+  Plug 'itchyny/lightline.vim'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'cespare/vim-toml'
   Plug 'vim-pandoc/vim-pandoc'
@@ -94,7 +110,6 @@ scriptencoding utf-8
   set hidden
   set backupdir=~/.vim/backup//,~/_vim/backup//,~/tmp//,.
   set path+=**
-  set encoding=utf-8
   set fileformats=unix,dos,mac
   set shortmess+=a
   set viminfo=
@@ -130,7 +145,6 @@ scriptencoding utf-8
   set smartcase
 
   set wildmenu
-  set wildmode=longest:full,full
   set wildignorecase
   set wildignore+=*.swp,*.bak,*~
   set wildignore+=*.pyc,*.rlib,*.class,*.o,*.obj,*.a,*.lib,*.so,*.dll,*.pdb
@@ -140,8 +154,7 @@ scriptencoding utf-8
   set background=dark
   colorscheme solarized
 
-  augroup Numbers
-    autocmd!
+  augroup vimrc
     autocmd InsertEnter * :set norelativenumber
     autocmd InsertLeave * :set relativenumber
   augroup END
@@ -172,8 +185,7 @@ scriptencoding utf-8
   command! -range Copy <line1>,<line2>!xclip -f -sel clip
   command! Paste :read !xclip -o -sel clip
 
-  augroup QuickFix
-    autocmd!
+  augroup vimrc
     autocmd QuickFixCmdPost [^l]* nested :botright cwindow|redraw!
     autocmd QuickFixCmdPost    l* nested :lwindow|redraw!
   augroup END
@@ -192,11 +204,11 @@ scriptencoding utf-8
     nnoremap gB :ls<CR>:b<Space>
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-    for cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
-      execute "nnoremap <silent> <expr> [".cmd[0]." ':<C-U>'.v:count1.'".cmd[1]."prev<CR>'"
-      execute "nnoremap <silent> <expr> ]".cmd[0]." ':<C-U>'.v:count1.'".cmd[1]."next<CR>'"
-      execute "nnoremap <silent> [".toupper(cmd[0])." :<C-U>".cmd[1]."first<CR>"
-      execute "nnoremap <silent> ]".toupper(cmd[0])." :<C-U>".cmd[1]."last<CR>"
+    for s:cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
+      execute 'nnoremap <silent> <expr> ['.s:cmd[0]." ':<C-U>'.v:count1.'".s:cmd[1]."prev<CR>'"
+      execute 'nnoremap <silent> <expr> ]'.s:cmd[0]." ':<C-U>'.v:count1.'".s:cmd[1]."next<CR>'"
+      execute 'nnoremap <silent> ['.toupper(s:cmd[0]).' :<C-U>'.s:cmd[1].'first<CR>'
+      execute 'nnoremap <silent> ]'.toupper(s:cmd[0]).' :<C-U>'.s:cmd[1].'last<CR>'
     endfor
   " }}}
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
@@ -232,23 +244,22 @@ scriptencoding utf-8
 " Tags {{{
   set tags=./tags;,tags
 
-  let gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
-  if gitroot != ''
-    let &tags = &tags . ',' . gitroot . '/.git/tags'
-  endif
-
-  augroup Tags
-    autocmd!
-    autocmd FileType * :let &l:tags = &tags . ',' . expand('~/.vim/tags/') . &ft
-  augroup END
+  autocmd vimrc FileType * :let &l:tags = &tags . ',' . expand('~/.vim/tags/') . &ft
 " }}}
 
 " File Types {{{
-  augroup RcFileTypes
-    autocmd!
+  augroup vimrc
     autocmd FileType vim setlocal keywordprg=:help
     autocmd FileType gitcommit,text,markdown,pandoc,c,cpp,rust setlocal spell
   augroup END
+" }}}
+
+" Projects {{{
+  let s:gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
+  if v:shell_error == 0 && s:gitroot !=# ''
+    let &path = &path . ',' . s:gitroot . '/**'
+    let &tags = &tags . ',' . s:gitroot . '/.git/tags'
+  endif
 " }}}
 
 if filereadable(expand('~/.vimrc.local'))

@@ -1,6 +1,6 @@
 README.md skip
 .config recurse
+.config/ranger recurse
 .vim recurse
 .vim/autoload recurse
 .vim/bin recurse
-.vim/bundle recurse
