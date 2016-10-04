@@ -23,6 +23,8 @@ setopt glob_complete
 setopt interactive_comments
 setopt notify
 
+WORDCHARS="${WORDCHARS/\/}"
+
 # Bindings
 export KEYTIMEOUT=5
 bindkey -v
@@ -35,6 +37,10 @@ bindkey '^k' insert-composed-char
 bindkey '^v' insert-unicode-char
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
+bindkey '^r' history-incremental-pattern-search-backward
+bindkey '^g' what-cursor-position
+bindkey '^e' cd-parent
+bindkey '^t' cd-undo
 bindkey '^[s' insert-sudo
 bindkey -M vicmd 'v' edit-command-line
 bindkey -M vicmd 'q' push-input
@@ -44,7 +50,13 @@ bindkey -M vicmd '~' vi-swap-case
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 
-autoload -Uz edit-command-line insert-composed-char insert-unicode-char
+# VI mode indicator
+function zle-line-init zle-keymap-select zle-line-finish {
+  psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}"
+  zle reset-prompt
+  zle -R
+}
+
 function insert-sudo {
   if [[ "$BUFFER" != su(do|)\ * ]]; then
     BUFFER="sudo $BUFFER"
@@ -52,14 +64,31 @@ function insert-sudo {
   fi
 }
 
+function cd-parent {
+  pushd .. &>/dev/null
+  precmd
+  zle reset-prompt
+}
+
+function cd-undo {
+  popd &>/dev/null
+  precmd
+  zle reset-prompt
+}
+
+autoload -Uz edit-command-line insert-composed-char insert-unicode-char
+zle -N zle-line-init
+zle -N zle-line-finish
+zle -N zle-keymap-select
 zle -N edit-command-line
 zle -N insert-composed-char
 zle -N insert-unicode-char
 zle -N insert-sudo
+zle -N cd-parent
+zle -N cd-undo
 
-autoload -Uz add-zsh-hook cdr chpwd_recent_dirs colors compinit vcs_info zmv
+autoload -Uz add-zsh-hook cdr chpwd_recent_dirs compinit vcs_info zmv
 compinit
-colors
 add-zsh-hook chpwd chpwd_recent_dirs
 
 # Completion
@@ -84,47 +113,32 @@ zstyle ':vcs_info:*' unstagedstr '*'
 zstyle ':vcs_info:*' formats '([%b]%u%c)'
 zstyle ':vcs_info:*' actionformats '([%b|%a]%u%c)'
 
-# VI mode indicator
-function zle-line-init zle-keymap-select zle-line-finish {
-  psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}"
-  zle reset-prompt
-  zle -R
-}
-
-zle -N zle-line-init
-zle -N zle-line-finish
-zle -N zle-keymap-select
-
 precmd() {
-  case $TERM in
-    xterm*)
-      {print -Pn '\e]0;%n@%m:%1~\a'}
-      ;;
-    screen* | tmux*)
-      {print -Pn '\e]2;%n@%m:%1~\a'}
-      ;;
-  esac
   vcs_info
 
   psvar=()
   psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}"
   [[ -n $vcs_info_msg_0_ ]] && psvar[2]="$vcs_info_msg_0_"
+
+  case $TERM in
+    termite|xterm*|rxvt*|(dt|k|E)term)
+      {print -n '\e]0;'}
+      ;;
+    screen*|tmux*)
+      {print -n '\e]2;'}
+      ;;
+  esac
+  print -Pn "%n${SSH_CLIENT:+@%m}:%1~\a"
 }
 
 # Prompt
-PROMPT="%{$fg_bold[yellow]%}%1v%h [%b%F{yellow}%n%f%{$fg_bold[yellow]%}@%b%F{magenta}%m%f \
-%(2v.%{$fg_bold[blue]%}%2v%b .)%F{blue}%3~%{$fg_bold[yellow]%}]%(!.#.$)%b%f "
-RPROMPT="%{$fg_bold[yellow]%}[%b%(0?.%F{green}%?.%F{red}%?)%f %{$fg_bold[yellow]%}%j %l]%b%f"
-
-function clear-clipboard {
-  printf '\\n' | xclip -sel clip &>/dev/null
-  gpaste-client empty &>/dev/null
-  qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
-}
-
-function zman {
-  PAGER="less -Rgis '+/^       $1'" man zshall
-}
+PROMPT="%B%F{yellow}%1v%h ["
+PROMPT+="%b%F{yellow}%n%f"
+PROMPT+="${SSH_CLIENT:+%B%F{yellow\}@%b%F{magenta\}%m}%f"
+PROMPT+="%B%F{yellow}:%b%F{blue}%3~"
+PROMPT+="%(2v. %B%F{blue}%2v%b%f.)"
+PROMPT+="%B%F{yellow}]%(!.#.$)%f%b "
+RPROMPT="%B%F{yellow}[%b%(0?.%F{green}%?.%F{red}%?)%f %B%F{yellow}%j %l]%b%f"
 
 # Aliases
 alias ls='ls --color=auto'
@@ -148,6 +162,16 @@ alias sudop='sudo env PATH="$PATH"'
 if hash nvim &>/dev/null; then
   alias vim='nvim'
 fi
+
+function clear-clipboard {
+  printf '\\n' | xclip -sel clip &>/dev/null
+  gpaste-client empty &>/dev/null
+  qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
+}
+
+function zman {
+  PAGER="less -Rgis '+/^       $1'" man zshall
+}
 
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local

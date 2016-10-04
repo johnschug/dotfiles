@@ -12,11 +12,11 @@ augroup END
     let g:lightline = {
           \ 'colorscheme': 'solarized',
           \ 'active': {
-          \   'left': [ [ 'mode', 'paste' ],
-          \             [ 'fugitive', 'filename', 'readonly', 'modified'  ] ],
-          \   'right': [ [ 'neomake', 'lineinfo' ],
-          \              [ 'percent' ],
-          \              [ 'fileformat', 'fileencoding', 'filetype' ] ],
+          \   'left': [['mode', 'paste'],
+          \             ['fugitive', 'filename', 'readonly', 'modified' ]],
+          \   'right': [['neomake', 'lineinfo'],
+          \              ['percent'],
+          \              ['fileformat', 'fileencoding', 'filetype']],
           \ },
           \ 'component_function': {
           \   'fugitive': 'LightLineFugitive',
@@ -39,15 +39,15 @@ augroup END
     endfunction
 
     function! LightLineFileformat()
-      return winwidth(0) > 70 ? &fileformat : ''
+      return winwidth(0) >= 80 ? &fileformat : ''
     endfunction
 
     function! LightLineFiletype()
-      return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : '') : ''
+      return winwidth(0) >= 80 ? (&filetype !=# '' ? &filetype : '') : ''
     endfunction
 
     function! LightLineFileencoding()
-      return winwidth(0) > 70 ? (&fileencoding !=# '' ? &fileencoding : &encoding) : ''
+      return winwidth(0) >= 80 ? (&fileencoding !=# '' ? &fileencoding : &encoding) : ''
     endfunction
   " }}}
 
@@ -55,6 +55,7 @@ augroup END
     autocmd vimrc BufWritePost * Neomake
     autocmd vimrc User NeomakeCountsChanged call lightline#update()
 
+    let g:neomake_verbose = 0
     let g:neomake_warning_sign = { 'text': '>>' }
     let g:neomake_error_sign = { 'text': '>>' }
   " }}}
@@ -100,19 +101,25 @@ augroup END
   Plug 'cespare/vim-toml'
   Plug 'vim-pandoc/vim-pandoc'
   Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
+  Plug 'chrisbra/vim-diff-enhanced'
   Plug 'rust-lang/rust.vim'
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
   call plug#end()
 " }}}
 
 " General {{{
+  if !exists('g:vim_root')
+    let g:vimroot = split(&runtimepath, ',')[0]
+  endif
+
   set autoread
   set hidden
-  set backupdir=~/.vim/backup//,~/_vim/backup//,~/tmp//,.
   set path+=**
   set fileformats=unix,dos,mac
   set shortmess+=a
   set viminfo=
+
+  let &backupdir = g:vimroot.'/backup//,~/tmp//,.'
 " }}}
 
 " Interface {{{
@@ -137,7 +144,8 @@ augroup END
   set foldmethod=syntax
   set foldcolumn=1
   set foldminlines=5
-  set foldopen=hor,insert,mark,quickfix,search,tag,undo
+  set foldopen+=insert
+  set fillchars=diff:⎼,fold:⎼
 
   set hlsearch
   set incsearch
@@ -151,13 +159,17 @@ augroup END
   set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
   set wildignore+=tags,cscope.*
 
+  " if (has('termguicolors'))
+  "   set t_8f=[38;2;%lu;%lu;%lum
+  "   set t_8b=[48;2;%lu;%lu;%lum
+  "   set termguicolors
+  " endif
+
   set background=dark
   colorscheme solarized
 
-  augroup vimrc
-    autocmd InsertEnter * :set norelativenumber
-    autocmd InsertLeave * :set relativenumber
-  augroup END
+  autocmd vimrc InsertEnter * :set norelativenumber
+  autocmd vimrc InsertLeave * :set relativenumber
 " }}}
 
 " Editing {{{
@@ -168,6 +180,7 @@ augroup END
   set softtabstop=2
   set tabstop=2
 
+  set matchpairs+=<:>,[:]
   set formatoptions+=j1
   set backspace=indent,eol,start
   set virtualedit=block
@@ -176,6 +189,8 @@ augroup END
   set complete+=kspell
   set completeopt+=longest,menuone
   set spelllang=en_us
+  set diffopt+=iwhite
+  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 
   set ttimeout
   set ttimeoutlen=100
@@ -184,11 +199,10 @@ augroup END
 " Commands {{{
   command! -range Copy <line1>,<line2>!xclip -f -sel clip
   command! Paste :read !xclip -o -sel clip
+  command! DiffOrig :vert new | set buftype=nofile | read ++edit # | 0d_ | diffthis | wincmd p | diffthis
 
-  augroup vimrc
-    autocmd QuickFixCmdPost [^l]* nested :botright cwindow|redraw!
-    autocmd QuickFixCmdPost    l* nested :lwindow|redraw!
-  augroup END
+  autocmd vimrc QuickFixCmdPost [^l]* nested :botright cwindow|redraw!
+  autocmd vimrc QuickFixCmdPost    l* nested :lwindow|redraw!
 
   if executable('ag')
     set grepprg=ag\ --nogroup\ --nocolor\ --column\ --vimgrep
@@ -213,11 +227,10 @@ augroup END
   " }}}
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
-  nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
+  nnoremap <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
   nnoremap <silent> gs :silent! grep! "\b<C-R><C-W>\b"<CR>
   nmap ga <Plug>(UnicodeGA)
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-  nnoremap <silent> <F3> :TagbarToggle<CR>
   nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
   nnoremap <silent> <Leader>d :bd<CR>
   nnoremap <silent> <Leader>n :set relativenumber!<CR>
@@ -241,25 +254,21 @@ augroup END
   cabbrev :: <C-R>=fnameescape(expand('%:h'))<CR>
 " }}}
 
-" Tags {{{
-  set tags=./tags;,tags
-
-  autocmd vimrc FileType * :let &l:tags = &tags . ',' . expand('~/.vim/tags/') . &ft
-" }}}
-
-" File Types {{{
-  augroup vimrc
-    autocmd FileType vim setlocal keywordprg=:help
-    autocmd FileType gitcommit,text,markdown,pandoc,c,cpp,rust setlocal spell
-  augroup END
+" File Type {{{
+  autocmd vimrc FileType vim setlocal keywordprg=:help
+  autocmd vimrc FileType gitcommit,text,markdown,pandoc,c,cpp,rust setlocal spell
 " }}}
 
 " Projects {{{
+  set tags=./tags;,tags
+
   let s:gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
   if v:shell_error == 0 && s:gitroot !=# ''
-    let &path = &path . ',' . s:gitroot . '/**'
-    let &tags = &tags . ',' . s:gitroot . '/.git/tags'
+    let &path .= ','.s:gitroot.'/**'
+    let &tags .= ','.s:gitroot.'/.git/tags'
   endif
+
+  autocmd vimrc FileType * :let &l:tags .= ','.expand(g:vimroot.'/tags/').&ft
 " }}}
 
 if filereadable(expand('~/.vimrc.local'))
