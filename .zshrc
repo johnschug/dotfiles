@@ -1,11 +1,10 @@
 # Start tmux
 if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
-    if hash systemd-run &> /dev/null; then
-      exec systemd-run --user --scope -q tmux new -A -s default
-    else
-      exec tmux new -A -s default
+    if hash systemd-run &>/dev/null; then
+      systemd-run --user --scope -q tmux new -d -s default &>/dev/null
     fi
+    exec tmux new -A -s default
   fi
 fi
 
@@ -15,13 +14,17 @@ if [ -f ~/.zsh/plugins/plugins.zsh ]; then
 fi
 
 # Options
+setopt append_create
 setopt auto_cd
+setopt auto_pushd
 setopt complete_aliases
 setopt correct
 setopt extended_glob
 setopt glob_complete
 setopt interactive_comments
+setopt noclobber
 setopt notify
+setopt pushd_ignore_dups
 
 WORDCHARS="${WORDCHARS/\/}"
 
@@ -39,8 +42,8 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^r' history-incremental-pattern-search-backward
 bindkey '^g' what-cursor-position
-bindkey '^e' cd-parent
-bindkey '^t' cd-undo
+bindkey '^t' cd-parent
+bindkey '^e' cd-undo
 bindkey '^[s' insert-sudo
 bindkey -M vicmd 'v' edit-command-line
 bindkey -M vicmd 'q' push-input
@@ -113,22 +116,35 @@ zstyle ':vcs_info:*' unstagedstr '*'
 zstyle ':vcs_info:*' formats '([%b]%u%c)'
 zstyle ':vcs_info:*' actionformats '([%b|%a]%u%c)'
 
-precmd() {
-  vcs_info
-
-  psvar=()
-  psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}"
-  [[ -n $vcs_info_msg_0_ ]] && psvar[2]="$vcs_info_msg_0_"
-
+function {
   case $TERM in
     termite|xterm*|rxvt*|(dt|k|E)term)
-      {print -n '\e]0;'}
+      _titlestart='\e]0;'
+      _titlefinish='\a'
       ;;
-    screen*|tmux*)
-      {print -n '\e]2;'}
+    screen*)
+      _titlestart='\ek'
+      _titlefinish='\e\'
       ;;
+    *)
+      if tput hs; then
+        _titlestart="$(tput tsl)"
+        _titlefinish="$(tput fsl)"
+      else
+        function set-title {}
+        return
+      fi
   esac
-  print -Pn "%n${SSH_CLIENT:+@%m}:%1~\a"
+
+  function set-title {
+    print -Pn "$_titlestart$@$_titlefinish"
+  }
+}
+
+function precmd {
+  vcs_info
+  psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_")
+  set-title "%n${SSH_CLIENT:+@%m}:%1~"
 }
 
 # Prompt
@@ -136,7 +152,7 @@ PROMPT="%B%F{yellow}%1v%h ["
 PROMPT+="%b%F{yellow}%n%f"
 PROMPT+="${SSH_CLIENT:+%B%F{yellow\}@%b%F{magenta\}%m}%f"
 PROMPT+="%B%F{yellow}:%b%F{blue}%3~"
-PROMPT+="%(2v. %B%F{blue}%2v%b%f.)"
+PROMPT+="%(2V. %B%F{blue}%2v%b%f.)"
 PROMPT+="%B%F{yellow}]%(!.#.$)%f%b "
 RPROMPT="%B%F{yellow}[%b%(0?.%F{green}%?.%F{red}%?)%f %B%F{yellow}%j %l]%b%f"
 
@@ -145,9 +161,6 @@ alias ls='ls --color=auto'
 alias l.='ls --color=auto -d .*'
 alias ll='ls --color=auto -l'
 alias ll.='ls --color=auto -l -d .*'
-alias view='vim -R'
-alias bvim='vim -b'
-alias bview='vim -Rb'
 alias info='info --vi-keys'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
@@ -161,6 +174,14 @@ alias zln='zmv -L'
 alias sudop='sudo env PATH="$PATH"'
 if hash nvim &>/dev/null; then
   alias vim='nvim'
+  alias rvim='nvim -Z'
+  alias view='nvim -R'
+  alias bvim='nvim -b'
+  alias bview='nvim -Rb'
+else
+  alias view='vim -R'
+  alias bvim='vim -b'
+  alias bview='vim -Rb'
 fi
 
 function clear-clipboard {
