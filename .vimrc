@@ -56,6 +56,7 @@ augroup END
     autocmd vimrc User NeomakeCountsChanged call lightline#update()
 
     let g:neomake_verbose = 0
+    let g:neomake_open_list = 2
     let g:neomake_warning_sign = { 'text': '>>' }
     let g:neomake_error_sign = { 'text': '>>' }
   " }}}
@@ -95,7 +96,6 @@ augroup END
   Plug 'chrisbra/unicode.vim'
   Plug 'neomake/neomake'
   Plug 'mhinz/vim-signify'
-  Plug 'tpope/vim-dispatch'
   Plug 'itchyny/lightline.vim'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'cespare/vim-toml'

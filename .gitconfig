@@ -1,5 +1,6 @@
 [core]
 	excludesfile = ~/.gitignore
+	autocrlf=input
 [color]
 	ui = auto
 [diff]
@@ -7,27 +8,37 @@
 	compactionHeuristic = true
 	renames = copies
 	tool = vimdiff
+	mnemonicPrefix = true
 [submodule]
-	fetchJobs = 4
+	fetchJobs = 8
 [difftool]
 	prompt = false
 [mergetool]
 	prompt = false
 [push]
-	default = simple
+	default = upstream
+[pull]
+	ff = only
+[rebase]
+	autoStash = true
 [gpg]
 	program = gpg2
 [user]
 	signingkey = A7D81D8297B90E18
 	name = John Schug
 	email = john.ips.schug@gmail.com
+[pretty]
+	compact = "format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset"
 [alias]
 	amend = "commit --amend -C HEAD"
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
 	assume = "update-index --assume-unchanged -- "
 	unassume = "update-index --no-assume-unchanged -- "
 	assumed = "!git ls-files -v | grep ^h | cut -c 3-"
-	tree-log = "log --graph --decorate --oneline"
+	compact-log = "log --pretty=compact"
+	tree-log = "log --pretty=compact --graph"
+	clog = "log --pretty=compact"
+	tlog = "log --pretty=compact --graph"
 	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo "$1" >>.gitignore
 	type = cat-file -t
 	dump = cat-file -p
