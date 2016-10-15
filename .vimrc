@@ -1,4 +1,6 @@
-set encoding=utf-8
+if &encoding !=# 'utf-8'
+   set encoding=utf-8
+endif
 scriptencoding utf-8
 
 augroup vimrc
@@ -13,41 +15,49 @@ augroup END
           \ 'colorscheme': 'solarized',
           \ 'active': {
           \   'left': [['mode', 'paste'],
-          \             ['fugitive', 'filename', 'readonly', 'modified' ]],
+          \             ['fugitive', 'hunks'],
+          \             ['readonly', 'filename']],
           \   'right': [['neomake', 'lineinfo'],
           \              ['percent'],
-          \              ['fileformat', 'fileencoding', 'filetype']],
+          \              ['filetype', 'fileencoding', 'fileformat']],
           \ },
-          \ 'component_function': {
-          \   'fugitive': 'LightLineFugitive',
-          \   'fileformat': 'LightLineFileformat',
-          \   'filetype': 'LightLineFiletype',
-          \   'fileencoding': 'LightLineFileencoding',
+          \ 'component': {
+          \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}',
+          \   'filename': '%f%( %M%)',
+          \   'fileformat': '%{winwidth(0)>=80?&ff:""}',
+          \   'fileencoding': '%{winwidth(0)>=80?(!empty(&fenc)?&fenc:&enc):""}',
           \ },
           \ 'component_expand': {
           \   'neomake': 'neomake#statusline#LoclistStatus',
           \ },
+          \ 'component_function': {
+          \   'hunks': 'LightLineHunks',
+          \ },
+          \ 'component_visible_condition': {
+          \   'fugitive': '(exists("*fugitive#head") && !empty(fugitive#head()))',
+          \   'fileformat': '(winwidth(0) >= 80)',
+          \   'fileencoding': '(winwidth(0) >= 80)',
+          \ },
           \ 'component_type': { 'neomake': 'error' },
           \ }
 
-    function! LightLineFugitive()
-      if exists('*fugitive#head')
-        let l:branch = fugitive#head()
-        return l:branch !=# '' ? l:branch : ''
+    function! LightLineHunks()
+      if (winwidth(0) < 100) || !exists('*sy#repo#get_stats')
+        return ''
       endif
-      return ''
-    endfunction
 
-    function! LightLineFileformat()
-      return winwidth(0) >= 80 ? &fileformat : ''
-    endfunction
+      let l:hunks = ''
+      let l:symbols = ['+', '-', '~']
+      let l:stats = copy(sy#repo#get_stats())
+      let l:stats[1:2] = reverse(l:stats[1:2])
 
-    function! LightLineFiletype()
-      return winwidth(0) >= 80 ? (&filetype !=# '' ? &filetype : '') : ''
-    endfunction
+      for l:i in range(len(l:stats))
+        if l:stats[l:i] > 0
+          let l:hunks .= printf('%s%s ', l:symbols[l:i], l:stats[l:i])
+        endif
+      endfor
 
-    function! LightLineFileencoding()
-      return winwidth(0) >= 80 ? (&fileencoding !=# '' ? &fileencoding : &encoding) : ''
+      return !empty(l:hunks) ? l:hunks[:-2] : ''
     endfunction
   " }}}
 
@@ -78,6 +88,12 @@ augroup END
     let g:UltiSnipsExpandTrigger = '<c-j>'
     let g:UltiSnipsJumpForwardTrigger = '<c-j>'
     let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
+  " }}}
+
+  " signify {{{
+    autocmd vimrc User Signify call lightline#update()
+
+    let g:signify_vcs_list = ['git']
   " }}}
 
   " vim-plug {{{
@@ -127,7 +143,7 @@ augroup END
   set lazyredraw
   set scrolloff=5
   set list
-  set listchars=tab:▸\ ,eol:¬
+  set listchars=tab:▸\ ,eol:¬,trail:•
   set number
   set relativenumber
   set cursorline
@@ -187,7 +203,7 @@ augroup END
   set autoindent
   set copyindent
   set complete+=kspell
-  set completeopt+=longest,menuone
+  set completeopt+=menuone
   set spelllang=en_us
   set diffopt+=iwhite
   let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
@@ -199,7 +215,14 @@ augroup END
 " Commands {{{
   command! -range Copy <line1>,<line2>!xclip -f -sel clip
   command! Paste :read !xclip -o -sel clip
-  command! DiffOrig :vert new | set buftype=nofile | read ++edit # | 0d_ | diffthis | wincmd p | diffthis
+  command! DiffOrig :call s:DiffOrig()
+  function! s:DiffOrig()
+    let l:ft = &filetype
+    diffthis
+    vnew | r ++edit # | 0d_
+    diffthis
+    execute 'setlocal bt=nofile bh=wipe nobl noswf ro ft='.l:ft
+  endfunction
 
   autocmd vimrc QuickFixCmdPost [^l]* nested :botright cwindow|redraw!
   autocmd vimrc QuickFixCmdPost    l* nested :lwindow|redraw!
@@ -263,7 +286,7 @@ augroup END
   set tags=./tags;,tags
 
   let s:gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
-  if v:shell_error == 0 && s:gitroot !=# ''
+  if v:shell_error == 0 && !empty(s:gitroot)
     let &path .= ','.s:gitroot.'/**'
     let &tags .= ','.s:gitroot.'/.git/tags'
   endif
@@ -277,4 +300,4 @@ elseif filereadable(expand('~/_vimrc.local'))
   source ~/_vimrc.local
 endif
 
-" vim:foldmethod=marker:foldlevel=0:sw=2:sts=2:ts=2:expandtab
+" vim:set sw=2 ts=2 et fdm=marker fdl=0:

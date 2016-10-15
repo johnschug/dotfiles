@@ -1,3 +1,7 @@
+snippet modeline "Vim modeline"
+vim`!v ':set '. (&expandtab ? printf('sw=%i ts=%i et', &sw, &ts) : printf('sw=%i sts=%i ts=%i noet', &sts, &sw, &ts)) . (&tw ? ' tw='. &tw : '') . ':'`
+endsnippet
+
 ##############
 #  LICENSES  #
 ##############
@@ -38,6 +42,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 endsnippet
-
 
 # vim:ft=snippets:
