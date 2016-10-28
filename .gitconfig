@@ -9,6 +9,8 @@
 	renames = copies
 	tool = vimdiff
 	mnemonicPrefix = true
+[merge]
+	tool = vimdiff
 [submodule]
 	fetchJobs = 8
 [difftool]
@@ -27,6 +29,8 @@
 	signingkey = A7D81D8297B90E18
 	name = John Schug
 	email = john.ips.schug@gmail.com
+[log]
+	mailmap = true
 [pretty]
 	compact = "format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset"
 [alias]

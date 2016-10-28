@@ -1,4 +1,4 @@
-if &encoding !=# 'utf-8'
+if has('vim_starting') && &encoding !=# 'utf-8'
    set encoding=utf-8
 endif
 scriptencoding utf-8
@@ -22,7 +22,7 @@ augroup END
           \              ['filetype', 'fileencoding', 'fileformat']],
           \ },
           \ 'component': {
-          \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}',
+          \   'fugitive': '%{exists("*fugitive#head")?fugitive#head(7):""}',
           \   'filename': '%f%( %M%)',
           \   'fileformat': '%{winwidth(0)>=80?&ff:""}',
           \   'fileencoding': '%{winwidth(0)>=80?(!empty(&fenc)?&fenc:&enc):""}',
@@ -31,33 +31,26 @@ augroup END
           \   'neomake': 'neomake#statusline#LoclistStatus',
           \ },
           \ 'component_function': {
-          \   'hunks': 'LightLineHunks',
+          \   'hunks': 'LightlineHunks',
           \ },
           \ 'component_visible_condition': {
-          \   'fugitive': '(exists("*fugitive#head") && !empty(fugitive#head()))',
+          \   'fugitive': '(exists("*fugitive#head") && !empty(fugitive#head(7)))',
           \   'fileformat': '(winwidth(0) >= 80)',
           \   'fileencoding': '(winwidth(0) >= 80)',
           \ },
           \ 'component_type': { 'neomake': 'error' },
           \ }
 
-    function! LightLineHunks()
+    function! LightlineHunks()
       if (winwidth(0) < 100) || !exists('*sy#repo#get_stats')
         return ''
       endif
 
-      let l:hunks = ''
       let l:symbols = ['+', '-', '~']
       let l:stats = copy(sy#repo#get_stats())
       let l:stats[1:2] = reverse(l:stats[1:2])
-
-      for l:i in range(len(l:stats))
-        if l:stats[l:i] > 0
-          let l:hunks .= printf('%s%s ', l:symbols[l:i], l:stats[l:i])
-        endif
-      endfor
-
-      return !empty(l:hunks) ? l:hunks[:-2] : ''
+      return join(map(filter(range(len(l:stats)), 'l:stats[v:val] > 0'),
+             \ 'l:symbols[v:val].l:stats[v:val]'))
     endfunction
   " }}}
 
@@ -184,8 +177,14 @@ augroup END
   set background=dark
   colorscheme solarized
 
-  autocmd vimrc InsertEnter * :set norelativenumber
-  autocmd vimrc InsertLeave * :set relativenumber
+  autocmd vimrc InsertEnter * set norelativenumber
+  autocmd vimrc InsertLeave * set relativenumber
+  autocmd vimrc WinEnter * if exists('w:cursor') |
+        \ let [&cursorline, &cursorcolumn] = w:cursor |
+        \ endif
+  autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn] |
+        \ setlocal nocursorline nocursorcolumn
+  autocmd vimrc FileType qf,netrw nested setlocal cursorline nocursorcolumn
 " }}}
 
 " Editing {{{
@@ -214,18 +213,18 @@ augroup END
 
 " Commands {{{
   command! -range Copy <line1>,<line2>!xclip -f -sel clip
-  command! Paste :read !xclip -o -sel clip
-  command! DiffOrig :call s:DiffOrig()
+  command! Paste read !xclip -o -sel clip
+  command! DiffOrig call s:DiffOrig()
   function! s:DiffOrig()
     let l:ft = &filetype
     diffthis
     vnew | r ++edit # | 0d_
     diffthis
-    execute 'setlocal bt=nofile bh=wipe nobl noswf ro ft='.l:ft
+    execute 'setlocal bt=nofile bh=wipe nobl noswf ro noma ft='.l:ft
   endfunction
 
-  autocmd vimrc QuickFixCmdPost [^l]* nested :botright cwindow|redraw!
-  autocmd vimrc QuickFixCmdPost    l* nested :lwindow|redraw!
+  autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
+  autocmd vimrc QuickFixCmdPost    l* nested lwindow|redraw!
 
   if executable('ag')
     set grepprg=ag\ --nogroup\ --nocolor\ --column\ --vimgrep
@@ -291,7 +290,7 @@ augroup END
     let &tags .= ','.s:gitroot.'/.git/tags'
   endif
 
-  autocmd vimrc FileType * :let &l:tags .= ','.expand(g:vimroot.'/tags/').&ft
+  autocmd vimrc FileType * let &l:tags = &tags.','.expand(g:vimroot.'/tags/').&ft
 " }}}
 
 if filereadable(expand('~/.vimrc.local'))

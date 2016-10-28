@@ -4,11 +4,15 @@ typeset -U path fpath
 path=(~/.local/bin ~/bin $path)
 fpath=(~/.zsh/functions $fpath)
 
-export EDITOR="vim"
-export VISUAL="$EDITOR"
 export PAGER="less"
 export LESS="-Rgi"
 export LESSHISTFILE="-"
+if hash nvim &>/dev/null; then
+  export EDITOR="nvim"
+else
+  export EDITOR="vim"
+fi
+export VISUAL="$EDITOR"
 
 # Start gpg-agent
 if hash gpg-connect-agent &>/dev/null; then

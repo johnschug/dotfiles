@@ -2,9 +2,9 @@
 if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
     if hash systemd-run &>/dev/null; then
-      systemd-run --user --scope -q tmux new -d -s default &>/dev/null
+      systemd-run --user --scope -q tmux new -d -s DEFAULT &>/dev/null
     fi
-    exec tmux new -A -s default
+    exec tmux new -A -s DEFAULT
   fi
 fi
 
@@ -148,13 +148,52 @@ function precmd {
 }
 
 # Prompt
-PROMPT="%B%F{yellow}%1v%h ["
-PROMPT+="%b%F{yellow}%n%f"
-PROMPT+="${SSH_CLIENT:+%B%F{yellow\}@%b%F{magenta\}%m}%f"
-PROMPT+="%B%F{yellow}:%b%F{blue}%3~"
-PROMPT+="%(2V. %B%F{blue}%2v%b%f.)"
-PROMPT+="%B%F{yellow}]%(!.#.$)%f%b "
-RPROMPT="%B%F{yellow}[%b%(0?.%F{green}%?.%F{red}%?)%f %B%F{yellow}%j %l]%b%f"
+function {
+  local COLORS="$(tput colors)"
+  if [ "$COLORS" -ge 256 ]; then
+    if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
+      local COLOR0="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)%}"
+      local COLOR1="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)%}"
+      local COLOR2="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x34 0x49 0x5e)%}"
+      local COLOR3="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)%}"
+      local COLOR4="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)%}"
+      local COLOR5="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x85 0x99 0x00)%}"
+      local COLOR6="%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
+    else
+      local COLOR0="%243F"
+      local COLOR1="%24F"
+      local COLOR2="%25F"
+      local COLOR3="%33F"
+      local COLOR4="%245F"
+      local COLOR5="%100F"
+      local COLOR6="%160F"
+    fi
+  elif [ "$COLORS" -ge 16 ]; then
+      local COLOR0="%B%F{yellow}"
+      local COLOR1="%b%F{yellow}"
+      local COLOR2="%b%F{magenta}"
+      local COLOR3="%b%F{blue}"
+      local COLOR4="%B%F{blue}"
+      local COLOR5="%b%F{green}"
+      local COLOR6="%b%F{red}"
+  else
+      local COLOR0="%b%F{white}"
+      local COLOR1="%b%F{blue}"
+      local COLOR2="%b%F{blue}"
+      local COLOR3="%b%F{cyan}"
+      local COLOR4="%b%F{white}"
+      local COLOR5="%b%F{green}"
+      local COLOR6="%b%F{red}"
+  fi
+
+  PROMPT="${COLOR0}%1v%h ["
+  PROMPT+="${COLOR1}%n"
+  PROMPT+="${SSH_CLIENT:+${COLOR0}@${COLOR2}%m}"
+  PROMPT+="${COLOR0}:${COLOR3}%3~"
+  PROMPT+="%(2V. ${COLOR4}%2v.)"
+  PROMPT+="${COLOR0}]%(!.#.$)%b%f "
+  RPROMPT="${COLOR0}[%(0?.${COLOR5}%?.${COLOR6}%?) ${COLOR0}%j %l]%b%f"
+}
 
 # Aliases
 alias ls='ls --color=auto'
