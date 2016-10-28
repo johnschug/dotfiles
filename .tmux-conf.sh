@@ -7,7 +7,6 @@ if [ "$COLORS" -ge 256 ]; then
   else
     tmux set -g default-terminal screen-256color
   fi
-
   if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
     COLOR0="#232629"
     COLOR1="#eee8d5"
@@ -16,6 +15,8 @@ if [ "$COLORS" -ge 256 ]; then
     COLOR4="#586e75"
     COLOR5="#657b83"
     COLOR6="#2c3e50"
+
+    tmux set -ga terminal-overrides ",xterm-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
   else
     COLOR0="colour235"
     COLOR1="colour255"
