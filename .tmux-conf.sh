@@ -1,30 +1,15 @@
 #!/bin/sh
 
 COLORS="$(tput colors)"
+if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
+    tmux set -ga terminal-overrides ",xterm-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
+fi
+
 if [ "$COLORS" -ge 256 ]; then
   if infocmp tmux-256color >/dev/null 2>&1; then
     tmux set -g default-terminal tmux-256color
   else
     tmux set -g default-terminal screen-256color
-  fi
-  if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-    COLOR0="#232629"
-    COLOR1="#eee8d5"
-    COLOR2="#31363b"
-    COLOR3="#93a1a1"
-    COLOR4="#586e75"
-    COLOR5="#657b83"
-    COLOR6="#2c3e50"
-
-    tmux set -ga terminal-overrides ",xterm-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
-  else
-    COLOR0="colour235"
-    COLOR1="colour255"
-    COLOR2="colour237"
-    COLOR3="colour247"
-    COLOR4="colour241"
-    COLOR5="colour243"
-    COLOR6="colour24"
   fi
 elif [ "$COLORS" -ge 16 ]; then
   if infocmp tmux-16color >/dev/null 2>&1; then
@@ -32,6 +17,33 @@ elif [ "$COLORS" -ge 16 ]; then
   else
     tmux set -g default-terminal screen-16color
   fi
+else
+  if infocmp tmux >/dev/null 2>&1; then
+    tmux set -g default-terminal tmux
+  else
+    tmux set -g default-terminal screen
+  fi
+fi
+
+VERSION="$(tmux -V | cut -d' ' -f2)"
+ if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ] &&
+   [ "$(printf '2.3\n%s\n' "$VERSION" | sort -V | head -n1)" = "2.3" ]; then
+   COLOR0="#232629"
+   COLOR1="#eee8d5"
+   COLOR2="#31363b"
+   COLOR3="#93a1a1"
+   COLOR4="#586e75"
+   COLOR5="#657b83"
+   COLOR6="#2c3e50"
+elif [ -n "$TMUX_NOPALETTE" ]; then
+  COLOR0="colour235"
+  COLOR1="colour255"
+  COLOR2="colour237"
+  COLOR3="colour247"
+  COLOR4="colour241"
+  COLOR5="colour243"
+  COLOR6="colour24"
+elif [ "$COLORS" -ge 16 ]; then
   COLOR0="brightblack"
   COLOR1="white"
   COLOR2="black"
@@ -40,11 +52,6 @@ elif [ "$COLORS" -ge 16 ]; then
   COLOR5="brightyellow"
   COLOR6="brightmagenta"
 else
-  if infocmp tmux >/dev/null 2>&1; then
-    tmux set -g default-terminal tmux
-  else
-    tmux set -g default-terminal screen
-  fi
   COLOR0="black"
   COLOR1="white"
   COLOR2="black"

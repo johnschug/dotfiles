@@ -269,6 +269,8 @@ augroup END
   nnoremap <Leader>gd :Gvdiff<CR>
   nnoremap <Leader>gw :Gwrite<CR>
 
+  inoremap <C-U> <C-G>u<C-U>
+
   xnoremap ae :<C-U>normal! ggVG<CR>
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
