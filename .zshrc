@@ -149,41 +149,43 @@ function precmd {
 
 # Prompt
 function {
-  local COLORS="$(tput colors)"
-  if [ "$COLORS" -ge 256 ]; then
-    if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-      local COLOR0="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)%}"
-      local COLOR1="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)%}"
-      local COLOR2="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x34 0x49 0x5e)%}"
-      local COLOR3="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)%}"
-      local COLOR4="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)%}"
-      local COLOR5="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x85 0x99 0x00)%}"
-      local COLOR6="%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
-    else
-      local COLOR0="%243F"
-      local COLOR1="%24F"
-      local COLOR2="%25F"
-      local COLOR3="%33F"
-      local COLOR4="%245F"
-      local COLOR5="%100F"
-      local COLOR6="%160F"
-    fi
-  elif [ "$COLORS" -ge 16 ]; then
-      local COLOR0="%B%F{yellow}"
-      local COLOR1="%b%F{yellow}"
-      local COLOR2="%b%F{magenta}"
-      local COLOR3="%b%F{blue}"
-      local COLOR4="%B%F{blue}"
-      local COLOR5="%b%F{green}"
-      local COLOR6="%b%F{red}"
+  if hash tput &>/dev/null; then
+    local COLORS="$(tput colors)"
   else
-      local COLOR0="%b%F{white}"
-      local COLOR1="%b%F{blue}"
-      local COLOR2="%b%F{blue}"
-      local COLOR3="%b%F{cyan}"
-      local COLOR4="%b%F{white}"
-      local COLOR5="%b%F{green}"
-      local COLOR6="%b%F{red}"
+    local COLORS=
+  fi
+  if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
+    local COLOR0="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)%}"
+    local COLOR1="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)%}"
+    local COLOR2="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x34 0x49 0x5e)%}"
+    local COLOR3="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)%}"
+    local COLOR4="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)%}"
+    local COLOR5="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x85 0x99 0x00)%}"
+    local COLOR6="%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
+  elif [ -n "$NOPALETTE" ]; then
+    local COLOR0="%243F"
+    local COLOR1="%31F"
+    local COLOR2="%25F"
+    local COLOR3="%33F"
+    local COLOR4="%245F"
+    local COLOR5="%100F"
+    local COLOR6="%160F"
+  elif [ "$COLORS" -ge 16 ]; then
+    local COLOR0="%11F"
+    local COLOR1="%F{yellow}"
+    local COLOR2="%F{magenta}"
+    local COLOR3="%F{blue}"
+    local COLOR4="%12F"
+    local COLOR5="%F{green}"
+    local COLOR6="%F{red}"
+  else
+    local COLOR0="%F{white}"
+    local COLOR1="%F{blue}"
+    local COLOR2="%F{blue}"
+    local COLOR3="%F{cyan}"
+    local COLOR4="%F{white}"
+    local COLOR5="%F{green}"
+    local COLOR6="%F{red}"
   fi
 
   PROMPT="${COLOR0}%1v%h ["

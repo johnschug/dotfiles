@@ -137,7 +137,8 @@
 " Terminals that support italics
 let s:terms_italic=[
             \"rxvt",
-            \"gnome-terminal"
+            \"gnome-terminal",
+            \"tmux",
             \]
 " For reference only, terminals are known to be incomptible.
 " Terminals that are in neither list need to be tested.
@@ -150,7 +151,7 @@ if has("gui_running")
 else
     let s:terminal_italic=0 " terminals will be guilty until proven compatible
     for term in s:terms_italic
-        if $TERM_PROGRAM =~ term
+        if $TERM =~ term
             let s:terminal_italic=1
         endif
     endfor
@@ -205,7 +206,7 @@ function! s:SetOption(name,default)
     endif
 endfunction
 
-if ($TERM_PROGRAM ==? "apple_terminal" && &t_Co < 256)
+if ($TERM ==? "apple_terminal" && &t_Co < 256)
     let s:solarized_termtrans_default = 1
 else
     let s:solarized_termtrans_default = 0

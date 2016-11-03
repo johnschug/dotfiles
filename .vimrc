@@ -12,7 +12,7 @@ augroup END
 
   " lightline {{{
     let g:lightline = {
-          \ 'colorscheme': 'solarized',
+          \ 'colorscheme': 'breeze',
           \ 'active': {
           \   'left': [['mode', 'paste'],
           \             ['fugitive', 'hunks'],
@@ -28,7 +28,7 @@ augroup END
           \   'fileencoding': '%{winwidth(0)>=80?(!empty(&fenc)?&fenc:&enc):""}',
           \ },
           \ 'component_expand': {
-          \   'neomake': 'neomake#statusline#LoclistStatus',
+          \   'neomake': 'LightlineError',
           \ },
           \ 'component_function': {
           \   'hunks': 'LightlineHunks',
@@ -52,6 +52,11 @@ augroup END
       return join(map(filter(range(len(l:stats)), 'l:stats[v:val] > 0'),
              \ 'l:symbols[v:val].l:stats[v:val]'))
     endfunction
+
+    function! LightlineError()
+      let l:local = neomake#statusline#LoclistStatus()
+      return !empty(l:local) ? l:local : neomake#statusline#QflistStatus()
+    endfunction
   " }}}
 
   " Neomake {{{
@@ -60,8 +65,8 @@ augroup END
 
     let g:neomake_verbose = 0
     let g:neomake_open_list = 2
-    let g:neomake_warning_sign = { 'text': '>>' }
-    let g:neomake_error_sign = { 'text': '>>' }
+    let g:neomake_warning_sign = { 'text': '⚠' }
+    let g:neomake_error_sign = { 'text': '✖' }
   " }}}
 
   " YouCompleteMe {{{
@@ -129,6 +134,8 @@ augroup END
   set viminfo=
 
   let &backupdir = g:vimroot.'/backup//,~/tmp//,.'
+
+  autocmd vimrc BufWritePost .vimrc nested source $MYVIMRC
 " }}}
 
 " Interface {{{
@@ -168,14 +175,8 @@ augroup END
   set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
   set wildignore+=tags,cscope.*
 
-  " if (has('termguicolors'))
-  "   set t_8f=[38;2;%lu;%lu;%lum
-  "   set t_8b=[48;2;%lu;%lu;%lum
-  "   set termguicolors
-  " endif
-
-  set background=dark
-  colorscheme solarized
+  let g:breeze_use_palette = !$NOPALETTE
+  colorscheme breeze
 
   autocmd vimrc InsertEnter * set norelativenumber
   autocmd vimrc InsertLeave * set relativenumber
@@ -263,6 +264,8 @@ augroup END
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
   nnoremap <silent> <Leader>s :set spell!<CR>
+  nnoremap <Leader>ev :vnew $MYVIMRC<CR>
+  nnoremap <Leader>sv :source $MYVIMRC<CR>
   nnoremap <Leader>gs :Gstatus<CR>
   nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
   nnoremap <Leader>gl :silent! Gllog!<CR>

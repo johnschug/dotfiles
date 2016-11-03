@@ -2,6 +2,8 @@ README.md skip
 .git skip
 .gitmodules skip
 .config recurse
+.config/mpd recurse
+.config/ncmpcpp recurse
 .config/ranger recurse
 .gnupg recurse
 .vim recurse
