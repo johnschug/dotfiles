@@ -1,8 +1,8 @@
 " Name:     Breeze vim colorscheme
 " Author:   John Schug <john.ips.schug@gmail.com>
-" License:  MIT License
-" Created:  In the middle of the night
-" Modified: 2016-10-30
+" License:  MIT
+" Created:  2016-10-30
+" Based On: Solarized by Ethan Schoonover
 "
 " vint: -ProhibitUsingUndeclaredVariable
 "
@@ -53,7 +53,7 @@ endif
 " ---------------------------------------------------------------------
 let s:none               = 'NONE'
 
-if (s:use_bold == 0 || &t_Co == 8 )
+if (s:use_bold == 0 || &t_Co == 8)
     let s:bold           = ''
     let s:bb             = ',bold'
 else
@@ -83,9 +83,6 @@ let s:fmt_ital     = ' cterm=NONE,italic term=NONE,italic gui=NONE,italic'
 let s:fmt_stnd     = ' cterm=NONE,standout term=NONE,standout gui=NONE,standout'
 let s:fmt_revr     = ' cterm=NONE,reverse term=NONE,reverse gui=NONE,reverse'
 let s:fmt_revb     = ' cterm=NONE,reverse'.s:bold.' term=NONE,reverse'.s:bold.' gui=NONE,reverse,bold'
-" revbb (reverse bold for bright colors) is only set to actual bold in low
-" color terminals (t_co=8, such as OS X Terminal.app) and should only be used
-" with colors 8-15.
 let s:fmt_revbb    = ' cterm=NONE,reverse'.s:bb.' term=NONE,reverse'.s:bb.' gui=NONE,reverse'
 let s:fmt_revbbu   = ' cterm=NONE,reverse'.s:bb.',underline term=NONE,reverse'.s:bb.',underline gui=NONE,reverse,underline'
 
@@ -334,7 +331,6 @@ exe 'hi! javaScript'        .s:fmt_none .s:fg_yellow .s:bg_none
 exe 'hi! perlHereDoc'    . s:fg_base1  .s:bg_back   .s:fmt_none
 exe 'hi! perlVarPlain'   . s:fg_yellow .s:bg_back   .s:fmt_none
 exe 'hi! perlStatementFileDesc'. s:fg_cyan.s:bg_back.s:fmt_none
-
 "}}}
 " tex highlighting "{{{
 " ---------------------------------------------------------------------
@@ -344,19 +340,8 @@ exe 'hi! texMathMatcher' . s:fg_yellow .s:bg_back   .s:fmt_none
 exe 'hi! texMathMatcher' . s:fg_yellow .s:bg_back   .s:fmt_none
 exe 'hi! texRefLabel'    . s:fg_yellow .s:bg_back   .s:fmt_none
 "}}}
-" haskell syntax highlighting"{{{
+" haskell highlighting "{{{
 " ---------------------------------------------------------------------
-" For use with syntax/haskell.vim : Haskell Syntax File
-" http://www.vim.org/scripts/script.php?script_id=3034
-" See also Steffen Siering's github repository:
-" http://github.com/urso/dotrc/blob/master/vim/syntax/haskell.vim
-" ---------------------------------------------------------------------
-"
-" Treat True and False specially, see the plugin referenced above
-let g:hs_highlight_boolean=1
-" highlight delims, see the plugin referenced above
-let g:hs_highlight_delimiters=1
-
 exe 'hi! cPreCondit'. s:fg_orange.s:bg_none   .s:fmt_none
 
 exe 'hi! VarId'    . s:fg_blue   .s:bg_none   .s:fmt_none
@@ -384,7 +369,6 @@ hi! link hsModuleWhereLabel  hsModuleStartLabel
 " the first two items don't have an impact, but better safe
 exe 'hi! hsNiceOperator'     . s:fg_cyan   .s:bg_none   .s:fmt_none
 exe 'hi! hsniceoperator'     . s:fg_cyan   .s:bg_none   .s:fmt_none
-
 "}}}
 " pandoc markdown syntax highlighting "{{{
 " ---------------------------------------------------------------------
@@ -506,7 +490,6 @@ exe 'hi! pandocMetadata'                 .s:fg_blue   .s:bg_none   .s:fmt_none
 exe 'hi! pandocMetadataKey'              .s:fg_blue   .s:bg_none   .s:fmt_none
 exe 'hi! pandocMetadata'                 .s:fg_blue   .s:bg_none   .s:fmt_bold
 hi! link pandocMetadataTitle             pandocMetadata
-
 "}}}
 " Syntastic "{{{
 exe 'hi! SyntasticWarningSign'           .s:fg_base1  .s:bg_base02 .s:fmt_bold

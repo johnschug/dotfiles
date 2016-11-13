@@ -102,9 +102,10 @@ augroup END
   Plug 'Valloric/ListToggle'
   Plug 'Raimondi/delimitMate'
   Plug 'tomtom/tcomment_vim'
+  Plug 'tommcdo/vim-lion'
+  Plug 'wellle/targets.vim'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-fugitive'
-  Plug 'tommcdo/vim-lion'
   Plug 'SirVer/ultisnips'
   Plug 'honza/vim-snippets'
   Plug 'chrisbra/unicode.vim'
@@ -207,6 +208,10 @@ augroup END
   set spelllang=en_us
   set diffopt+=iwhite
   let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+
+  if exists('&inccommand')
+    set inccommand=nosplit
+  endif
 
   set ttimeout
   set ttimeoutlen=100

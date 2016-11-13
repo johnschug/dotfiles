@@ -6,7 +6,7 @@ mpd_music_dir = ~/Music
 
 visualizer_fifo_path = /run/user/1000/mpd.fifo
 visualizer_output_name = Visualizer feed
-visualizer_in_stereo = yes
+visualizer_in_stereo = no
 visualizer_sample_multiplier = 1
 visualizer_sync_interval = 15
 visualizer_type = wave

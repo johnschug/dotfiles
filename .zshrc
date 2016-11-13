@@ -141,9 +141,19 @@ function {
   }
 }
 
+function preexec {
+  typeset -ig _starttime=SECONDS
+}
+
 function precmd {
+  local elapsed=0
+  if (( _starttime >= 0 )) ; then
+    elapsed=$((SECONDS - _starttime))
+  fi
+  _starttime=-1
+
   vcs_info
-  psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_")
+  psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_" "$elapsed")
   set-title "%n${SSH_CLIENT:+@%m}:%1~"
 }
 
@@ -194,7 +204,7 @@ function {
   PROMPT+="${COLOR0}:${COLOR3}%3~"
   PROMPT+="%(2V. ${COLOR4}%2v.)"
   PROMPT+="${COLOR0}]%(!.#.$)%b%f "
-  RPROMPT="${COLOR0}[%(0?.${COLOR5}%?.${COLOR6}%?) ${COLOR0}%j %l]%b%f"
+  RPROMPT="${COLOR0}[%(0?.${COLOR5}%?.${COLOR6}%?) ${COLOR0}%3vs %j]%b%f"
 }
 
 # Aliases
