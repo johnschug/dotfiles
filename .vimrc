@@ -3,9 +3,16 @@ if has('vim_starting') && &encoding !=# 'utf-8'
 endif
 scriptencoding utf-8
 
+" Early Setup {{{
 augroup vimrc
   autocmd!
 augroup END
+
+if has('gui_running')
+  set guioptions-=m
+  set guioptions+=M
+endif
+" }}}
 
 " Plugins {{{
   runtime! macros/matchit.vim
@@ -19,7 +26,8 @@ augroup END
           \             ['readonly', 'filename']],
           \   'right': [['neomake', 'lineinfo'],
           \              ['percent'],
-          \              ['filetype', 'fileencoding', 'fileformat']],
+          \              ['filetype', 'fileencoding', 'fileformat'],
+          \              ['spell']],
           \ },
           \ 'component': {
           \   'fugitive': '%{exists("*fugitive#head")?fugitive#head(7):""}',
@@ -60,7 +68,7 @@ augroup END
   " }}}
 
   " Neomake {{{
-    autocmd vimrc BufWritePost * Neomake
+    autocmd vimrc BufReadPost,BufWritePost * Neomake
     autocmd vimrc User NeomakeCountsChanged call lightline#update()
 
     let g:neomake_verbose = 0
@@ -116,6 +124,7 @@ augroup END
   Plug 'cespare/vim-toml'
   Plug 'vim-pandoc/vim-pandoc'
   Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
+  Plug 'hashivim/vim-vagrant'
   Plug 'chrisbra/vim-diff-enhanced'
   Plug 'rust-lang/rust.vim'
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
@@ -136,7 +145,7 @@ augroup END
 
   let &backupdir = g:vimroot.'/backup//,~/tmp//,.'
 
-  autocmd vimrc BufWritePost .vimrc nested source $MYVIMRC
+  autocmd vimrc BufWritePost _vimrc,.vimrc nested source $MYVIMRC
 " }}}
 
 " Interface {{{
@@ -176,6 +185,19 @@ augroup END
   set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
   set wildignore+=tags,cscope.*
 
+  if has('gui_running')
+    if has ('gui_win32')
+      set guifont=Source_Code_Pro:h10,Courier_New:h10,Consolas:h10
+    else
+      set guifont=Source\ Code\ Pro\ 10,DejaVu\ Sans\ Mono\ 10,Monospace\ 10
+    endif
+    set guioptions-=r
+    set guioptions-=R
+    set guioptions-=l
+    set guioptions-=L
+    set guioptions-=T
+  endif
+
   let g:breeze_use_palette = !$NOPALETTE
   colorscheme breeze
 
@@ -197,12 +219,14 @@ augroup END
   set softtabstop=2
   set tabstop=2
 
+  set nostartofline
   set matchpairs+=<:>,[:]
-  set formatoptions+=j1
+  set formatoptions+=qjl1
   set backspace=indent,eol,start
   set virtualedit=block
   set autoindent
   set copyindent
+  set preserveindent
   set complete+=kspell
   set completeopt+=menuone
   set spelllang=en_us
@@ -268,7 +292,7 @@ augroup END
   nnoremap <silent> <Leader>j :setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
-  nnoremap <silent> <Leader>s :set spell!<CR>
+  nnoremap <silent> <Leader>ss :set spell!<CR>
   nnoremap <Leader>ev :vnew $MYVIMRC<CR>
   nnoremap <Leader>sv :source $MYVIMRC<CR>
   nnoremap <Leader>gs :Gstatus<CR>
@@ -277,6 +301,7 @@ augroup END
   nnoremap <Leader>gd :Gvdiff<CR>
   nnoremap <Leader>gw :Gwrite<CR>
 
+  inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>
 
   xnoremap ae :<C-U>normal! ggVG<CR>
@@ -288,13 +313,13 @@ augroup END
 
 " File Type {{{
   autocmd vimrc FileType vim setlocal keywordprg=:help
-  autocmd vimrc FileType gitcommit,text,markdown,pandoc,c,cpp,rust setlocal spell
+  autocmd vimrc FileType gitcommit,text,markdown,pandoc,html,c,cpp,rust setlocal spell
 " }}}
 
 " Projects {{{
   set tags=./tags;,tags
 
-  let s:gitroot = substitute(system('git rev-parse --show-toplevel'), '[\n\r]', '', 'g')
+  let s:gitroot = get(systemlist('git rev-parse --show-toplevel'), 0, '')
   if v:shell_error == 0 && !empty(s:gitroot)
     let &path .= ','.s:gitroot.'/**'
     let &tags .= ','.s:gitroot.'/.git/tags'

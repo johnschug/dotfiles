@@ -1,5 +1,5 @@
 [core]
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.config/ignore
 	autocrlf=input
 [color]
 	ui = auto
@@ -23,6 +23,8 @@
 	ff = only
 [rebase]
 	autoStash = true
+[commit]
+	template = ~/.config/commit-template
 [gpg]
 	program = gpg2
 [user]
@@ -32,7 +34,7 @@
 [log]
 	mailmap = true
 [pretty]
-	compact = "format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset"
+	compact = "format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?"
 [alias]
 	amend = "commit --amend -C HEAD"
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
@@ -47,5 +49,5 @@
 	type = cat-file -t
 	dump = cat-file -p
 [include]
-	path = ~/.gitconfig.local
+	path = ~/.config/config.local
 # vim:set sw=4 sts=4 ts=4 noet:

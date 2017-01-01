@@ -2,7 +2,7 @@ umask 077
 
 typeset -U path fpath
 path=(~/.local/bin ~/bin $path)
-fpath=(~/.zsh/functions $fpath)
+fpath=(~/.local/share/zsh/functions ~/.zsh/functions $fpath)
 
 export PAGER="less"
 export LESS="-Rgi"
@@ -13,6 +13,7 @@ else
   export EDITOR="vim"
 fi
 export VISUAL="$EDITOR"
+export SUDO_EDITOR="vim"
 
 # Start gpg-agent
 if hash gpg-connect-agent &>/dev/null; then

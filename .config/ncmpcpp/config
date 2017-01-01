@@ -1,5 +1,5 @@
 ncmpcpp_directory = ~/.config/ncmpcpp
-lyrics_directory = ~/.local/lyrics
+lyrics_directory = ~/.local/share/lyrics
 
 mpd_host = /run/user/1000/mpd.socket
 mpd_music_dir = ~/Music
