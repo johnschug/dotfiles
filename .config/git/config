@@ -48,6 +48,7 @@
 	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo "$1" >>.gitignore
 	type = cat-file -t
 	dump = cat-file -p
+	st = status -s
 [include]
 	path = ~/.config/config.local
 # vim:set sw=4 sts=4 ts=4 noet:

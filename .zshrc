@@ -20,13 +20,23 @@ setopt auto_pushd
 setopt complete_aliases
 setopt correct
 setopt extended_glob
+setopt extended_history
 setopt glob_complete
+setopt hist_ignore_all_dups
+setopt hist_no_store
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
 setopt interactive_comments
+setopt menu_complete
 setopt noclobber
 setopt notify
 setopt pushd_ignore_dups
+setopt share_history
 
 WORDCHARS="${WORDCHARS/\/}"
+HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
+SAVEHIST=200
+HISTSIZE=1000
 
 # Bindings
 export KEYTIMEOUT=5
@@ -38,10 +48,10 @@ bindkey '^u' backward-kill-line
 bindkey '^f' edit-command-line
 bindkey '^k' insert-composed-char
 bindkey '^v' insert-unicode-char
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
+bindkey '^p' history-beginning-search-backward-end
+bindkey '^n' history-beginning-search-forward-end
 bindkey '^r' history-incremental-pattern-search-backward
-bindkey '^g' what-cursor-position
+bindkey '^g' autosuggest-accept
 bindkey '^t' cd-parent
 bindkey '^e' cd-undo
 bindkey '^[s' insert-sudo
@@ -79,7 +89,7 @@ function cd-undo {
   zle reset-prompt
 }
 
-autoload -Uz edit-command-line insert-composed-char insert-unicode-char
+autoload -Uz edit-command-line insert-composed-char insert-unicode-char history-search-end
 zle -N zle-line-init
 zle -N zle-line-finish
 zle -N zle-keymap-select
@@ -89,6 +99,8 @@ zle -N insert-unicode-char
 zle -N insert-sudo
 zle -N cd-parent
 zle -N cd-undo
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
 
 autoload -Uz add-zsh-hook cdr chpwd_recent_dirs compinit vcs_info zmv
 compinit
@@ -96,17 +108,22 @@ add-zsh-hook chpwd chpwd_recent_dirs
 
 # Completion
 compdef gpg2=gpg
+zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' menu select=2
-zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:matches' group yes
 zstyle ':completion:*:functions' ignored-patterns '_*'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/5))numeric)'
+zstyle ':completion:*:approximate:*' max-errors 2
+zstyle ':completion:*:processes' command 'ps --forest -e -o pid,user,tty,comm'
+zstyle ':completion:*:processes-names' command 'ps -u ${USER} -o comm | uniq'
+zstyle ':completion:*:*:kill:*:processes' command 'ps -o pid,tty,comm'
 
 # VCS Info
 zstyle ':vcs_info:*' check-for-changes true

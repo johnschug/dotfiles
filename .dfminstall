@@ -11,3 +11,4 @@ README.md skip
 .vim recurse
 .vim/autoload recurse
 .vim/bin recurse
+.zsh recurse

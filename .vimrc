@@ -12,6 +12,16 @@ if has('gui_running')
   set guioptions-=m
   set guioptions+=M
 endif
+
+if !exists('g:vim_root')
+  let g:vimroot = split(&runtimepath, ',')[0]
+endif
+
+runtime local.vim
+
+if exists('*local#init')
+  call local#init()
+endif
 " }}}
 
 " Plugins {{{
@@ -106,7 +116,7 @@ endif
     let g:plug_window = 'vertical belowright new'
   " }}}
 
-  call plug#begin('~/.vim/plugins')
+  call plug#begin(g:vimroot.'/plugins')
   Plug 'Valloric/ListToggle'
   Plug 'Raimondi/delimitMate'
   Plug 'tomtom/tcomment_vim'
@@ -114,28 +124,27 @@ endif
   Plug 'wellle/targets.vim'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-fugitive'
-  Plug 'SirVer/ultisnips'
-  Plug 'honza/vim-snippets'
-  Plug 'chrisbra/unicode.vim'
+  Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+  Plug 'chrisbra/unicode.vim', { 'on': ['<Plug>(UnicodeGA)', 'UnicodeTable'] }
   Plug 'neomake/neomake'
+  Plug 'sbdchd/neoformat'
   Plug 'mhinz/vim-signify'
   Plug 'itchyny/lightline.vim'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'cespare/vim-toml'
-  Plug 'vim-pandoc/vim-pandoc'
-  Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
+  Plug 'vim-pandoc/vim-pandoc' | Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
   Plug 'hashivim/vim-vagrant'
   Plug 'chrisbra/vim-diff-enhanced'
   Plug 'rust-lang/rust.vim'
   Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
+
+  if exists('*local#plugins')
+    call local#plugins()
+  endif
   call plug#end()
 " }}}
 
 " General {{{
-  if !exists('g:vim_root')
-    let g:vimroot = split(&runtimepath, ',')[0]
-  endif
-
   set autoread
   set hidden
   set path+=**
@@ -143,7 +152,15 @@ endif
   set shortmess+=a
   set viminfo=
 
-  let &backupdir = g:vimroot.'/backup//,~/tmp//,.'
+  set backupdir-=.
+  set backupdir-=~/
+  set backupdir+=.
+
+  if exists('+undofile')
+    set undofile
+
+    autocmd vimrc BufWritePre /tmp/* setlocal noundofile
+  endif
 
   autocmd vimrc BufWritePost _vimrc,.vimrc nested source $MYVIMRC
 " }}}
@@ -153,7 +170,7 @@ endif
   set lazyredraw
   set scrolloff=5
   set list
-  set listchars=tab:▸\ ,eol:¬,trail:•
+  set listchars=tab:▸\ ,nbsp:␣,trail:•,eol:¬
   set number
   set relativenumber
   set cursorline
@@ -230,6 +247,10 @@ endif
   set complete+=kspell
   set completeopt+=menuone
   set spelllang=en_us
+  set dictionary^=spell
+  if filereadable('/usr/share/dict/words')
+    set dictionary+=/usr/share/dict/words
+  endif
   set diffopt+=iwhite
   let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 
@@ -242,7 +263,7 @@ endif
 " }}}
 
 " Commands {{{
-  command! -range Copy <line1>,<line2>!xclip -f -sel clip
+  command! -range Copy <line1>,<line2>write !xclip -f -sel clip
   command! Paste read !xclip -o -sel clip
   command! DiffOrig call s:DiffOrig()
   function! s:DiffOrig()
@@ -256,9 +277,12 @@ endif
   autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
   autocmd vimrc QuickFixCmdPost    l* nested lwindow|redraw!
 
-  if executable('ag')
-    set grepprg=ag\ --nogroup\ --nocolor\ --column\ --vimgrep
-    set grepformat=%f:%l:%c:%m,%f:%l:%m
+  if executable('rg')
+    set grepprg=rg\ --vimgrep\ --no-heading\ -S
+    set grepformat^=%f:%l:%c:%m
+  elseif executable('ag')
+    set grepprg=ag\ --vimgrep
+    set grepformat^=%f:%l:%c:%m
   else
     set grepprg=grep\ -rnH
   endif
@@ -267,7 +291,9 @@ endif
 " Mappings {{{
   " Navigation {{{
     nnoremap gb <C-^>
-    nnoremap gB :ls<CR>:b<Space>
+    nnoremap <silent> <expr> gB (exists(':Buffers') == 2)?':Buffers<CR>':':ls<CR>:b<SPACE>'
+    nnoremap <silent> <C-P> :Files<CR>
+
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
     for s:cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
@@ -279,7 +305,7 @@ endif
   " }}}
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
-  nnoremap <expr> gp '`['.strpart(getregtype(), 0, 1).'`]'
+  nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
   nnoremap <silent> gs :silent! grep! "\b<C-R><C-W>\b"<CR>
   nmap ga <Plug>(UnicodeGA)
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
@@ -328,10 +354,7 @@ endif
   autocmd vimrc FileType * let &l:tags = &tags.','.expand(g:vimroot.'/tags/').&ft
 " }}}
 
-if filereadable(expand('~/.vimrc.local'))
-  source ~/.vimrc.local
-elseif filereadable(expand('~/_vimrc.local'))
-  source ~/_vimrc.local
+if exists('*local#finish')
+  call local#finish()
 endif
-
 " vim:set sw=2 ts=2 et fdm=marker fdl=0:

@@ -15,16 +15,12 @@ fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR="vim"
 
-# Start gpg-agent
-if hash gpg-connect-agent &>/dev/null; then
-  gpg-connect-agent /bye &>/dev/null
-  if [ -S "/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
-    export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
-  elif [ -S "/var/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
-    export SSH_AUTH_SOCK="/var/run/user/$UID/gnupg/S.gpg-agent.ssh"
-  elif [ -S "$HOME/.gnupg/S.gpg-agent.ssh" ]; then
-    export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
-  fi
+if [ -S "/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
+  export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
+elif [ -S "/var/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
+  export SSH_AUTH_SOCK="/var/run/user/$UID/gnupg/S.gpg-agent.ssh"
+elif [ -S "$HOME/.gnupg/S.gpg-agent.ssh" ]; then
+  export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
 fi
 
 if [ -f ~/.zshenv.local ]; then
