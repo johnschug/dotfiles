@@ -1,8 +1,8 @@
 umask 077
 
 typeset -U path fpath
-path=(~/.local/bin ~/bin $path)
-fpath=(~/.local/share/zsh/functions ~/.zsh/functions $fpath)
+path=(~/.local/bin $path)
+fpath=("${XDG_DATA_HOME:-$HOME/.local/share}/zsh/functions" $fpath)
 
 export PAGER="less"
 export LESS="-Rgi"

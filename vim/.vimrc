@@ -116,7 +116,12 @@ endif
     let g:plug_window = 'vertical belowright new'
   " }}}
 
-  call plug#begin(g:vimroot.'/plugins')
+  if $XDG_DATA_HOME == 0
+    let s:plugin_dir = expand('~/.local/share/vim/plugged')
+  else
+    let s:plugin_dir = $XDG_DATA_HOME.'/vim/plugged'
+  endif
+  call plug#begin(s:plugin_dir)
   Plug 'Valloric/ListToggle'
   Plug 'Raimondi/delimitMate'
   Plug 'tomtom/tcomment_vim'

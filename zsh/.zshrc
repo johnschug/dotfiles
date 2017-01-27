@@ -9,8 +9,8 @@ if hash tmux &> /dev/null; then
 fi
 
 # Plugins
-if [ -f ~/.zsh/plugins/plugins.zsh ]; then
-  source ~/.zsh/plugins/plugins.zsh
+if [ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh" ]; then
+  source "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh"
 fi
 
 # Options
