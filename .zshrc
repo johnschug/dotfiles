@@ -51,7 +51,6 @@ bindkey '^v' insert-unicode-char
 bindkey '^p' history-beginning-search-backward-end
 bindkey '^n' history-beginning-search-forward-end
 bindkey '^r' history-incremental-pattern-search-backward
-bindkey '^g' autosuggest-accept
 bindkey '^t' cd-parent
 bindkey '^e' cd-undo
 bindkey '^[s' insert-sudo

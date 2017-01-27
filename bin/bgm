@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euf
+
+srcdir="$HOME/Pictures/shared"
+bgdir="$HOME/Pictures/wallpapers"
+blacklist="${bgdir}/.blacklist"
+history="${bgdir}/.history"
+
+if [[ $XDG_CURRENT_DESKTOP =~ GNOME ]]; then
+  set_background() {
+    gsettings set org.gnome.desktop.background picture-uri "file://$1"
+  }
+
+  get_background() {
+    gsettings get org.gnome.desktop.background picture-uri|sed -e "s/^'file:\/\///" -e "s/'$//"
+  }
+else
+  set_background() {
+    return
+  }
+
+  get_background() {
+    return
+  }
+fi
+
+rotate() {
+  touch "$history"
+  selection=$(find -L "$bgdir" -type f -name 'wallpaper_*' -print0 | shuf -zn1)
+  printf '%s\n' "$selection" | tee -a "$history"
+  tail -n999 "$history" | sponge "$history"
+  set_background "$selection"
+}
+
+scan() {
+  if [ ! -f "$blacklist" ]; then
+    touch "$blacklist"
+  fi
+
+  find -H "$bgdir" \( -type f -o -type l \) -name 'wallpaper_*' -delete
+
+  counter=1
+  find -H "$srcdir" -type f \( -iname '*.jpg' -o -iname '*.png' \) -print0 |
+  while IFS= read -rd '' bg; do
+    if grep -q "$bg" "$blacklist"; then
+      continue
+    fi
+    ln -s "$bg" "${bgdir}/wallpaper_$(printf '%04d' $counter)"
+    counter=$((counter+1))
+  done
+
+  rotate
+}
+
+blacklist_file() {
+  local file=$(readlink "$1")
+  if [ ! -f "$file" ] || ([ -f "$blacklist" ] && grep -q "$file" "$blacklist"); then
+    return
+  fi
+  printf '%s\n' "$file" | tee -a "$blacklist"
+}
+
+blacklist() {
+  local file
+  if [ $# -eq 0 ]; then
+    file=$(get_background)
+    addfile "$file"
+  else
+    for file in "$@"; do
+      file=$(printf %04d "$file")
+      file="${bgdir}/wallpaper_${file}"
+      if [ -f "${file}" ]; then
+        blacklist_file "${file}"
+      fi
+    done
+  fi
+  scan
+}
+
+case "$1" in
+  scan|rescan)
+    scan
+    ;;
+  rotate)
+    rotate
+    ;;
+  blacklist)
+    shift
+    blacklist "$@"
+    ;;
+esac

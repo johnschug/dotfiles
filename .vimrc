@@ -203,10 +203,13 @@ endif
   set wildignore+=tags,cscope.*
 
   if has('gui_running')
-    if has ('gui_win32')
-      set guifont=Source_Code_Pro:h10,Courier_New:h10,Consolas:h10
+    if has('gui_win32')
+      if exists('&renderoptions')
+        set renderoptions=type:directx,geom:1,renmode:5,taamode:1
+      endif
+      set guifont^=Source_Code_Pro:h10,Noto_Mono:h10,DejaVu_Sans_Mono:h10,Courier_New:h10
     else
-      set guifont=Source\ Code\ Pro\ 10,DejaVu\ Sans\ Mono\ 10,Monospace\ 10
+      set guifont^=Source\ Code\ Pro\ 10,Noto\ Mono\ 10,DejaVu\ Sans\ Mono\ 10
     endif
     set guioptions-=r
     set guioptions-=R
@@ -266,12 +269,33 @@ endif
   command! -range Copy <line1>,<line2>write !xclip -f -sel clip
   command! Paste read !xclip -o -sel clip
   command! DiffOrig call s:DiffOrig()
-  function! s:DiffOrig()
+  function! s:DiffOrig() abort
     let l:ft = &filetype
     diffthis
     vnew | r ++edit # | 0d_
     diffthis
     execute 'setlocal bt=nofile bh=wipe nobl noswf ro noma ft='.l:ft
+  endfunction
+  command! -nargs=1 EditConfig call s:EditConfig(<args>)
+  function! s:EditConfig(what) abort
+    let l:ft = &filetype
+    if a:what ==# 'vimrc'
+      let l:file = expand($MYVIMRC)
+    elseif a:what ==# 'local'
+      let l:file = g:vimroot.'/local.vim'
+    elseif a:what ==# 'colors'
+      let l:colors = get(g:, 'colors_name', '')
+      if empty(l:colors)
+        return
+      endif
+      let l:file = g:vimroot.'/colors/'.l:colors.'.vim'
+    elseif !isdirectory(globpath(g:vimroot, a:what)) || empty(l:ft)
+      return
+    else
+      let l:file = g:vimroot.'/'.a:what.'/'.l:ft.'.vim'
+    endif
+    execute ':vsplit '.l:file
+    execute ':lcd %:p:h'
   endfunction
 
   autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
@@ -319,8 +343,12 @@ endif
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
   nnoremap <silent> <Leader>ss :set spell!<CR>
-  nnoremap <Leader>ev :vnew $MYVIMRC<CR>
-  nnoremap <Leader>sv :source $MYVIMRC<CR>
+  nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
+  nnoremap <silent> <Leader>ev :EditConfig('vimrc')<CR>
+  nnoremap <silent> <Leader>el :EditConfig('local')<CR>
+  nnoremap <silent> <Leader>ef :EditConfig('ftplugin')<CR>
+  nnoremap <silent> <Leader>es :EditConfig('syntax')<CR>
+  nnoremap <silent> <Leader>ec :EditConfig('colors')<CR>
   nnoremap <Leader>gs :Gstatus<CR>
   nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
   nnoremap <Leader>gl :silent! Gllog!<CR>
