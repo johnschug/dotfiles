@@ -7,3 +7,6 @@
 [submodule ".zsh/plugins/zsh-autosuggestions"]
 	path = zsh/.local/share/zsh/plugins/zsh-autosuggestions
 	url = git://github.com/zsh-users/zsh-autosuggestions
+[submodule "neofetch/neofetch"]
+	path = neofetch/neofetch
+	url = https://github.com/dylanaraps/neofetch.git
