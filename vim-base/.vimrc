@@ -17,13 +17,12 @@ if !exists('g:vim_root')
   let g:vimroot = split(&runtimepath, ',')[0]
 endif
 
-let g:vimdata = $XDG_DATA_HOME
-if empty(g:vimdata)
-  if has('win32') || has('win64')
-    let g:vimdata = !empty($LOCALAPPDATA) ? $LOCALAPPDATA : g:vimroot
-  else
-    let g:vimdata = expand('~/.local/share/vim')
-  endif
+if !empty($XDG_DATA_HOME)
+  let g:vimdata = $XDG_DATA_HOME.'/vim'
+elseif has('win32') || has('win64')
+  let g:vimdata = !empty($LOCALAPPDATA) ? $LOCALAPPDATA.'/vim' : g:vimroot
+else
+  let g:vimdata = expand('~/.local/share/vim')
 endif
 
 runtime local.vim
