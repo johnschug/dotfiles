@@ -202,7 +202,7 @@ endif
 
   set wildmenu
   set wildignorecase
-  set wildignore+=*.swp,*.bak,*~
+  set wildignore+=*.swp,*.bak,.DS_Store,._*,*~
   set wildignore+=*.pyc,*.rlib,*.class,*.o,*.obj,*.a,*.lib,*.so,*.dll,*.pdb
   set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
   set wildignore+=tags,cscope.*

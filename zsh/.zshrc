@@ -9,8 +9,8 @@ if hash tmux &> /dev/null; then
 fi
 
 # Plugins
-if [ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh" ]; then
-  source "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh"
+if [ -f "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh" ]; then
+  source "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh"
 fi
 
 # Options
@@ -27,14 +27,13 @@ setopt hist_no_store
 setopt hist_reduce_blanks
 setopt hist_save_no_dups
 setopt interactive_comments
-setopt menu_complete
 setopt noclobber
 setopt notify
 setopt pushd_ignore_dups
 setopt share_history
 
 WORDCHARS="${WORDCHARS/\/}"
-HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
+HISTFILE="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history"
 SAVEHIST=200
 HISTSIZE=1000
 
@@ -109,12 +108,13 @@ add-zsh-hook chpwd chpwd_recent_dirs
 compdef gpg2=gpg
 zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-${HOME}/.cache}/zsh"
 zstyle ':completion:*' group-name ''
+zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:matches' group yes
 zstyle ':completion:*:functions' ignored-patterns '_*'
@@ -252,13 +252,13 @@ else
 fi
 
 function clear-clipboard {
-  printf '\\n' | xclip -sel clip &>/dev/null
-  gpaste-client empty &>/dev/null
-  qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
-}
-
-function zman {
-  PAGER="less -Rgis '+/^       $1'" man zshall
+  printf '\n' | xclip -sel clip &>/dev/null
+  if hash gpaste-client &>/dev/null; then
+    gpaste-client empty &>/dev/null
+  fi
+  if hash qdbus &>/dev/null; then
+    qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
+  fi
 }
 
 if [ -f ~/.zshrc.local ]; then
