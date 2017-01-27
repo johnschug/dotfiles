@@ -9,11 +9,11 @@ export PAGER="less"
 export LESS="-Rgi"
 export LESSHISTFILE="-"
 if hash nvim &>/dev/null; then
-  export EDITOR="nvim"
   export MANPAGER="env MANPATH=${MANPATH} nvim -c 'set ft=man' -"
+  export EDITOR="nvim"
 else
-  export EDITOR="vim"
   export MANPAGER="env MAN_PN=1 MANPATH=${MANPATH} vim -RM +MANPAGER -"
+  export EDITOR="vim"
 fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR="vim"

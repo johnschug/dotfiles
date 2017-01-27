@@ -17,6 +17,15 @@ if !exists('g:vim_root')
   let g:vimroot = split(&runtimepath, ',')[0]
 endif
 
+let g:vimdata = $XDG_DATA_HOME
+if empty(g:vimdata)
+  if has('win32') || has('win64')
+    let g:vimdata = !empty($LOCALAPPDATA) ? $LOCALAPPDATA : g:vimroot
+  else
+    let g:vimdata = expand('~/.local/share/vim')
+  endif
+endif
+
 runtime local.vim
 
 if exists('*local#init')
@@ -26,130 +35,11 @@ endif
 
 " Plugins {{{
   runtime! macros/matchit.vim
-
-  " lightline {{{
-    let g:lightline = {
-          \ 'colorscheme': 'breeze',
-          \ 'active': {
-          \   'left': [['mode', 'paste'],
-          \             ['fugitive', 'hunks'],
-          \             ['readonly', 'filename']],
-          \   'right': [['neomake', 'lineinfo'],
-          \              ['percent'],
-          \              ['filetype', 'fileencoding', 'fileformat'],
-          \              ['spell']],
-          \ },
-          \ 'component': {
-          \   'fugitive': '%{exists("*fugitive#head")?fugitive#head(7):""}',
-          \   'filename': '%f%( %M%)',
-          \   'fileformat': '%{winwidth(0)>=80?&ff:""}',
-          \   'fileencoding': '%{winwidth(0)>=80?(!empty(&fenc)?&fenc:&enc):""}',
-          \ },
-          \ 'component_expand': {
-          \   'neomake': 'LightlineError',
-          \ },
-          \ 'component_function': {
-          \   'hunks': 'LightlineHunks',
-          \ },
-          \ 'component_visible_condition': {
-          \   'fugitive': '(exists("*fugitive#head") && !empty(fugitive#head(7)))',
-          \   'fileformat': '(winwidth(0) >= 80)',
-          \   'fileencoding': '(winwidth(0) >= 80)',
-          \ },
-          \ 'component_type': { 'neomake': 'error' },
-          \ }
-
-    function! LightlineHunks()
-      if (winwidth(0) < 100) || !exists('*sy#repo#get_stats')
-        return ''
-      endif
-
-      let l:symbols = ['+', '-', '~']
-      let l:stats = copy(sy#repo#get_stats())
-      let l:stats[1:2] = reverse(l:stats[1:2])
-      return join(map(filter(range(len(l:stats)), 'l:stats[v:val] > 0'),
-             \ 'l:symbols[v:val].l:stats[v:val]'))
-    endfunction
-
-    function! LightlineError()
-      let l:local = neomake#statusline#LoclistStatus()
-      return !empty(l:local) ? l:local : neomake#statusline#QflistStatus()
-    endfunction
-  " }}}
-
-  " Neomake {{{
-    autocmd vimrc BufReadPost,BufWritePost * Neomake
-    autocmd vimrc User NeomakeCountsChanged call lightline#update()
-
-    let g:neomake_verbose = 0
-    let g:neomake_open_list = 2
-    let g:neomake_warning_sign = { 'text': '⚠' }
-    let g:neomake_error_sign = { 'text': '✖' }
-  " }}}
-
-  " YouCompleteMe {{{
-    let g:ycm_add_preview_to_completeopt = 1
-    if filereadable(expand('~/.ycm_extra_conf.py'))
-      let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-    endif
-  " }}}
-
-  " delimitMate {{{
-    let g:delimitMate_expand_space = 1
-    let g:delimitMate_expand_cr = 2
-    let g:delimitMate_jump_expansion = 1
-  " }}}
-
-  " UltiSnips {{{
-    let g:UltiSnipsExpandTrigger = '<c-j>'
-    let g:UltiSnipsJumpForwardTrigger = '<c-j>'
-    let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
-  " }}}
-
-  " signify {{{
-    autocmd vimrc User Signify call lightline#update()
-
-    let g:signify_vcs_list = ['git']
-  " }}}
-
-  " vim-plug {{{
-    let g:plug_window = 'vertical belowright new'
-  " }}}
-
-  if $XDG_DATA_HOME == 0
-    let s:plugin_dir = expand('~/.local/share/vim/plugged')
-  else
-    let s:plugin_dir = $XDG_DATA_HOME.'/vim/plugged'
-  endif
-  call plug#begin(s:plugin_dir)
-  Plug 'Valloric/ListToggle'
-  Plug 'Raimondi/delimitMate'
-  Plug 'tomtom/tcomment_vim'
-  Plug 'tommcdo/vim-lion'
-  Plug 'wellle/targets.vim'
-  Plug 'tpope/vim-surround'
-  Plug 'tpope/vim-fugitive'
-  Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
-  Plug 'chrisbra/unicode.vim', { 'on': ['<Plug>(UnicodeGA)', 'UnicodeTable'] }
-  Plug 'neomake/neomake'
-  Plug 'sbdchd/neoformat'
-  Plug 'mhinz/vim-signify'
-  Plug 'itchyny/lightline.vim'
-  Plug 'editorconfig/editorconfig-vim'
-  Plug 'cespare/vim-toml'
-  Plug 'vim-pandoc/vim-pandoc' | Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
-  Plug 'hashivim/vim-vagrant'
-  Plug 'chrisbra/vim-diff-enhanced'
-  Plug 'rust-lang/rust.vim'
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
-
-  if exists('*local#plugins')
-    call local#plugins()
-  endif
-  call plug#end()
+  runtime plugins.vim
 " }}}
 
 " General {{{
+  filetype plugin indent on
   set autoread
   set hidden
   set path+=**
@@ -157,11 +47,13 @@ endif
   set shortmess+=a
   set viminfo=
 
-  set backupdir-=.
-  set backupdir-=~/
-  set backupdir+=.
-
+  if !isdirectory(g:vimdata.'/backup')
+    call mkdir(g:vimdata.'/backup', 'p')
+  endif
+  let &backupdir=g:vimdata.'/backup'
+  let &directory=g:vimdata.'/swap//'
   if exists('+undofile')
+    let &undodir=g:vimdata.'/undo'
     set undofile
 
     autocmd vimrc BufWritePre /tmp/* setlocal noundofile
@@ -184,6 +76,13 @@ endif
   set showcmd
   set noshowmode
   set laststatus=2
+  set statusline=
+  set statusline+=%{&paste?'[PASTE]\ ':''}%r%f%(\ %M%)%=
+  set statusline+=%{&spell?&spelllang.'\ ':''}
+  set statusline+=%{!empty(&ft)?&ft:'no\ ft'}
+  set statusline+=\ \|\ %{strlen(&fenc)?&fenc:&enc}
+  set statusline+=\ \|\ %{&ff}
+  set statusline+=\ :\ %3p%%\ :%3l:%-3v
   set display+=lastline
 
   set splitbelow splitright
@@ -260,7 +159,6 @@ endif
     set dictionary+=/usr/share/dict/words
   endif
   set diffopt+=iwhite
-  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 
   if exists('&inccommand')
     set inccommand=nosplit
@@ -271,8 +169,11 @@ endif
 " }}}
 
 " Commands {{{
-  command! -range Copy <line1>,<line2>write !xclip -f -sel clip
-  command! Paste read !xclip -o -sel clip
+  if executable('xclip')
+    command! -range Copy <line1>,<line2>write !xclip -f -sel clip
+    command! Paste read !xclip -o -sel clip
+  endif
+
   command! DiffOrig call s:DiffOrig()
   function! s:DiffOrig() abort
     let l:ft = &filetype
@@ -281,6 +182,7 @@ endif
     diffthis
     execute 'setlocal bt=nofile bh=wipe nobl noswf ro noma ft='.l:ft
   endfunction
+
   command! -nargs=1 EditConfig call s:EditConfig(<args>)
   function! s:EditConfig(what) abort
     let l:ft = &filetype
@@ -320,8 +222,7 @@ endif
 " Mappings {{{
   " Navigation {{{
     nnoremap gb <C-^>
-    nnoremap <silent> <expr> gB (exists(':Buffers') == 2)?':Buffers<CR>':':ls<CR>:b<SPACE>'
-    nnoremap <silent> <C-P> :Files<CR>
+    nnoremap gB :ls<CR>:b<SPACE>
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -336,9 +237,7 @@ endif
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
   nnoremap <silent> gs :silent! grep! "\b<C-R><C-W>\b"<CR>
-  nmap ga <Plug>(UnicodeGA)
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-  nnoremap <silent> <F5> :YcmForceCompileAndDiagnostics<CR>
   nnoremap <silent> <Leader>d :bd<CR>
   nnoremap <silent> <Leader>n :set relativenumber!<CR>
   nnoremap <silent> <Leader>o :set paste!<CR>
@@ -346,7 +245,6 @@ endif
   nnoremap <silent> <Leader>M :setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
   nnoremap <silent> <Leader>j :setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
-  nnoremap <silent> <Leader>g :YcmCompleter GoTo<CR>
   nnoremap <silent> <Leader>ss :set spell!<CR>
   nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
   nnoremap <silent> <Leader>ev :EditConfig('vimrc')<CR>
@@ -354,11 +252,6 @@ endif
   nnoremap <silent> <Leader>ef :EditConfig('ftplugin')<CR>
   nnoremap <silent> <Leader>es :EditConfig('syntax')<CR>
   nnoremap <silent> <Leader>ec :EditConfig('colors')<CR>
-  nnoremap <Leader>gs :Gstatus<CR>
-  nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
-  nnoremap <Leader>gl :silent! Gllog!<CR>
-  nnoremap <Leader>gd :Gvdiff<CR>
-  nnoremap <Leader>gw :Gwrite<CR>
 
   inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>
@@ -384,7 +277,7 @@ endif
     let &tags .= ','.s:gitroot.'/.git/tags'
   endif
 
-  autocmd vimrc FileType * let &l:tags = &tags.','.expand(g:vimroot.'/tags/').&ft
+  autocmd vimrc FileType * let &l:tags = &tags.','.expand(g:vimdata.'/tags/').&ft
 " }}}
 
 if exists('*local#finish')

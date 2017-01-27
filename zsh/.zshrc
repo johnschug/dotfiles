@@ -33,9 +33,11 @@ setopt pushd_ignore_dups
 setopt share_history
 
 WORDCHARS="${WORDCHARS/\/}"
-HISTFILE="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history"
-SAVEHIST=200
-HISTSIZE=1000
+if [ "$UID" -ne 0 ]; then
+  HISTFILE="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history"
+  SAVEHIST=200
+  HISTSIZE=1000
+fi
 
 # Bindings
 export KEYTIMEOUT=5
@@ -252,7 +254,9 @@ else
 fi
 
 function clear-clipboard {
-  printf '\n' | xclip -sel clip &>/dev/null
+  if hash xclip &>/dev/null; then
+    printf '\n' | xclip -sel clip &>/dev/null
+  fi
   if hash gpaste-client &>/dev/null; then
     gpaste-client empty &>/dev/null
   fi
