@@ -35,7 +35,7 @@ setopt share_history
 WORDCHARS="${WORDCHARS/\/}"
 if [ "$UID" -ne 0 ]; then
   HISTFILE="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history"
-  SAVEHIST=200
+  SAVEHIST=500
   HISTSIZE=1000
 fi
 
@@ -191,29 +191,29 @@ function {
     local COLOR5="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x85 0x99 0x00)%}"
     local COLOR6="%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
   elif [ -n "$NOPALETTE" ]; then
-    local COLOR0="%243F"
-    local COLOR1="%31F"
-    local COLOR2="%25F"
-    local COLOR3="%33F"
-    local COLOR4="%245F"
-    local COLOR5="%100F"
-    local COLOR6="%160F"
+    local COLOR0='%243F'
+    local COLOR1='%31F'
+    local COLOR2='%25F'
+    local COLOR3='%33F'
+    local COLOR4='%245F'
+    local COLOR5='%100F'
+    local COLOR6='%160F'
   elif [ "$COLORS" -ge 16 ]; then
-    local COLOR0="%11F"
-    local COLOR1="%F{yellow}"
-    local COLOR2="%F{magenta}"
-    local COLOR3="%F{blue}"
-    local COLOR4="%12F"
-    local COLOR5="%F{green}"
-    local COLOR6="%F{red}"
+    local COLOR0='%11F'
+    local COLOR1='%F{yellow}'
+    local COLOR2='%F{magenta}'
+    local COLOR3='%F{blue}'
+    local COLOR4='%12F'
+    local COLOR5='%F{green}'
+    local COLOR6='%F{red}'
   else
-    local COLOR0="%F{white}"
-    local COLOR1="%F{blue}"
-    local COLOR2="%F{blue}"
-    local COLOR3="%F{cyan}"
-    local COLOR4="%F{white}"
-    local COLOR5="%F{green}"
-    local COLOR6="%F{red}"
+    local COLOR0='%F{white}'
+    local COLOR1='%F{blue}'
+    local COLOR2='%F{blue}'
+    local COLOR3='%F{cyan}'
+    local COLOR4='%F{white}'
+    local COLOR5='%F{green}'
+    local COLOR6='%F{red}'
   fi
 
   PROMPT="${COLOR0}%1v%h ["

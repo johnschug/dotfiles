@@ -4,7 +4,7 @@ if [ -n "$currentv4" ]; then
   printf %s\\n "$currentv4"
 fi
 
-currentv6=$(ip -6 -o addr show scope global | head -n1 | awk '{ print $4 }' | cut -d/ -f1)
+currentv6=$(ip -6 -o addr show scope global | awk 'NR==1{ print $4 }' | cut -d/ -f1)
 if [ -n "$currentv6" ]; then
   printf %s\\n "$currentv6"
 fi

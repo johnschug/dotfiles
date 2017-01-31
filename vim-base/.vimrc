@@ -46,13 +46,19 @@ endif
   set shortmess+=a
   set viminfo=
 
-  if !isdirectory(g:vimdata.'/backup')
-    call mkdir(g:vimdata.'/backup', 'p')
-  endif
   let &backupdir=g:vimdata.'/backup'
+  if !isdirectory(&backupdir)
+    call mkdir(&backupdir, 'p')
+  endif
   let &directory=g:vimdata.'/swap//'
+  if !isdirectory(&directory)
+    call mkdir(&directory, 'p')
+  endif
   if exists('+undofile')
     let &undodir=g:vimdata.'/undo'
+    if !isdirectory(&undodir)
+      call mkdir(&undodir, 'p')
+    endif
     set undofile
 
     autocmd vimrc BufWritePre /tmp/* setlocal noundofile
