@@ -5,18 +5,19 @@ fpath=("${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/functions" $fpath)
 path=(~/.local/bin $path)
 manpath=("${XDG_DATA_HOME:-${HOME}/.local/share}/man" $manpath "")
 
-export PAGER="less"
-export LESS="-Rgi"
-export LESSHISTFILE="-"
+export LANG='en_US.UTF-8'
+export PAGER='less'
+export LESS='-Rgi'
+export LESSHISTFILE='-'
 if hash nvim &>/dev/null; then
   export MANPAGER="env MANPATH=\"${MANPATH}\" nvim -c 'set ft=man' -"
-  export EDITOR="nvim"
+  export EDITOR='nvim'
 else
   export MANPAGER="env MAN_PN=1 MANPATH=\"${MANPATH}\" vim -RM +MANPAGER -"
-  export EDITOR="vim"
+  export EDITOR='vim'
 fi
 export VISUAL="$EDITOR"
-export SUDO_EDITOR="vim"
+export SUDO_EDITOR='vim'
 
 if [ -S "/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
   export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"

@@ -179,7 +179,7 @@ endif
     command! Paste read !xclip -o -sel clip
   endif
 
-  command! DiffOrig call s:DiffOrig()
+  command! DiffOrig call <SID>DiffOrig()
   function! s:DiffOrig() abort
     let l:ft = &filetype
     diffthis
@@ -188,7 +188,7 @@ endif
     execute 'setlocal bt=nofile bh=wipe nobl noswf ro noma ft='.l:ft
   endfunction
 
-  command! -nargs=1 EditConfig call s:EditConfig(<args>)
+  command! -nargs=1 EditConfig call <SID>EditConfig(<args>)
   function! s:EditConfig(what) abort
     let l:ft = &filetype
     if a:what ==# 'vimrc'
@@ -241,7 +241,7 @@ endif
   nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
   nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
-  nnoremap <silent> gs :silent! grep! "\b<C-R><C-W>\b"<CR>
+  nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
   nnoremap <silent> <Leader>d :bd<CR>
   nnoremap <silent> <Leader>n :set relativenumber!<CR>

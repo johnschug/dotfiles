@@ -1,5 +1,5 @@
 [core]
-	excludesfile = ~/.config/ignore
+	excludesfile = ~/.config/git/ignore
 	autocrlf=input
 [color]
 	ui = auto
@@ -24,7 +24,7 @@
 [rebase]
 	autoStash = true
 [commit]
-	template = ~/.config/commit-template
+	template = ~/.config/git/commit-template
 [gpg]
 	program = gpg2
 [user]
@@ -33,6 +33,10 @@
 	email = john.ips.schug@gmail.com
 [log]
 	mailmap = true
+	decorate = auto
+	follow = true
+[status]
+	short = true
 [pretty]
 	compact = "format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?"
 [alias]
@@ -48,7 +52,7 @@
 	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo "$1" >>.gitignore
 	type = cat-file -t
 	dump = cat-file -p
-	st = status -s
+	st = status
 [include]
 	path = ~/.config/config.local
 # vim:set sw=4 sts=4 ts=4 noet:

@@ -23,6 +23,7 @@ setopt extended_glob
 setopt extended_history
 setopt glob_complete
 setopt hist_ignore_all_dups
+setopt hist_ignore_space
 setopt hist_no_store
 setopt hist_reduce_blanks
 setopt hist_save_no_dups
@@ -102,29 +103,33 @@ zle -N cd-undo
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
-autoload -Uz add-zsh-hook cdr chpwd_recent_dirs compinit vcs_info zmv
-compinit
-add-zsh-hook chpwd chpwd_recent_dirs
+autoload -Uz compinit vcs_info zmv
 
 # Completion
-compdef gpg2=gpg
 zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-${HOME}/.cache}/zsh"
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/completions"
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:matches' group yes
-zstyle ':completion:*:functions' ignored-patterns '_*'
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':completion:*:approximate:*' max-errors 2
-zstyle ':completion:*:processes' command 'ps --forest -e -o pid,user,tty,comm'
-zstyle ':completion:*:processes-names' command 'ps -u ${USER} -o comm | uniq'
-zstyle ':completion:*:*:kill:*:processes' command 'ps -o pid,tty,comm'
+zstyle ':completion:*:approximate:*' max-errors 2 numeric
+zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
+zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
+
+_zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump-${ZSH_VERSION}"
+if [[ -e "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
+  zcompile "$_zcompdump"
+fi
+
+compinit -i -d "$_zcompdump"
+compdef gpg2=gpg
 
 # VCS Info
 zstyle ':vcs_info:*' check-for-changes true
@@ -240,6 +245,7 @@ alias cpv='rsync -pogh --progress'
 alias ln='ln -v'
 alias zcp='zmv -C'
 alias zln='zmv -L'
+alias ip='ip -c'
 alias sudop='sudo env PATH="$PATH"'
 if hash nvim &>/dev/null; then
   alias vim='nvim'
