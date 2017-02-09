@@ -121,17 +121,16 @@ call plug#end()
 " Settings {{{
   let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 
-  if executable('sk')
-    if executable('rg')
-      let $SKIM_DEFAULT_COMMAND='rg --files'
-    elseif executable('ag')
-      let $SKIM_DEFAULT_COMMAND='ag -g ""'
-    endif
+  if executable('rg')
+    let $SKIM_DEFAULT_COMMAND='rg --files'
+  elseif executable('ag')
+    let $SKIM_DEFAULT_COMMAND='ag -l -g ""'
   endif
+  let $FZF_DEFAULT_COMMAND=$SKIM_DEFAULT_COMMAND
 " }}}
 
 " Mappings {{{
-  if executable('sk')
+  if executable('sk') || executable('fzf')
     nnoremap <silent> <C-J> :Buffers<CR>
     nnoremap <silent> <C-P> :Files<CR>
   endif

@@ -52,7 +52,6 @@ bindkey '^k' insert-composed-char
 bindkey '^v' insert-unicode-char
 bindkey '^p' history-beginning-search-backward-end
 bindkey '^n' history-beginning-search-forward-end
-bindkey '^r' history-incremental-pattern-search-backward
 bindkey '^t' cd-parent
 bindkey '^e' cd-undo
 bindkey '^[s' insert-sudo
@@ -82,12 +81,14 @@ function cd-parent {
   pushd .. &>/dev/null
   precmd
   zle reset-prompt
+  zle zle-line-init
 }
 
 function cd-undo {
   popd &>/dev/null
   precmd
   zle reset-prompt
+  zle zle-line-init
 }
 
 autoload -Uz edit-command-line insert-composed-char insert-unicode-char history-search-end
@@ -114,6 +115,7 @@ zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' insert-unambiguous true
 zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:matches' group yes

@@ -270,6 +270,7 @@ endif
 
 " File Type {{{
   autocmd vimrc FileType vim setlocal keywordprg=:help
+  autocmd vimrc FileType man setlocal nolist noexpandtab sw=8 sts=8 ts=8
   autocmd vimrc FileType gitcommit,text,markdown,pandoc,html,c,cpp,rust setlocal spell
 " }}}
 
