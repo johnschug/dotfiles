@@ -1,5 +1,5 @@
 #!/bin/sh
-currentv4=$(wget -4 -q -O - http://api.ipify.org | sed 's/[^0-9.]//g')
+currentv4=$(dig +short myip.opendns.com @resolver1.opendns.com)
 if [ -n "$currentv4" ]; then
   printf %s\\n "$currentv4"
 fi

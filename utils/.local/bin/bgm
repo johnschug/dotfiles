@@ -3,7 +3,7 @@ set -euf
 
 srcdir="$HOME/Pictures/shared"
 bgdir="$HOME/Pictures/wallpapers"
-blacklist="${bgdir}/.blacklist"
+blacklist="${srcdir}/.blacklist"
 history="${bgdir}/.history"
 
 if [[ $XDG_CURRENT_DESKTOP =~ GNOME ]]; then
@@ -77,7 +77,9 @@ blacklist() {
   scan
 }
 
-case "$1" in
+cmd="$1"
+shift
+case "$cmd" in
   scan|rescan)
     scan
     ;;
@@ -85,7 +87,6 @@ case "$1" in
     rotate
     ;;
   blacklist)
-    shift
     blacklist "$@"
     ;;
 esac
