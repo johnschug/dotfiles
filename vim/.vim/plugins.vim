@@ -68,6 +68,11 @@ scriptencoding utf-8
     endif
   " }}}
 
+  " completor {{{
+    let g:completor_ocaml_omni_trigger = '(?:\w{2,}|\.\w*|\#\w*)$'
+    let g:completor_haskell_trigger = '(?:\w{2,}|\.\w*)$'
+  " }}}
+
   " delimitMate {{{
     let g:delimitMate_expand_space = 1
     let g:delimitMate_expand_cr = 2
@@ -107,11 +112,13 @@ Plug 'mhinz/vim-signify'
 Plug 'itchyny/lightline.vim'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'cespare/vim-toml'
+Plug 'itchyny/vim-haskell-indent'
 Plug 'vim-pandoc/vim-pandoc' | Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc' }
 Plug 'hashivim/vim-vagrant'
 Plug 'chrisbra/vim-diff-enhanced'
 Plug 'rust-lang/rust.vim'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
+Plug 'maralla/completor.vim'
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer' }
 
 if exists('*local#plugins')
   call local#plugins()
@@ -127,6 +134,10 @@ call plug#end()
     let $SKIM_DEFAULT_COMMAND='ag -l -g ""'
   endif
   let $FZF_DEFAULT_COMMAND=$SKIM_DEFAULT_COMMAND
+
+  if executable('hindent')
+    autocmd vimrc FileType haskell setlocal equalprg=hindent
+  endif
 " }}}
 
 " Mappings {{{

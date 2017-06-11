@@ -142,6 +142,7 @@ exe 'hi! Statement'      .s:fmt_none   .s:fg_green  .s:bg_none
 "        Operator        "sizeof", "+", "*", etc.
 "        Keyword         any other keyword
 "        Exception       try, catch, throw
+exe 'hi! Exception'      .s:fmt_bold   .s:fg_green .s:bg_none
 
 exe 'hi! PreProc'        .s:fmt_none   .s:fg_orange .s:bg_none
 "       *PreProc         generic Preprocessor

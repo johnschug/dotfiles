@@ -9,8 +9,7 @@ augroup vimrc
 augroup END
 
 if has('gui_running')
-  set guioptions-=m
-  set guioptions+=M
+  set guioptions-=m guioptions+=M
 endif
 
 if !exists('g:vim_root')
@@ -25,16 +24,18 @@ else
   let g:vimdata = expand('~/.local/share/vim')
 endif
 
-runtime local.vim
-
-if exists('*local#init')
-  call local#init()
+if filereadable(g:vimroot.'/local.vim')
+  exe 'source '.g:vimroot.'/local.vim'
+  exe 'autocmd vimrc BufWritePost '.resolve(g:vimroot).'/local.vim nested source $MYVIMRC'
 endif
 " }}}
 
 " Plugins {{{
   runtime! macros/matchit.vim
-  runtime plugins.vim
+  if filereadable(g:vimroot.'/plugins.vim')
+    exe 'source '.g:vimroot.'/plugins.vim'
+    exe 'autocmd vimrc BufWritePost '.resolve(g:vimroot).'/plugins.vim nested source $MYVIMRC'
+  endif
 " }}}
 
 " General {{{
@@ -64,7 +65,7 @@ endif
     autocmd vimrc BufWritePre /tmp/* setlocal noundofile
   endif
 
-  autocmd vimrc BufWritePost _vimrc,.vimrc nested source $MYVIMRC
+  autocmd vimrc BufWritePost $MYVIMRC nested source $MYVIMRC
 " }}}
 
 " Interface {{{
@@ -106,6 +107,7 @@ endif
 
   set wildmenu
   set wildignorecase
+  set wildmode=longest:full,full
   set wildignore+=*.swp,*.bak,.DS_Store,._*,*~
   set wildignore+=*.pyc,*.rlib,*.class,*.o,*.obj,*.a,*.lib,*.so,*.dll,*.pdb
   set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
@@ -120,11 +122,7 @@ endif
     else
       set guifont^=Source\ Code\ Pro\ 10,Noto\ Mono\ 10,DejaVu\ Sans\ Mono\ 10
     endif
-    set guioptions-=r
-    set guioptions-=R
-    set guioptions-=l
-    set guioptions-=L
-    set guioptions-=T
+    set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T
   endif
 
   let g:breeze_use_palette = !$NOPALETTE
@@ -134,10 +132,12 @@ endif
   autocmd vimrc InsertLeave * set relativenumber
   autocmd vimrc WinEnter * if exists('w:cursor') |
         \ let [&cursorline, &cursorcolumn] = w:cursor |
+        \ elseif &buftype ==# 'terminal' |
+        \ setlocal nocursorcolumn nocursorline |
         \ endif
   autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn] |
         \ setlocal nocursorline nocursorcolumn
-  autocmd vimrc FileType qf,netrw nested setlocal cursorline nocursorcolumn
+  autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn
 " }}}
 
 " Editing {{{
@@ -193,6 +193,8 @@ endif
     let l:ft = &filetype
     if a:what ==# 'vimrc'
       let l:file = expand($MYVIMRC)
+    elseif a:what ==# 'plugins'
+      let l:file = g:vimroot.'/plugins.vim'
     elseif a:what ==# 'local'
       let l:file = g:vimroot.'/local.vim'
     elseif a:what ==# 'colors'
@@ -253,6 +255,7 @@ endif
   nnoremap <silent> <Leader>ss :set spell!<CR>
   nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
   nnoremap <silent> <Leader>ev :EditConfig('vimrc')<CR>
+  nnoremap <silent> <Leader>ep :EditConfig('plugins')<CR>
   nnoremap <silent> <Leader>el :EditConfig('local')<CR>
   nnoremap <silent> <Leader>ef :EditConfig('ftplugin')<CR>
   nnoremap <silent> <Leader>es :EditConfig('syntax')<CR>
@@ -269,12 +272,15 @@ endif
 " }}}
 
 " File Type {{{
+  let g:rust_fold = 1
+
   autocmd vimrc FileType vim setlocal keywordprg=:help
   autocmd vimrc FileType man setlocal nolist noexpandtab sw=8 sts=8 ts=8
   autocmd vimrc FileType gitcommit,text,markdown,pandoc,html,c,cpp,rust setlocal spell
 " }}}
 
 " Projects {{{
+  set tagcase=smart
   set tags=./tags;,tags
 
   let s:gitroot = get(systemlist('git rev-parse --show-toplevel'), 0, '')

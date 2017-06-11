@@ -1,6 +1,9 @@
 # Start tmux
 if hash tmux &> /dev/null; then
   if [ -z "$TMUX" ]; then
+    if [ -n "$SSH_CLIENT" ]; then
+      read -sk '?Press any key to continue...'
+    fi
     if hash systemd-run &>/dev/null; then
       systemd-run --user --scope -q tmux new -d -s DEFAULT &>/dev/null
     fi
@@ -27,14 +30,14 @@ setopt hist_ignore_space
 setopt hist_no_store
 setopt hist_reduce_blanks
 setopt hist_save_no_dups
+setopt inc_append_history
 setopt interactive_comments
 setopt noclobber
 setopt notify
 setopt pushd_ignore_dups
-setopt share_history
 
 WORDCHARS="${WORDCHARS/\/}"
-if [ "$UID" -ne 0 ]; then
+if [ "$EUID" -ne 0 ]; then
   HISTFILE="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history"
   SAVEHIST=500
   HISTSIZE=1000
@@ -104,9 +107,8 @@ zle -N cd-undo
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
-autoload -Uz compinit vcs_info zmv
-
 # Completion
+autoload -Uz compinit bashcompinit
 zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/completions"
@@ -125,15 +127,19 @@ zstyle ':completion:*:approximate:*' max-errors 2 numeric
 zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
 zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
 
-_zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump-${ZSH_VERSION}"
-if [[ -e "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
-  zcompile "$_zcompdump"
-fi
+function {
+  local _zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump-${ZSH_VERSION}"
+  if [[ -e "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
+    zcompile "$_zcompdump"
+  fi
 
-compinit -i -d "$_zcompdump"
-compdef gpg2=gpg
+  compinit -i -d "$_zcompdump"
+  bashcompinit
+  compdef gpg2=gpg
+}
 
 # VCS Info
+autoload -Uz vcs_info
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' get-revision true
 zstyle ':vcs_info:*' stagedstr '+'
@@ -250,7 +256,7 @@ alias ip='ip -c'
 alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
 if hash rg &>/dev/null; then
-  alias rg='rg -S'
+  alias rg='rg'
   alias grep='rg -S'
 elif hash ag &>/dev/null; then
   alias grep='ag'
@@ -268,6 +274,7 @@ else
   alias bvim='vim -b'
   alias bview='vim -Rb'
 fi
+alias strace='strace -y '
 
 function clear-clipboard {
   if hash xclip &>/dev/null; then

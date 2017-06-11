@@ -1,6 +1,6 @@
 [core]
 	excludesfile = ~/.config/git/ignore
-	autocrlf=input
+	autocrlf = input
 [color]
 	ui = auto
 [diff]
@@ -54,5 +54,5 @@
 	dump = cat-file -p
 	st = status
 [include]
-	path = ~/.config/config.local
+	path = ~/.config/git/local.conf
 # vim:set sw=4 sts=4 ts=4 noet:

@@ -67,7 +67,6 @@ syn keyword tmuxOptsSet prefix prefix2 status status-fg status-bg bell-action
 syn keyword tmuxOptsSet default-command history-limit status-left status-right
 syn keyword tmuxOptsSet status-interval set-titles display-time buffer-limit
 syn keyword tmuxOptsSet status-left-length status-right-length status-position
-syn keyword tmuxOptsSet message-style message-command-style
 syn keyword tmuxOptsSet message-command-bg message-bg lock-after-time default-path
 syn keyword tmuxOptsSet message-command-attr message-attr status-attr set-remain-on-exit
 syn keyword tmuxOptsSet status-utf8 default-terminal visual-activity repeat-time
@@ -80,6 +79,7 @@ syn keyword tmuxOptsSet set-titles-string lock-command lock-server
 syn keyword tmuxOptsSet mouse-select-pane message-limit quiet escape-time
 syn keyword tmuxOptsSet pane-active-border-bg pane-active-border-fg
 syn keyword tmuxOptsSet pane-border-bg pane-border-fg message-command-fg message-fg
+syn keyword tmuxOptsSet pane-border-status pane-border-format
 syn keyword tmuxOptsSet display-panes-active-colour alternate-screen
 syn keyword tmuxOptsSet detach-on-destroy word-separators
 syn keyword tmuxOptsSet destroy-unattached exit-unattached focus-events set-clipboard
@@ -168,8 +168,9 @@ syn match tmuxVariable          /\w\+=/                 display
 syn match tmuxVariableExpansion /\${\=\w\+}\=/          display
 syn match tmuxAdditionalCommand /\\;/ display
 
-" concatenating flag '-t' and table name is a valid syntax
+" concatenating flag '-t' or '-T' and table name is a valid syntax
 syn match tmuxKeyTable /\s\(-t\)\?\(vi-edit\|emacs-edit\|vi-choice\|emacs-choice\|vi-copy\|emacs-copy\)/ display
+syn match tmuxKeyTable /\s\(-T\)\?copy-mode\(-vi\)\?/ display
 
 syn match tmuxColor /\(bright\)\?\(black\|red\|green\|yellow\|blue\|magenta\|cyan\|white\)/ display
 syn match tmuxColor /default/        display
