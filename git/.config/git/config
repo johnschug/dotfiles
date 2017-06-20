@@ -38,17 +38,31 @@
 [status]
 	short = true
 [pretty]
-	compact = "format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?"
+	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?
+[url "git@github.com:"]
+	pushInsteadOf = gh:
+	pushInsteadOf = git://github.com/
+	pushInsteadOf = https://github.com/
+[url "https://github.com/"]
+	insteadOf = gh:
+[url "https://gist.github.com/"]
+	insteadOf = gist:
+[url "git@bitbucket.org:"]
+	pushInsteadOf = bb:
+	pushInsteadOf = git://bitbucket.org/
+	pushInsteadOf = https://bitbucket.org/
+[url "https://bitbucket.org/"]
+	insteadOf = bb:
 [alias]
-	amend = "commit --amend -C HEAD"
+	amend = commit --amend -C HEAD
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
-	assume = "update-index --assume-unchanged -- "
-	unassume = "update-index --no-assume-unchanged -- "
-	assumed = "!git ls-files -v | grep ^h | cut -c 3-"
-	compact-log = "log --pretty=compact"
-	tree-log = "log --pretty=compact --graph"
-	clog = "log --pretty=compact"
-	tlog = "log --pretty=compact --graph"
+	assume = update-index --assume-unchanged --
+	unassume = update-index --no-assume-unchanged --
+	assumed = !git ls-files -v | grep ^h | cut -c 3-
+	compact-log = log --pretty=compact
+	tree-log = log --pretty=compact --graph
+	clog = log --pretty=compact
+	tlog = log --pretty=compact --graph
 	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo "$1" >>.gitignore
 	type = cat-file -t
 	dump = cat-file -p

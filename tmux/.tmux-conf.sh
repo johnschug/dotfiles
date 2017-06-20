@@ -1,31 +1,30 @@
 #!/bin/sh
-
 if which tput >/dev/null 2>&1; then
-  COLORS="$(tput colors)"
+  COLORS=$(tput "-T${1:-$TERM}" colors)
 else
   COLORS=
 fi
 if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-    tmux set -ga terminal-overrides ",xterm-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
+    tmux set-option -ga terminal-overrides ",xterm-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
 fi
 
-if [ "$COLORS" -ge 256 ]; then
+if [ "$COLORS" -ge 256 ] || [ "$COLORTERM" = "truecolor" ]; then
   if infocmp tmux-256color >/dev/null 2>&1; then
-    tmux set -g default-terminal tmux-256color
+    tmux set-option -g default-terminal tmux-256color
   else
-    tmux set -g default-terminal screen-256color
+    tmux set-option -g default-terminal screen-256color
   fi
 elif [ "$COLORS" -ge 16 ]; then
   if infocmp tmux-16color >/dev/null 2>&1; then
-    tmux set -g default-terminal tmux-16color
+    tmux set-option -g default-terminal tmux-16color
   else
-    tmux set -g default-terminal screen-16color
+    tmux set-option -g default-terminal screen-16color
   fi
 else
   if infocmp tmux >/dev/null 2>&1; then
-    tmux set -g default-terminal tmux
+    tmux set-option -g default-terminal tmux
   else
-    tmux set -g default-terminal screen
+    tmux set-option -g default-terminal screen
   fi
 fi
 
@@ -68,11 +67,11 @@ else
   COLOR6="cyan"
   COLOR7="blue"
 fi
-tmux set -g window-style "bg=${COLOR0},fg=${COLOR1}"
-tmux set -g message-style "bg=${COLOR2},fg=${COLOR3}"
-tmux set -g message-command-style "bg=${COLOR2},fg=${COLOR3}"
-tmux set -g status-style "bg=${COLOR2},fg=${COLOR3}"
-tmux set -g status-left "#[bg=${COLOR4},fg=${COLOR0}] #S #[bg=${COLOR5}] #{session_width}x#{session_height} "
-tmux set -g status-right "#[bg=${COLOR6},fg=${COLOR0}]#{?client_prefix, P ,}#[bg=${COLOR5}] #(cut -f1-4 -d' ' /proc/loadavg) #[bg=${COLOR4}] %F %R "
-tmux set -g window-status-format " #I) #T (#W) "
-tmux set -g window-status-current-format "#[bg=${COLOR7},bold] #I) #T "
+tmux set-option -wg window-style "bg=${COLOR0},fg=${COLOR1}"
+tmux set-option -g message-style "bg=${COLOR2},fg=${COLOR3}"
+tmux set-option -g message-command-style "bg=${COLOR2},fg=${COLOR3}"
+tmux set-option -g status-style "bg=${COLOR2},fg=${COLOR3}"
+tmux set-option -g status-left "#[bg=${COLOR4},fg=${COLOR0}] #S #[bg=${COLOR5}] #{session_width}x#{session_height} "
+tmux set-option -g status-right "#[bg=${COLOR6},fg=${COLOR0}]#{?client_prefix, P ,}#[bg=${COLOR5}] #(cut -f1-4 -d' ' /proc/loadavg) #[bg=${COLOR4}] %F %R "
+tmux set-option -wg window-status-format " #I) #T (#W) "
+tmux set-option -wg window-status-current-format "#[bg=${COLOR7},bold] #I) #T "

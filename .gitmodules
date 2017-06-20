@@ -1,12 +1,78 @@
 [submodule ".zsh/plugins/zsh-syntax-highlighting"]
 	path = zsh/.local/share/zsh/plugins/zsh-syntax-highlighting
-	url = git://github.com/zsh-users/zsh-syntax-highlighting.git
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
 [submodule ".zsh/plugins/zsh-completions"]
 	path = zsh/.local/share/zsh/plugins/zsh-completions
-	url = git://github.com/zsh-users/zsh-completions.git
+	url = https://github.com/zsh-users/zsh-completions.git
 [submodule ".zsh/plugins/zsh-autosuggestions"]
 	path = zsh/.local/share/zsh/plugins/zsh-autosuggestions
-	url = git://github.com/zsh-users/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
 [submodule "neofetch/neofetch"]
 	path = neofetch/neofetch
 	url = https://github.com/dylanaraps/neofetch.git
+[submodule "vim/.vim/pack/bundle/start/neomake"]
+	path = vim/.vim/pack/bundle/start/neomake
+	url = https://github.com/neomake/neomake
+[submodule "vim/.vim/pack/bundle/start/targets.vim"]
+	path = vim/.vim/pack/bundle/start/targets.vim
+	url = https://github.com/wellle/targets.vim
+[submodule "vim/.vim/pack/bundle/start/vim-surround"]
+	path = vim/.vim/pack/bundle/start/vim-surround
+	url = https://github.com/tpope/vim-surround
+[submodule "vim/.vim/pack/bundle/start/vim-fugitive"]
+	path = vim/.vim/pack/bundle/start/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "vim/.vim/pack/bundle/start/ultisnips"]
+	path = vim/.vim/pack/bundle/start/ultisnips
+	url = https://github.com/SirVer/ultisnips
+[submodule "vim/.vim/pack/bundle/start/vim-snippets"]
+	path = vim/.vim/pack/bundle/start/vim-snippets
+	url = https://github.com/honza/vim-snippets
+[submodule "vim/.vim/pack/bundle/start/unicode.vim"]
+	path = vim/.vim/pack/bundle/start/unicode.vim
+	url = https://github.com/chrisbra/unicode.vim
+[submodule "vim/.vim/pack/bundle/start/vim-signify"]
+	path = vim/.vim/pack/bundle/start/vim-signify
+	url = https://github.com/mhinz/vim-signify
+[submodule "vim/.vim/pack/bundle/start/lightline.vim"]
+	path = vim/.vim/pack/bundle/start/lightline.vim
+	url = https://github.com/itchyny/lightline.vim
+[submodule "vim/.vim/pack/bundle/start/editorconfig-vim"]
+	path = vim/.vim/pack/bundle/start/editorconfig-vim
+	url = https://github.com/editorconfig/editorconfig-vim
+[submodule "vim/.vim/pack/bundle/start/vim-toml"]
+	path = vim/.vim/pack/bundle/start/vim-toml
+	url = https://github.com/cespare/vim-toml
+[submodule "vim/.vim/pack/bundle/start/vim-haskell-indent"]
+	path = vim/.vim/pack/bundle/start/vim-haskell-indent
+	url = https://github.com/itchyny/vim-haskell-indent
+[submodule "vim/.vim/pack/bundle/start/vim-pandoc"]
+	path = vim/.vim/pack/bundle/start/vim-pandoc
+	url = https://github.com/vim-pandoc/vim-pandoc
+[submodule "vim/.vim/pack/bundle/start/vim-pandoc-syntax"]
+	path = vim/.vim/pack/bundle/start/vim-pandoc-syntax
+	url = https://github.com/vim-pandoc/vim-pandoc-syntax
+[submodule "vim/.vim/pack/bundle/start/vim-vagrant"]
+	path = vim/.vim/pack/bundle/start/vim-vagrant
+	url = https://github.com/hashivim/vim-vagrant
+[submodule "vim/.vim/pack/bundle/start/vim-diff-enhanced"]
+	path = vim/.vim/pack/bundle/start/vim-diff-enhanced
+	url = https://github.com/chrisbra/vim-diff-enhanced
+[submodule "vim/.vim/pack/bundle/start/rust.vim"]
+	path = vim/.vim/pack/bundle/start/rust.vim
+	url = https://github.com/rust-lang/rust.vim
+[submodule "vim/.vim/pack/bundle/start/completor.vim"]
+	path = vim/.vim/pack/bundle/start/completor.vim
+	url = https://github.com/maralla/completor.vim
+[submodule "vim/.vim/pack/bundle/start/ListToggle"]
+	path = vim/.vim/pack/bundle/start/ListToggle
+	url = https://github.com/Valloric/ListToggle
+[submodule "vim/.vim/pack/bundle/start/delimitMate"]
+	path = vim/.vim/pack/bundle/start/delimitMate
+	url = https://github.com/Raimondi/delimitMate
+[submodule "vim/.vim/pack/bundle/start/tcomment_vim"]
+	path = vim/.vim/pack/bundle/start/tcomment_vim
+	url = https://github.com/tomtom/tcomment_vim
+[submodule "vim/.vim/pack/bundle/start/vim-lion"]
+	path = vim/.vim/pack/bundle/start/vim-lion
+	url = https://github.com/tommcdo/vim-lion

@@ -8,34 +8,25 @@ augroup vimrc
   autocmd!
 augroup END
 
-if has('gui_running')
-  set guioptions-=m guioptions+=M
-endif
-
-if !exists('g:vim_root')
-  let g:vimroot = split(&runtimepath, ',')[0]
-endif
-
+let g:vimconf = expand('<sfile>:p:h')
 if !empty($XDG_DATA_HOME)
   let g:vimdata = $XDG_DATA_HOME.'/vim'
 elseif has('win32') || has('win64')
-  let g:vimdata = !empty($LOCALAPPDATA) ? $LOCALAPPDATA.'/vim' : g:vimroot
+  let g:vimdata = !empty($LOCALAPPDATA) ? $LOCALAPPDATA.'/vim' : g:vimconf
 else
   let g:vimdata = expand('~/.local/share/vim')
 endif
 
-if filereadable(g:vimroot.'/local.vim')
-  exe 'source '.g:vimroot.'/local.vim'
-  exe 'autocmd vimrc BufWritePost '.resolve(g:vimroot).'/local.vim nested source $MYVIMRC'
+runtime local.vim
+
+if has('gui_running')
+  set guioptions-=m guioptions+=M
 endif
 " }}}
 
 " Plugins {{{
   runtime! macros/matchit.vim
-  if filereadable(g:vimroot.'/plugins.vim')
-    exe 'source '.g:vimroot.'/plugins.vim'
-    exe 'autocmd vimrc BufWritePost '.resolve(g:vimroot).'/plugins.vim nested source $MYVIMRC'
-  endif
+  runtime plugins.vim
 " }}}
 
 " General {{{
@@ -191,25 +182,12 @@ endif
   command! -nargs=1 EditConfig call <SID>EditConfig(<args>)
   function! s:EditConfig(what) abort
     let l:ft = &filetype
-    if a:what ==# 'vimrc'
-      let l:file = expand($MYVIMRC)
-    elseif a:what ==# 'plugins'
-      let l:file = g:vimroot.'/plugins.vim'
-    elseif a:what ==# 'local'
-      let l:file = g:vimroot.'/local.vim'
-    elseif a:what ==# 'colors'
-      let l:colors = get(g:, 'colors_name', '')
-      if empty(l:colors)
-        return
-      endif
-      let l:file = g:vimroot.'/colors/'.l:colors.'.vim'
-    elseif !isdirectory(globpath(g:vimroot, a:what)) || empty(l:ft)
+    if !isdirectory(globpath(g:vimconf, a:what)) || empty(l:ft)
       return
     else
-      let l:file = g:vimroot.'/'.a:what.'/'.l:ft.'.vim'
+      let l:file = g:vimconf.'/'.a:what.'/'.l:ft.'.vim'
     endif
     execute ':vsplit '.l:file
-    execute ':lcd %:p:h'
   endfunction
 
   autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
@@ -254,12 +232,12 @@ endif
   nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
   nnoremap <silent> <Leader>ss :set spell!<CR>
   nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
-  nnoremap <silent> <Leader>ev :EditConfig('vimrc')<CR>
-  nnoremap <silent> <Leader>ep :EditConfig('plugins')<CR>
-  nnoremap <silent> <Leader>el :EditConfig('local')<CR>
+  nnoremap <silent> <Leader>ev :vsplit $MYVIMRC<CR>
+  nnoremap <silent> <expr> <Leader>el ':vsplit '.g:vimconf.'/local.vim<CR>'
+  nnoremap <silent> <expr> <Leader>ep ':vsplit '.g:vimconf.'/plugins.vim<CR>'
+  nnoremap <silent> <expr> <Leader>ec ':vsplit '.g:vimconf.'/colors/'.g:colors_name.'.vim<CR>'
   nnoremap <silent> <Leader>ef :EditConfig('ftplugin')<CR>
   nnoremap <silent> <Leader>es :EditConfig('syntax')<CR>
-  nnoremap <silent> <Leader>ec :EditConfig('colors')<CR>
 
   inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>
@@ -267,8 +245,8 @@ endif
   xnoremap ae :<C-U>normal! ggVG<CR>
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
-  cabbrev %% <C-R>=fnameescape(expand('%'))<CR>
-  cabbrev :: <C-R>=fnameescape(expand('%:h'))<CR>
+  cabbrev <expr> %% fnameescape(expand('%'))
+  cabbrev <expr> :: fnameescape(expand('%:h'))
 " }}}
 
 " File Type {{{
