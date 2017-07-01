@@ -25,6 +25,7 @@ endif
 " }}}
 
 " Plugins {{{
+  let g:netrw_home = g:vimdata
   runtime! macros/matchit.vim
   runtime plugins.vim
 " }}}
@@ -38,24 +39,28 @@ endif
   set shortmess+=a
   set viminfo=
 
-  let &backupdir=g:vimdata.'/backup'
+  set backupskip+=*/tmp/*,/dev/shm/*
+  let &backupdir = g:vimdata.'/backup'
   if !isdirectory(&backupdir)
     call mkdir(&backupdir, 'p')
   endif
-  let &directory=g:vimdata.'/swap//'
+
+  let &directory = g:vimdata.'/swap//'
   if !isdirectory(&directory)
     call mkdir(&directory, 'p')
   endif
+
   if exists('+undofile')
-    let &undodir=g:vimdata.'/undo'
+    autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/* setlocal noundofile
+
+    let &undodir = g:vimdata.'/undo'
     if !isdirectory(&undodir)
       call mkdir(&undodir, 'p')
     endif
     set undofile
-
-    autocmd vimrc BufWritePre /tmp/* setlocal noundofile
   endif
 
+  autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/* setlocal noswapfile
   autocmd vimrc BufWritePost $MYVIMRC nested source $MYVIMRC
 " }}}
 
@@ -139,6 +144,7 @@ endif
   set softtabstop=2
   set tabstop=2
 
+  set confirm
   set nostartofline
   set matchpairs+=<:>,[:]
   set formatoptions+=qjl1

@@ -17,12 +17,20 @@
 	prompt = false
 [mergetool]
 	prompt = false
-[push]
-	default = upstream
-[pull]
-	ff = only
 [rebase]
 	autoStash = true
+[fetch]
+	prune = true
+[pull]
+	ff = only
+[push]
+	default = upstream
+[log]
+	mailmap = true
+	decorate = auto
+	follow = true
+[status]
+	short = true
 [commit]
 	template = ~/.config/git/commit-template
 [gpg]
@@ -31,14 +39,6 @@
 	signingkey = A7D81D8297B90E18
 	name = John Schug
 	email = john.ips.schug@gmail.com
-[log]
-	mailmap = true
-	decorate = auto
-	follow = true
-[status]
-	short = true
-[pretty]
-	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?
 [url "git@github.com:"]
 	pushInsteadOf = gh:
 	pushInsteadOf = git://github.com/
@@ -53,9 +53,11 @@
 	pushInsteadOf = https://bitbucket.org/
 [url "https://bitbucket.org/"]
 	insteadOf = bb:
+[pretty]
+	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?
 [alias]
 	amend = commit --amend -C HEAD
-	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+	snapshot = !git stash save "snapshot: $(date -Imin)" && git stash apply "stash@{0}"
 	assume = update-index --assume-unchanged --
 	unassume = update-index --no-assume-unchanged --
 	assumed = !git ls-files -v | grep ^h | cut -c 3-
@@ -67,6 +69,7 @@
 	type = cat-file -t
 	dump = cat-file -p
 	st = status
+	pushf = push --force-with-lease
 [include]
 	path = ~/.config/git/local.conf
 # vim:set sw=4 sts=4 ts=4 noet:

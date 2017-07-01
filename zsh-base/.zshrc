@@ -1,10 +1,10 @@
 # Start tmux
-if hash tmux &> /dev/null; then
+if (( $+commands[tmux] )); then
   if [ -z "$TMUX" ]; then
     if [ -n "$SSH_CLIENT" ]; then
       read -sk '?Press any key to continue...'
     fi
-    if hash systemd-run &>/dev/null; then
+    if (( $+commands[systemd-run] )); then
       systemd-run --user --scope -q tmux new -d -s DEFAULT &>/dev/null
     fi
     exec tmux new -A -s DEFAULT
@@ -190,7 +190,7 @@ function precmd {
 
 # Prompt
 function {
-  if hash tput &>/dev/null; then
+  if (( $+commands[tput] )); then
     local COLORS="$(tput colors)"
   else
     local COLORS=
@@ -255,15 +255,18 @@ alias rename='rename -v'
 alias ip='ip -c'
 alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
-if hash rg &>/dev/null; then
+if (( $+commands[rg] )); then
   alias rg='rg'
   alias grep='rg -S'
-elif hash ag &>/dev/null; then
+elif (( $+commands[ag] )); then
   alias grep='ag'
 else
   alias grep='grep -Rni --color=auto'
 fi
-if hash nvim &>/dev/null; then
+if (( $+commands[gpg2] )); then
+  alias gpg=gpg2
+fi
+if (( $+commands[nvim] )); then
   alias vim='nvim'
   alias rvim='nvim -Z'
   alias view='nvim -R'
@@ -277,13 +280,13 @@ fi
 alias strace='strace -y '
 
 function clear-clipboard {
-  if hash xclip &>/dev/null; then
+  if (( $+commands[xclip] )); then
     printf '\n' | xclip -sel clip &>/dev/null
   fi
-  if hash gpaste-client &>/dev/null; then
+  if (( $+commands[gpaste-client] )); then
     gpaste-client empty &>/dev/null
   fi
-  if hash qdbus &>/dev/null; then
+  if (( $+commands[qdbus] )); then
     qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
   fi
 }

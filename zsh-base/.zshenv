@@ -9,7 +9,7 @@ export LANG='en_US.UTF-8'
 export PAGER='less'
 export LESS='-Rgi'
 export LESSHISTFILE='-'
-if hash nvim &>/dev/null; then
+if (( $+commands[nvim] )); then
   export MANPAGER="env MANPATH=\"${MANPATH}\" nvim -c 'set ft=man' -"
   export EDITOR='nvim'
 else
@@ -19,10 +19,8 @@ fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR='vim'
 
-if [ -S "/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
-  export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
-elif [ -S "/var/run/user/$UID/gnupg/S.gpg-agent.ssh" ]; then
-  export SSH_AUTH_SOCK="/var/run/user/$UID/gnupg/S.gpg-agent.ssh"
+if (( $+commands[gpgconf] )) && [ -S "$(gpgconf --list-dirs agent-ssh-socket)" ]; then
+  export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 elif [ -S "${HOME}/.gnupg/S.gpg-agent.ssh" ]; then
   export SSH_AUTH_SOCK="${HOME}/.gnupg/S.gpg-agent.ssh"
 fi
