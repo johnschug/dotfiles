@@ -1,0 +1,20 @@
+set ignorecase
+set incsearch
+set matchpairs+=<:>,[:]
+set number
+set relativenumber
+set scrolloff=5
+set showmode
+set sidescroll=1
+set sidescrolloff=10
+set smartcase
+set surround
+set wrapscan
+
+vnoremap ae gg0oG$
+
+vnoremap gc :action CommentByLineComment<CR>
+nnoremap gcc :action CommentByLineComment<CR>
+
+nnoremap <Leader>sv :source ~/.ideavimrc<CR>
+nnoremap <Leader>ev :vsplit ~/.ideavimrc<CR>

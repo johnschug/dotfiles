@@ -64,9 +64,6 @@
 [submodule "vim/.vim/pack/bundle/start/completor.vim"]
 	path = vim/.vim/pack/bundle/start/completor.vim
 	url = https://github.com/maralla/completor.vim
-[submodule "vim/.vim/pack/bundle/start/ListToggle"]
-	path = vim/.vim/pack/bundle/start/ListToggle
-	url = https://github.com/Valloric/ListToggle
 [submodule "vim/.vim/pack/bundle/start/delimitMate"]
 	path = vim/.vim/pack/bundle/start/delimitMate
 	url = https://github.com/Raimondi/delimitMate

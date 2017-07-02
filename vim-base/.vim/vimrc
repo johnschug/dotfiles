@@ -8,7 +8,7 @@ augroup vimrc
   autocmd!
 augroup END
 
-let g:vimconf = expand('<sfile>:p:h')
+let g:vimconf = split(&runtimepath, ',')[0]
 if !empty($XDG_DATA_HOME)
   let g:vimdata = $XDG_DATA_HOME.'/vim'
 elseif has('win32') || has('win64')
@@ -26,7 +26,9 @@ endif
 
 " Plugins {{{
   let g:netrw_home = g:vimdata
-  runtime! macros/matchit.vim
+  if !has('nvim')
+    packadd! matchit
+  endif
   runtime plugins.vim
 " }}}
 
@@ -68,8 +70,10 @@ endif
   set ttyfast
   set lazyredraw
   set scrolloff=5
+  set sidescroll=1
+  set sidescrolloff=10
   set list
-  set listchars=tab:▸\ ,nbsp:␣,trail:•,eol:¬
+  set listchars=tab:▸\ ,nbsp:␣,trail:•,eol:¬,precedes:…,extends:…
   set number
   set relativenumber
   set cursorline
@@ -89,6 +93,11 @@ endif
 
   set splitbelow splitright
 
+  set nowrap
+  set linebreak
+  set breakindent
+  let &showbreak='↪ '
+
   set nofoldenable
   set foldmethod=syntax
   set foldcolumn=1
@@ -96,6 +105,7 @@ endif
   set foldopen+=insert
   set fillchars=diff:⎼,fold:⎼
 
+  set wrapscan
   set hlsearch
   set incsearch
   set ignorecase
@@ -121,8 +131,12 @@ endif
     set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T
   endif
 
-  let g:breeze_use_palette = !$NOPALETTE
-  colorscheme breeze
+  try
+    let g:breeze_use_palette = !$NOPALETTE
+    colorscheme breeze
+  catch /^Vim\%((\a\+)\)\=:E185/
+    colorscheme slate
+  endtry
 
   autocmd vimrc InsertEnter * set norelativenumber
   autocmd vimrc InsertLeave * set relativenumber
@@ -133,16 +147,18 @@ endif
         \ endif
   autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn] |
         \ setlocal nocursorline nocursorcolumn
-  autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn
+  autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn |
+        \ nnoremap <buffer> <Esc> <C-W>q |
+        \ nnoremap <buffer> q <C-W>q
+  autocmd vimrc FileType help wincmd L
 " }}}
 
 " Editing {{{
-  set nowrap
-  set expandtab
   set smarttab
+  set expandtab
   set shiftwidth=2
-  set softtabstop=2
-  set tabstop=2
+  set softtabstop=-1
+  set tabstop=4
 
   set confirm
   set nostartofline
@@ -176,24 +192,19 @@ endif
     command! Paste read !xclip -o -sel clip
   endif
 
-  command! DiffOrig call <SID>DiffOrig()
-  function! s:DiffOrig() abort
-    let l:ft = &filetype
-    diffthis
-    vnew | r ++edit # | 0d_
-    diffthis
-    execute 'setlocal bt=nofile bh=wipe nobl noswf ro noma ft='.l:ft
-  endfunction
-
-  command! -nargs=1 EditConfig call <SID>EditConfig(<args>)
-  function! s:EditConfig(what) abort
-    let l:ft = &filetype
-    if !isdirectory(globpath(g:vimconf, a:what)) || empty(l:ft)
+  command! -nargs=+ EditConfig call <SID>EditConfig(<f-args>)
+  function! s:EditConfig(what, ...) abort
+    let l:name = get(a:000, 0, &filetype)
+    if empty(l:name)
       return
-    else
-      let l:file = g:vimconf.'/'.a:what.'/'.l:ft.'.vim'
     endif
-    execute ':vsplit '.l:file
+    let l:stem = a:what.'/'.l:name.'.vim'
+    if filewritable(g:vimconf.'/after/'.l:stem) ||
+          \ (!filewritable(g:vimconf.'/'.l:stem) && findfile(l:stem, &runtimepath) !=# '')
+      execute ':vsplit '.g:vimconf.'/after/'.l:stem
+    else
+      execute ':vsplit '.g:vimconf.'/'.l:stem
+    endif
   endfunction
 
   autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
@@ -217,38 +228,52 @@ endif
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+  " }}}
+  " Unimpaired mappings {{{
     for s:cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
       execute 'nnoremap <silent> <expr> ['.s:cmd[0]." ':<C-U>'.v:count1.'".s:cmd[1]."prev<CR>'"
       execute 'nnoremap <silent> <expr> ]'.s:cmd[0]." ':<C-U>'.v:count1.'".s:cmd[1]."next<CR>'"
       execute 'nnoremap <silent> ['.toupper(s:cmd[0]).' :<C-U>'.s:cmd[1].'first<CR>'
       execute 'nnoremap <silent> ]'.toupper(s:cmd[0]).' :<C-U>'.s:cmd[1].'last<CR>'
     endfor
+    for s:opt in [['s', 'spell'], ['et', 'expandtab'], ['w', 'wrap'], ['r', 'relativenumber'], ['l', 'list']]
+      execute 'nnoremap <silent> [o'.s:opt[0].' :setlocal '.s:opt[1].'<CR>'
+      execute 'nnoremap <silent> ]o'.s:opt[0].' :setlocal no'.s:opt[1].'<CR>'
+      execute 'nnoremap <silent> co'.s:opt[0].' :setlocal '.s:opt[1].'!<CR>'
+    endfor
+    nnoremap <silent> [ts :setlocal tabstop=4<CR>
+    nnoremap <silent> ]ts :setlocal tabstop=8<CR>
+    nnoremap <silent> [od :diffthis<CR>
+    nnoremap <silent> ]od :diffoff<CR>
+    nnoremap <silent> <expr> cod (&diff?':diffoff':':diffthis').'<CR>'
+    nnoremap <silent> [oy :setlocal syntax=ON<CR>
+    nnoremap <silent> ]oy :setlocal syntax=OFF<CR>
+    nnoremap <silent> <expr> coy ':setlocal syntax='.(&l:syntax==#'OFF'?'ON':'OFF').'<CR>'
+    nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
+    nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   " }}}
-  nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
-  nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
   nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
   nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
-  nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
+  nnoremap <silent> <C-L> :nohlsearch<Bar>diffupdate<CR><C-L>
   nnoremap <silent> <Leader>d :bd<CR>
-  nnoremap <silent> <Leader>n :set relativenumber!<CR>
-  nnoremap <silent> <Leader>o :set paste!<CR>
-  nnoremap <silent> <Leader>m :setlocal expandtab shiftwidth=2 softtabstop=2 tabstop=2<CR>
-  nnoremap <silent> <Leader>M :setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
-  nnoremap <silent> <Leader>j :setlocal noexpandtab shiftwidth=4 softtabstop=4 tabstop=4<CR>
-  nnoremap <silent> <Leader>J :setlocal noexpandtab shiftwidth=8 softtabstop=8 tabstop=8<CR>
-  nnoremap <silent> <Leader>ss :set spell!<CR>
+  nnoremap <silent> <Leader>i1 :setlocal expandtab shiftwidth=2<CR>
+  nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=4<CR>
+  nnoremap <silent> <Leader>i3 :setlocal noexpandtab shiftwidth=4 tabstop=4<CR>
+  nnoremap <silent> <Leader>i4 :setlocal noexpandtab shiftwidth=8 tabstop=8<CR>
   nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
   nnoremap <silent> <Leader>ev :vsplit $MYVIMRC<CR>
   nnoremap <silent> <expr> <Leader>el ':vsplit '.g:vimconf.'/local.vim<CR>'
   nnoremap <silent> <expr> <Leader>ep ':vsplit '.g:vimconf.'/plugins.vim<CR>'
-  nnoremap <silent> <expr> <Leader>ec ':vsplit '.g:vimconf.'/colors/'.g:colors_name.'.vim<CR>'
-  nnoremap <silent> <Leader>ef :EditConfig('ftplugin')<CR>
-  nnoremap <silent> <Leader>es :EditConfig('syntax')<CR>
+  nnoremap <silent> <Leader>ec :EditConfig colors <C-R>=g:colors_name<CR><CR>
+  nnoremap <silent> <Leader>ef :EditConfig ftplugin<CR>
+  nnoremap <silent> <Leader>es :EditConfig syntax<CR>
+  nnoremap <silent> <Leader>q :copen<CR>
+  nnoremap <silent> <Leader>l :lopen<CR>
 
   inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>
 
-  xnoremap ae :<C-U>normal! ggVG<CR>
+  xnoremap ae gg0oG$
   onoremap ae :<C-U>keepjumps normal! ggVG<CR>
 
   cabbrev <expr> %% fnameescape(expand('%'))
