@@ -261,7 +261,7 @@ if (( $+commands[rg] )); then
 elif (( $+commands[ag] )); then
   alias grep='ag'
 else
-  alias grep='grep -Rni --color=auto'
+  alias grep='grep -ni --color=auto'
 fi
 if (( $+commands[gpg2] )); then
   alias gpg=gpg2
