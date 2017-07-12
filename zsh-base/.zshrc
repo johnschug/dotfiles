@@ -12,7 +12,7 @@ if (( $+commands[tmux] )); then
 fi
 
 # Plugins
-if [ -f "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh" ]; then
+if [ -r "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh" ]; then
   source "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh"
 fi
 
@@ -129,7 +129,7 @@ zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
 
 function {
   local _zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump-${ZSH_VERSION}"
-  if [[ -e "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
+  if [[ -r "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
     zcompile "$_zcompdump"
   fi
 
@@ -291,6 +291,6 @@ function clear-clipboard {
   fi
 }
 
-if [ -f ~/.zshrc.local ]; then
+if [ -r ~/.zshrc.local ]; then
   source ~/.zshrc.local
 fi

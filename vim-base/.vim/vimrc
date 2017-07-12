@@ -24,14 +24,6 @@ if has('gui_running')
 endif
 " }}}
 
-" Plugins {{{
-  let g:netrw_home = g:vimdata
-  if !has('nvim')
-    packadd! matchit
-  endif
-  runtime plugins.vim
-" }}}
-
 " General {{{
   filetype plugin indent on
   set autoread
@@ -217,7 +209,7 @@ endif
     set grepprg=ag\ --vimgrep
     set grepformat^=%f:%l:%c:%m
   else
-    set grepprg=grep\ -rnH
+    set grepprg=grep\ -srnH
   endif
 " }}}
 
@@ -284,13 +276,18 @@ endif
   let g:rust_fold = 1
 
   autocmd vimrc FileType vim setlocal keywordprg=:help
-  autocmd vimrc FileType man setlocal nolist noexpandtab sw=8 sts=8 ts=8
+  autocmd vimrc FileType man setlocal nolist noexpandtab sw=8 ts=8
   autocmd vimrc FileType gitcommit,text,markdown,pandoc,html,c,cpp,rust setlocal spell
+  if executable('hindent')
+    autocmd vimrc FileType haskell setlocal equalprg=hindent
+  endif
 " }}}
 
 " Projects {{{
   set tagcase=smart
   set tags=./tags;,tags
+  set sessionoptions-=curdir
+  set sessionoptions+=winpos,sesdir
 
   let s:gitroot = get(systemlist('git rev-parse --show-toplevel'), 0, '')
   if v:shell_error == 0 && !empty(s:gitroot)
@@ -299,6 +296,14 @@ endif
   endif
 
   autocmd vimrc FileType * let &l:tags = &tags.','.expand(g:vimdata.'/tags/').&ft
+" }}}
+
+" Plugins {{{
+  let g:netrw_home = g:vimdata
+  if !has('nvim')
+    packadd! matchit
+  endif
+  runtime plugins.vim
 " }}}
 
 if exists('*local#finish')

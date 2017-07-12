@@ -25,6 +25,6 @@ elif [ -S "${HOME}/.gnupg/S.gpg-agent.ssh" ]; then
   export SSH_AUTH_SOCK="${HOME}/.gnupg/S.gpg-agent.ssh"
 fi
 
-if [ -f ~/.zshenv.local ]; then
+if [ -r ~/.zshenv.local ]; then
   source ~/.zshenv.local
 fi

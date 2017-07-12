@@ -500,6 +500,10 @@ exe 'hi! SyntasticErrorSign'             .s:fg_red    .s:bg_base02 .s:fmt_bold
 exe 'hi! NeomakeWarningSign'             .s:fg_base1  .s:bg_base02 .s:fmt_bold
 exe 'hi! NeomakeErrorSign'               .s:fg_red    .s:bg_base02 .s:fmt_bold
 "}}}
+" Ale "{{{
+exe 'hi! ALEWarningSign'                 .s:fg_base1  .s:bg_base02 .s:fmt_bold
+exe 'hi! ALEErrorSign'                   .s:fg_red    .s:bg_base02 .s:fmt_bold
+"}}}
 " Lightline "{{{
 let g:lightline#colorscheme#breeze#palette = {
       \ 'normal': {

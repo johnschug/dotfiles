@@ -10,9 +10,6 @@
 [submodule "neofetch/neofetch"]
 	path = neofetch/neofetch
 	url = https://github.com/dylanaraps/neofetch.git
-[submodule "vim/.vim/pack/bundle/start/neomake"]
-	path = vim/.vim/pack/bundle/start/neomake
-	url = https://github.com/neomake/neomake
 [submodule "vim/.vim/pack/bundle/start/targets.vim"]
 	path = vim/.vim/pack/bundle/start/targets.vim
 	url = https://github.com/wellle/targets.vim
@@ -73,3 +70,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-lion"]
 	path = vim/.vim/pack/bundle/start/vim-lion
 	url = https://github.com/tommcdo/vim-lion
+[submodule "vim/.vim/pack/bundle/start/ale"]
+	path = vim/.vim/pack/bundle/start/ale
+	url = https://github.com/w0rp/ale.git

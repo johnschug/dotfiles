@@ -8,3 +8,6 @@
 *.orig
 *.diff
 tmp*
+
+# vim specific
+Session.vim

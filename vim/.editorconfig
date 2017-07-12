@@ -18,26 +18,14 @@ indent_style = space
 indent_size = 4
 max_line_length = 79
 
-[*.java]
+[*.{java,groovy,gradle,kt}]
 indent_style = space
 indent_size = 4
-tab_width = 8
 max_line_length = 120
-
-[*.groovy]
-indent_style = space
-indent_size = 4
-tab_width = 8
-max_line_length = 120
-
-[*.gradle]
-indent_style = space
-indent_size = 4
 
 [*.js]
 indent_style = space
 indent_size = 4
-tab_width = 8
 
 [*.{h,hpp,c,cpp}]
 indent_style = space
@@ -47,6 +35,7 @@ max_line_length = 80
 [*.scala]
 indent_style = space
 indent_size = 2
+max_line_length = 120
 
 [*.rs]
 indent_style = space
