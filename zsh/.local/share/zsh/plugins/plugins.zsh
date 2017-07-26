@@ -19,6 +19,6 @@ function {
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=030"
 
+bindkey '^ ' skim-cd-widget
 bindkey '^o' skim-file-widget
-bindkey '^j' skim-cd-widget
 bindkey '^r' skim-history-widget

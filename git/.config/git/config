@@ -54,7 +54,7 @@
 [url "https://bitbucket.org/"]
 	insteadOf = bb:
 [pretty]
-	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset %G?
+	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
 [alias]
 	amend = commit --amend -C HEAD
 	snapshot = !git stash save "snapshot: $(date -Imin)" && git stash apply "stash@{0}"

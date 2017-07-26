@@ -124,12 +124,8 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
   endif
   let $FZF_DEFAULT_COMMAND=$SKIM_DEFAULT_COMMAND
 
-  if exists(':Buffers')
-    nnoremap <silent> <C-J> :Buffers<CR>
-  endif
-  if exists(':Files')
-    nnoremap <silent> <C-P> :Files<CR>
-  endif
+  nnoremap <silent> <C-Space> :Buffers<CR>
+  nnoremap <silent> <C-P> :Files<CR>
 " }}}
 
 " vim:set sw=2 ts=2 et fdm=marker fdl=0:

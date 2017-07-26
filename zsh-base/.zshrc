@@ -240,9 +240,9 @@ function {
 
 # Aliases
 alias ls='ls --color=auto'
-alias l.='ls --color=auto -d .*'
+alias l.="ls --color=auto -AI '[^.]*'"
 alias ll='ls --color=auto -l'
-alias ll.='ls --color=auto -l -d .*'
+alias ll.="ls --color=auto -lAI '[^.]*'"
 alias info='info --vi-keys'
 alias chown='chown -c --preserve-root'
 alias chmod='chmod -c --preserve-root'
@@ -255,14 +255,7 @@ alias rename='rename -v'
 alias ip='ip -c'
 alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
-if (( $+commands[rg] )); then
-  alias rg='rg'
-  alias grep='rg -S'
-elif (( $+commands[ag] )); then
-  alias grep='ag'
-else
-  alias grep='grep -ni --color=auto'
-fi
+alias strace='strace -y '
 if (( $+commands[gpg2] )); then
   alias gpg=gpg2
 fi
@@ -277,19 +270,23 @@ else
   alias bvim='vim -b'
   alias bview='vim -Rb'
 fi
-alias strace='strace -y '
-
-function clear-clipboard {
-  if (( $+commands[xclip] )); then
-    printf '\n' | xclip -sel clip &>/dev/null
-  fi
-  if (( $+commands[gpaste-client] )); then
-    gpaste-client empty &>/dev/null
-  fi
-  if (( $+commands[qdbus] )); then
-    qdbus org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory &>/dev/null
-  fi
-}
+if (( $+commands[rg] )); then
+  alias rg='rg'
+  alias grep='rg -S'
+  function vim-grep {
+    vim -q <(rg --vimgrep --no-heading -S "$@")
+  }
+elif (( $+commands[ag] )); then
+  alias grep='ag'
+  function vim-grep {
+    vim -q <(ag --vimgrep "$@")
+  }
+else
+  alias grep='grep -ni --color=auto'
+  function vim-grep {
+    vim -q <(grep -srnH "$@")
+  }
+fi
 
 if [ -r ~/.zshrc.local ]; then
   source ~/.zshrc.local

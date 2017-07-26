@@ -1,9 +1,9 @@
+" Early Setup {{{
 if has('vim_starting') && &encoding !=# 'utf-8'
    set encoding=utf-8
 endif
 scriptencoding utf-8
 
-" Early Setup {{{
 augroup vimrc
   autocmd!
 augroup END
@@ -140,8 +140,7 @@ endif
   autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn] |
         \ setlocal nocursorline nocursorcolumn
   autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn |
-        \ nnoremap <buffer> <Esc> <C-W>q |
-        \ nnoremap <buffer> q <C-W>q
+        \ nnoremap <silent> <buffer> q <C-W>c
   autocmd vimrc FileType help wincmd L
 " }}}
 
@@ -215,8 +214,8 @@ endif
 
 " Mappings {{{
   " Navigation {{{
+    nnoremap <C-Space> :ls<CR>:b<SPACE>
     nnoremap gb <C-^>
-    nnoremap gB :ls<CR>:b<SPACE>
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -259,8 +258,6 @@ endif
   nnoremap <silent> <Leader>ec :EditConfig colors <C-R>=g:colors_name<CR><CR>
   nnoremap <silent> <Leader>ef :EditConfig ftplugin<CR>
   nnoremap <silent> <Leader>es :EditConfig syntax<CR>
-  nnoremap <silent> <Leader>q :copen<CR>
-  nnoremap <silent> <Leader>l :lopen<CR>
 
   inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>
