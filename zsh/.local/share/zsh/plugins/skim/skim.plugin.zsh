@@ -20,12 +20,12 @@ fi
 
 __fsel() {
   local item
-  local cmd="${SKIM_FSEL_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
+  local cmd="${SKIM_FSEL_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
     -o -type f -print \
     -o -type d -print \
     -o -type l -print 2> /dev/null | cut -b3-"}"
   setopt localoptions pipefail 2> /dev/null
-  eval "$cmd" | env "${__skimopts}=${SKIM_FSEL_OPTIONS:-${(P)__skimopts} --reverse}" $__skimcmd -m | while read item; do
+  eval "$cmd" | env "${__skimopts}=${SKIM_FSEL_OPTIONS:-${(P)__skimopts} --reverse}" $__skimcmd -m "$@" | while read item; do
     echo -n "${(q)item} "
   done
   local ret=$?

@@ -25,6 +25,7 @@
 	ff = only
 [push]
 	default = upstream
+	recurseSubmodules = check
 [log]
 	mailmap = true
 	decorate = auto

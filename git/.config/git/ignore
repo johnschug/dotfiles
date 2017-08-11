@@ -9,5 +9,8 @@
 *.diff
 tmp*
 
+tags
+cscope.*
+
 # vim specific
 Session.vim

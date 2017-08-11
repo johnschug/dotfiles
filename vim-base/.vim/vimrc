@@ -106,10 +106,9 @@ endif
   set wildmenu
   set wildignorecase
   set wildmode=longest:full,full
-  set wildignore+=*.swp,*.bak,.DS_Store,._*,*~
-  set wildignore+=*.pyc,*.rlib,*.class,*.o,*.obj,*.a,*.lib,*.so,*.dll,*.pdb
-  set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
-  set wildignore+=tags,cscope.*
+  set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+  set suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
 
   if has('gui_running')
     if has('gui_win32')
@@ -216,6 +215,8 @@ endif
   " Navigation {{{
     nnoremap <C-Space> :ls<CR>:b<SPACE>
     nnoremap gb <C-^>
+    nnoremap <expr> <Leader>f ':find '
+    nnoremap <expr> <Leader>F ':sfind '
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -297,6 +298,8 @@ endif
 
 " Plugins {{{
   let g:netrw_home = g:vimdata
+  let g:netrw_hide = 1
+  let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
   if !has('nvim')
     packadd! matchit
   endif
