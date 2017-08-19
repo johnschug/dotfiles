@@ -28,12 +28,12 @@ endif
   filetype plugin indent on
   set autoread
   set hidden
-  set path+=**
+  set path& path+=**
   set fileformats=unix,dos,mac
   set shortmess+=a
   set viminfo=
 
-  set backupskip+=*/tmp/*,/dev/shm/*
+  set backupskip& backupskip+=*/tmp/*,/dev/shm/*
   let &backupdir = g:vimdata.'/backup'
   if !isdirectory(&backupdir)
     call mkdir(&backupdir, 'p')
@@ -106,9 +106,10 @@ endif
   set wildmenu
   set wildignorecase
   set wildmode=longest:full,full
+  set wildignore&
   set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
   set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
-  set suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
+  set suffixes& suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
 
   if has('gui_running')
     if has('gui_win32')
@@ -119,7 +120,7 @@ endif
     else
       set guifont^=Source\ Code\ Pro\ 10,Noto\ Mono\ 10,DejaVu\ Sans\ Mono\ 10
     endif
-    set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T
+    set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T guioptions+=c
   endif
 
   try
@@ -152,8 +153,8 @@ endif
 
   set confirm
   set nostartofline
-  set matchpairs+=<:>,[:]
-  set formatoptions+=qjl1
+  set matchpairs+=<:>
+  set formatoptions+=jl1
   set backspace=indent,eol,start
   set virtualedit=block
   set autoindent
@@ -178,11 +179,11 @@ endif
 
 " Commands {{{
   if executable('xclip')
-    command! -range Copy <line1>,<line2>write !xclip -f -sel clip
-    command! Paste read !xclip -o -sel clip
+    command! -bar -range Copy <line1>,<line2>write !xclip -f -sel clip
+    command! -bar Paste read !xclip -o -sel clip
   endif
 
-  command! -nargs=+ EditConfig call <SID>EditConfig(<f-args>)
+  command! -bar -nargs=+ EditConfig call <SID>EditConfig(<f-args>)
   function! s:EditConfig(what, ...) abort
     let l:name = get(a:000, 0, &filetype)
     if empty(l:name)
@@ -197,6 +198,23 @@ endif
     endif
   endfunction
 
+  command! -bar StripTrailingWhitespace call <SID>StripTrailingWhitespace()
+  function! s:StripTrailingWhitespace()
+    if &l:modifiable && !&l:binary
+      let l:view = winsaveview()
+      try
+        " vint:-ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
+        silent! %sm/\s\+$//e
+        " vint:+ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
+      finally
+        call winrestview(l:view)
+      endtry
+    endif
+  endfunction
+
+  autocmd vimrc BufWritePre * if get(b:, 'strip_trailing', 1) |
+        \ StripTrailingWhitespace |
+        \ endif
   autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
   autocmd vimrc QuickFixCmdPost    l* nested lwindow|redraw!
 
@@ -233,6 +251,7 @@ endif
       execute 'nnoremap <silent> ]o'.s:opt[0].' :setlocal no'.s:opt[1].'<CR>'
       execute 'nnoremap <silent> co'.s:opt[0].' :setlocal '.s:opt[1].'!<CR>'
     endfor
+    nnoremap <silent> cost :let b:strip_trailing=!get(b:, 'strip_trailing', 1)<CR>
     nnoremap <silent> [ts :setlocal tabstop=4<CR>
     nnoremap <silent> ]ts :setlocal tabstop=8<CR>
     nnoremap <silent> [od :diffthis<CR>
@@ -248,6 +267,7 @@ endif
   nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
   nnoremap <silent> <C-L> :nohlsearch<Bar>diffupdate<CR><C-L>
   nnoremap <silent> <Leader>d :bd<CR>
+  nnoremap <silent> <Leader>$ :StripTrailingWhitespace<CR>
   nnoremap <silent> <Leader>i1 :setlocal expandtab shiftwidth=2<CR>
   nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=4<CR>
   nnoremap <silent> <Leader>i3 :setlocal noexpandtab shiftwidth=4 tabstop=4<CR>

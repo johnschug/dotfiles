@@ -12,8 +12,8 @@ if (( $+commands[tmux] )); then
 fi
 
 # Plugins
-if [ -r "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh" ]; then
-  source "${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins/plugins.zsh"
+if [ -r "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh" ]; then
+  source "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh"
 fi
 
 # Options
@@ -38,7 +38,7 @@ setopt pushd_ignore_dups
 
 WORDCHARS="${WORDCHARS/\/}"
 if [ "$EUID" -ne 0 ]; then
-  HISTFILE="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history"
+  HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
   SAVEHIST=500
   HISTSIZE=1000
 fi
@@ -57,7 +57,7 @@ bindkey '^p' history-beginning-search-backward-end
 bindkey '^n' history-beginning-search-forward-end
 bindkey '^t' cd-parent
 bindkey '^e' cd-undo
-bindkey '^[s' insert-sudo
+bindkey '^[s' toggle-sudo
 bindkey -M vicmd 'v' edit-command-line
 bindkey -M vicmd 'q' push-input
 bindkey -M vicmd 'u' undo
@@ -73,10 +73,13 @@ function zle-line-init zle-keymap-select zle-line-finish {
   zle -R
 }
 
-function insert-sudo {
+function toggle-sudo {
   if [[ "$BUFFER" != su(do|)\ * ]]; then
     BUFFER="sudo $BUFFER"
     (( CURSOR += 5 ))
+  elif [[ "$BUFFER" == sudo\ * ]]; then
+    (( CURSOR -= 5 ))
+    BUFFER=${BUFFER#"sudo "}
   fi
 }
 
@@ -101,7 +104,7 @@ zle -N zle-keymap-select
 zle -N edit-command-line
 zle -N insert-composed-char
 zle -N insert-unicode-char
-zle -N insert-sudo
+zle -N toggle-sudo
 zle -N cd-parent
 zle -N cd-undo
 zle -N history-beginning-search-backward-end history-search-end
@@ -111,7 +114,7 @@ zle -N history-beginning-search-forward-end history-search-end
 autoload -Uz compinit bashcompinit
 zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/completions"
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' menu select
@@ -128,7 +131,7 @@ zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
 zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
 
 function {
-  local _zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump-${ZSH_VERSION}"
+  local _zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-${ZSH_VERSION}"
   if [[ -r "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
     zcompile "$_zcompdump"
   fi

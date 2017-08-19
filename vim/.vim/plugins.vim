@@ -43,22 +43,16 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
   nnoremap <Leader>gw :Gwrite<CR>
 " }}}
 
-" " Neomake {{{
-"   autocmd vimrc BufReadPost,BufWritePost * Neomake
-"   autocmd vimrc User NeomakeCountsChanged call lightline#update()
-"
-"   let g:neomake_verbose = 0
-"   let g:neomake_open_list = 2
-"   let g:neomake_warning_sign = { 'text': '⚠' }
-"   let g:neomake_error_sign = { 'text': '✖' }
-" " }}}
-
 " Ale {{{
   autocmd vimrc User ALELint call lightline#update()
 
   let g:ale_sign_warning = '⚠'
   let g:ale_sign_error = '✖'
-  let g:ale_linters = { 'rust': ['rustc'] }
+  let g:ale_linters = {
+        \ 'rust': ['rustc'],
+        \ 'markdown': ['proselint', 'vale'],
+        \ 'text': ['proselint', 'vale'],
+        \ }
 
   nmap <silent> [e <Plug>(ale_previous_wrap)
   nmap <silent> ]e <Plug>(ale_next_wrap)
@@ -84,10 +78,12 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
   let g:delimitMate_jump_expansion = 1
 " }}}
 
-" UltiSnips {{{
-  let g:UltiSnipsExpandTrigger = '<c-j>'
-  let g:UltiSnipsJumpForwardTrigger = '<c-j>'
-  let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
+" editorconfig {{{
+  let g:EditorConfig_disable_rules = ['trim_trailing_whitespace']
+" }}}
+
+" EnchancedDiff {{{
+  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 " }}}
 
 " signify {{{
@@ -108,14 +104,6 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
   endfunction
 " }}}
 
-" EnchancedDiff {{{
-  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
-" }}}
-
-" Unicode.vim {{{
-  nmap ga <Plug>(UnicodeGA)
-" }}}
-
 " Skim / FZF {{{
   if executable('rg')
     let $SKIM_DEFAULT_COMMAND='rg --files'
@@ -126,6 +114,16 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
 
   nnoremap <silent> <C-Space> :Buffers<CR>
   nnoremap <silent> <C-P> :Files<CR>
+" }}}
+
+" UltiSnips {{{
+  let g:UltiSnipsExpandTrigger = '<c-j>'
+  let g:UltiSnipsJumpForwardTrigger = '<c-j>'
+  let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
+" }}}
+
+" Unicode.vim {{{
+  nmap ga <Plug>(UnicodeGA)
 " }}}
 
 " vim:set sw=2 ts=2 et fdm=marker fdl=0:

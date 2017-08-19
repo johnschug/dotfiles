@@ -6,12 +6,8 @@ trim_trailing_whitespace = true
 end_of_line = lf
 insert_final_newline = true
 
-[*.md]
-trim_trailing_whitespace = false
+[*.{md,txt}]
 max_line_length = 100
-
-[*.txt]
-trim_trailing_whitespace = false
 
 [*.py]
 indent_style = space
