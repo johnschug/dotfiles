@@ -108,7 +108,6 @@ endif
   set wildmode=longest:full,full
   set wildignore&
   set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
-  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
   set suffixes& suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
 
   if has('gui_running')
@@ -238,6 +237,9 @@ endif
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+
+    nnoremap <C-]> g<C-]>
+    nnoremap g<C-]> <C-]>
   " }}}
   " Unimpaired mappings {{{
     for s:cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
@@ -320,6 +322,9 @@ endif
   let g:netrw_home = g:vimdata
   let g:netrw_hide = 1
   let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+  let g:netrw_sizestyle = 'H'
+  let g:netrw_sort_options = 'i'
+
   if !has('nvim')
     packadd! matchit
   endif
