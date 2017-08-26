@@ -76,3 +76,6 @@
 [submodule "vim/.vim/pack/bundle/start/ListToggle"]
 	path = vim/.vim/pack/bundle/start/ListToggle
 	url = https://github.com/Valloric/ListToggle.git
+[submodule "vim/.vim/pack/bundle/start/vim-repeat"]
+	path = vim/.vim/pack/bundle/start/vim-repeat
+	url = https://github.com/tpope/vim-repeat.git
