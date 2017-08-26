@@ -7,7 +7,7 @@ UseFontLineChararacters=true
 CursorShape=2
 
 [General]
-Environment=TERM=xterm-256color,COLORTERM=truecolor
+Environment=TERM=konsole-256color,COLORTERM=truecolor
 LocalTabTitleFormat=%w
 Name=Default
 Parent=FALLBACK/

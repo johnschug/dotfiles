@@ -8,12 +8,6 @@
 "
 " Colorscheme initialization "{{{
 " ---------------------------------------------------------------------
-if has('termguicolors') && (&t_Co > 256 || $COLORTERM =~# 'truecolor')
-  let &t_8f = "\e[38;2;%lu;%lu;%lum"
-  let &t_8b = "\e[48;2;%lu;%lu;%lum"
-  set termguicolors
-endif
-
 hi clear
 if exists('syntax_on')
   syntax reset
@@ -21,7 +15,6 @@ endif
 let g:colors_name = 'breeze'
 
 let s:use_palette = get(g:, 'breeze_use_palette', 1)
-let s:use_bold = get(g:, 'breeze_bold', 0)
 "}}}
 " Palettes "{{{
 " ---------------------------------------------------------------------
@@ -49,18 +42,6 @@ else
   let s:mode = 0
 endif
 "}}}
-" Formatting options and null values for passthrough effect "{{{
-" ---------------------------------------------------------------------
-let s:none               = 'NONE'
-
-if (s:use_bold == 0 || &t_Co == 8)
-    let s:bold           = ''
-    let s:bb             = ',bold'
-else
-    let s:bold           = ',bold'
-    let s:bb             = ''
-endif
-"}}}
 " Highlighting primitives"{{{
 " ---------------------------------------------------------------------
 let s:bg_none = ' ctermbg=NONE guibg=NONE'
@@ -73,20 +54,20 @@ for s:i in ['back', 'base03', 'base02', 'base01', 'base00',
 endfor
 
 let s:fmt_none     = ' cterm=NONE term=NONE gui=NONE'
-let s:fmt_bold     = ' cterm=NONE'.s:bold.' term=NONE'.s:bold.' gui=NONE,bold'
+let s:fmt_bold     = ' cterm=NONE,bold term=NONE,bold gui=NONE,bold'
 let s:fmt_bldi     = s:fmt_bold
 let s:fmt_undr     = ' cterm=NONE,underline term=NONE,underline gui=NONE,underline'
-let s:fmt_undb     = ' cterm=NONE,underline'.s:bold.' term=NONE,underline'.s:bold.' gui=NONE,underline'.s:bold
+let s:fmt_undb     = ' cterm=NONE,underline,bold term=NONE,underline,bold gui=NONE,underline,bold'
 let s:fmt_undi     = s:fmt_undr
 let s:fmt_curl     = ' cterm=NONE,undercurl term=NONE,undercurl gui=NONE,undercurl'
 let s:fmt_ital     = ' cterm=NONE,italic term=NONE,italic gui=NONE,italic'
 let s:fmt_stnd     = ' cterm=NONE,standout term=NONE,standout gui=NONE,standout'
 let s:fmt_revr     = ' cterm=NONE,reverse term=NONE,reverse gui=NONE,reverse'
-let s:fmt_revb     = ' cterm=NONE,reverse'.s:bold.' term=NONE,reverse'.s:bold.' gui=NONE,reverse,bold'
-let s:fmt_revbb    = ' cterm=NONE,reverse'.s:bb.' term=NONE,reverse'.s:bb.' gui=NONE,reverse'
-let s:fmt_revbbu   = ' cterm=NONE,reverse'.s:bb.',underline term=NONE,reverse'.s:bb.',underline gui=NONE,reverse,underline'
+let s:fmt_revb     = ' cterm=NONE,reverse,bold term=NONE,reverse,bold gui=NONE,reverse,bold'
+let s:fmt_revbb    = ' cterm=NONE,reverse term=NONE,reverse gui=NONE,reverse'
+let s:fmt_revbbu   = ' cterm=NONE,reverse,underline term=NONE,reverse,underline gui=NONE,reverse,underline'
 
-let s:sp_none      = ' guisp='.s:none
+let s:sp_none      = ' guisp=NONE'
 let s:sp_back      = ' guisp='.s:back[1]
 let s:sp_base03    = ' guisp='.s:base03[1]
 let s:sp_base02    = ' guisp='.s:base02[1]
@@ -112,7 +93,6 @@ let s:sp_cyan      = ' guisp='.s:cyan[1]
 " exe compiled formats
 
 exe 'hi! Normal'         .s:fmt_none   .s:fg_base0  .s:bg_back
-set background=dark
 
 exe 'hi! Comment'        .s:fmt_ital   .s:fg_base01 .s:bg_none
 "       *Comment         any comment
@@ -565,5 +545,30 @@ let g:lightline#colorscheme#breeze#palette = {
       \             s:base03[0][s:mode], s:base00[0][s:mode]]],
       \ },
       \}
+"}}}
+set background=dark
+
+" License "{{{
+" ---------------------------------------------------------------------
+"
+" Copyright (c) 2011 Ethan Schoonover
+"
+" Permission is hereby granted, free of charge, to any person obtaining a copy
+" of this software and associated documentation files (the "Software"), to deal
+" in the Software without restriction, including without limitation the rights
+" to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+" copies of the Software, and to permit persons to whom the Software is
+" furnished to do so, subject to the following conditions:
+"
+" The above copyright notice and this permission notice shall be included in
+" all copies or substantial portions of the Software.
+"
+" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+" AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+" OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+" THE SOFTWARE.
 "}}}
 " vim:set sw=2 ts=2 et tw=78 fdm=marker fdl=0:

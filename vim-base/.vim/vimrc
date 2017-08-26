@@ -122,6 +122,11 @@ endif
     set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T guioptions+=c
   endif
 
+  if has('termguicolors') && (&t_Co > 256 || $COLORTERM =~# 'truecolor')
+    let &t_8f = "\e[38;2;%lu;%lu;%lum"
+    let &t_8b = "\e[48;2;%lu;%lu;%lum"
+    set termguicolors
+  endif
   try
     let g:breeze_use_palette = !$NOPALETTE
     colorscheme breeze

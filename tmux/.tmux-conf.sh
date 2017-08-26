@@ -5,7 +5,7 @@ else
   COLORS=
 fi
 if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-    tmux set-option -ga terminal-overrides ",xterm-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
+    tmux set-option -ga terminal-overrides ",xterm-256color:Tc,konsole-256color:Tc,screen-256color:Tc,tmux-256color:Tc"
 fi
 
 if [ "$COLORS" -ge 256 ] || [ "$COLORTERM" = "truecolor" ]; then
