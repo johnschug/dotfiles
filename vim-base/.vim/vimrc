@@ -44,16 +44,13 @@ endif
     call mkdir(&directory, 'p')
   endif
 
-  if exists('+undofile')
-    autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/* setlocal noundofile
-
-    let &undodir = g:vimdata.'/undo'
-    if !isdirectory(&undodir)
-      call mkdir(&undodir, 'p')
-    endif
-    set undofile
+  let &undodir = g:vimdata.'/undo'
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, 'p')
   endif
+  set undofile
 
+  autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/* setlocal noundofile
   autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/* setlocal noswapfile
   autocmd vimrc BufWritePost $MYVIMRC nested source $MYVIMRC
 " }}}
@@ -122,6 +119,7 @@ endif
     set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T guioptions+=c
   endif
 
+  syntax enable
   if has('termguicolors') && (&t_Co > 256 || $COLORTERM =~# 'truecolor')
     let &t_8f = "\e[38;2;%lu;%lu;%lum"
     let &t_8b = "\e[48;2;%lu;%lu;%lum"
@@ -179,6 +177,7 @@ endif
 
   set ttimeout
   set ttimeoutlen=100
+  set timeoutlen=500
 " }}}
 
 " Commands {{{
@@ -216,6 +215,9 @@ endif
     endif
   endfunction
 
+  autocmd vimrc BufWritePre * if !isdirectory(expand('<afile>:p:h')) |
+        \ call mkdir(expand('<afile>:p:h'), 'p') |
+        \ endif
   autocmd vimrc BufWritePre * if get(b:, 'strip_trailing', 1) |
         \ StripTrailingWhitespace |
         \ endif
@@ -275,10 +277,10 @@ endif
   nnoremap <silent> <C-L> :nohlsearch<Bar>diffupdate<CR><C-L>
   nnoremap <silent> <Leader>d :bd<CR>
   nnoremap <silent> <Leader>$ :StripTrailingWhitespace<CR>
-  nnoremap <silent> <Leader>i1 :setlocal expandtab shiftwidth=2<CR>
-  nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=4<CR>
-  nnoremap <silent> <Leader>i3 :setlocal noexpandtab shiftwidth=4 tabstop=4<CR>
-  nnoremap <silent> <Leader>i4 :setlocal noexpandtab shiftwidth=8 tabstop=8<CR>
+  nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=2<CR>
+  nnoremap <silent> <Leader>i4e :setlocal expandtab shiftwidth=4<CR>
+  nnoremap <silent> <Leader>i4n :setlocal noexpandtab shiftwidth=4 tabstop=4<CR>
+  nnoremap <silent> <Leader>i8 :setlocal noexpandtab shiftwidth=8 tabstop=8<CR>
   nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
   nnoremap <silent> <Leader>ev :vsplit $MYVIMRC<CR>
   nnoremap <silent> <expr> <Leader>el ':vsplit '.g:vimconf.'/local.vim<CR>'
@@ -286,6 +288,7 @@ endif
   nnoremap <silent> <Leader>ec :EditConfig colors <C-R>=g:colors_name<CR><CR>
   nnoremap <silent> <Leader>ef :EditConfig ftplugin<CR>
   nnoremap <silent> <Leader>es :EditConfig syntax<CR>
+  nnoremap <silent> <Leader>ss :syntax sync fromstart<CR>
 
   inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>

@@ -39,8 +39,8 @@ setopt pushd_ignore_dups
 WORDCHARS="${WORDCHARS/\/}"
 if [ "$EUID" -ne 0 ]; then
   HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
-  SAVEHIST=500
-  HISTSIZE=1000
+  SAVEHIST=10000
+  HISTSIZE=10000
 fi
 
 # Bindings
