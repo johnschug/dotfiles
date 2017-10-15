@@ -117,6 +117,7 @@ endif
       set guifont^=Source\ Code\ Pro\ 10,Noto\ Mono\ 10,DejaVu\ Sans\ Mono\ 10
     endif
     set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T guioptions+=c
+    set browsedir=buffer
   endif
 
   syntax enable
@@ -239,8 +240,8 @@ endif
   " Navigation {{{
     nnoremap <C-Space> :ls<CR>:b<SPACE>
     nnoremap gb <C-^>
-    nnoremap <expr> <Leader>f ':find '
-    nnoremap <expr> <Leader>F ':sfind '
+    nnoremap <Leader>f :find<Space>
+    nnoremap <Leader>F :sfind<Space>
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
@@ -274,7 +275,7 @@ endif
   " }}}
   nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
   nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
-  nnoremap <silent> <C-L> :nohlsearch<Bar>diffupdate<CR><C-L>
+  nnoremap <silent> <C-L> :nohlsearch<Bar>checktime<Bar>diffupdate<CR><C-L>
   nnoremap <silent> <Leader>d :bd<CR>
   nnoremap <silent> <Leader>$ :StripTrailingWhitespace<CR>
   nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=2<CR>
