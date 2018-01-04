@@ -102,10 +102,11 @@ endif
 
   set wildmenu
   set wildignorecase
-  set wildmode=longest:full,full
+  set wildmode=full
   set wildignore&
   set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
-  set suffixes& suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
+  set suffixes&
+  set suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
 
   if has('gui_running')
     if has('gui_win32')
@@ -152,7 +153,6 @@ endif
   set expandtab
   set shiftwidth=2
   set softtabstop=-1
-  set tabstop=4
 
   set confirm
   set nostartofline
@@ -203,12 +203,12 @@ endif
   endfunction
 
   command! -bar StripTrailingWhitespace call <SID>StripTrailingWhitespace()
-  function! s:StripTrailingWhitespace()
+  function! s:StripTrailingWhitespace() abort
     if &l:modifiable && !&l:binary
       let l:view = winsaveview()
       try
         " vint:-ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
-        silent! %sm/\s\+$//e
+        silent! keeppatterns %sm/\s\+$//e
         " vint:+ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
       finally
         call winrestview(l:view)
@@ -302,6 +302,7 @@ endif
 " }}}
 
 " File Type {{{
+  let g:load_doxygen_syntax = 1
   let g:rust_fold = 1
 
   autocmd vimrc FileType vim setlocal keywordprg=:help
@@ -343,4 +344,4 @@ endif
 if exists('*local#finish')
   call local#finish()
 endif
-" vim:set sw=2 ts=2 et fdm=marker fdl=0:
+" vim:set sw=2 ts=2 et fdm=marker:

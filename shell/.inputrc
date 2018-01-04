@@ -1,14 +1,23 @@
 $include /etc/inputrc
-set editing-mode vi
+
 set completion-ignore-case on
+set completion-map-case on
+set mark-symlinked-directories on
+set match-hidden-files off
 set show-mode-in-prompt on
+set skip-completed-text on
+set visible-stats on
+
+set editing-mode vi
 set keymap vi-command
 Control-p: history-search-backward
 Control-n: history-search-forward
 Control-e: emacs-editing-mode
+Control-f: edit-and-execute-command
 set keymap vi-insert
 Control-p: history-search-backward
 Control-n: history-search-forward
 Control-e: emacs-editing-mode
+Control-f: edit-and-execute-command
 set keymap emacs
 Control-e: vi-editing-mode

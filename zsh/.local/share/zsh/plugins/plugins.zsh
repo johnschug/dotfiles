@@ -7,7 +7,7 @@ elif hash ag &>/dev/null; then
 fi
 
 function {
-  local plugindir=$(dirname $(readlink -f "${(%):-%x}"))
+  local plugindir=${${(%):-%x}:A:h}
   local plugins=('zsh-completions' 'zsh-syntax-highlighting' 'zsh-autosuggestions' 'skim')
   local p
   for p in $plugins; do

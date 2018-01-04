@@ -21,6 +21,7 @@ setopt append_create
 setopt auto_cd
 setopt auto_pushd
 setopt complete_aliases
+setopt complete_in_word
 setopt correct
 setopt extended_glob
 setopt extended_history
@@ -58,6 +59,7 @@ bindkey '^n' history-beginning-search-forward-end
 bindkey '^t' cd-parent
 bindkey '^e' cd-undo
 bindkey '^[s' toggle-sudo
+bindkey -M vicmd '^f' edit-command-line
 bindkey -M vicmd 'v' edit-command-line
 bindkey -M vicmd 'q' push-input
 bindkey -M vicmd 'u' undo
@@ -112,6 +114,7 @@ zle -N history-beginning-search-forward-end history-search-end
 
 # Completion
 autoload -Uz compinit bashcompinit
+zstyle ':completion:*' verbose true
 zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
@@ -125,7 +128,7 @@ zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:match:*' original only
 zstyle ':completion:*:matches' group yes
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
-zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*:warnings' format '%BNo matches for: %d%b'
 zstyle ':completion:*:approximate:*' max-errors 2 numeric
 zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
 zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"

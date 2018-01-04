@@ -16,6 +16,10 @@ vnoremap ae gg0oG$
 vnoremap gc :action CommentByLineComment<CR>
 nnoremap gcc :action CommentByLineComment<CR>
 
+nnoremap [b :prev<CR>
+nnoremap ]b :next<CR>
+nnoremap [B :first<CR>
+nnoremap ]B :last<CR>
 nnoremap [e :action GotoPreviousError<CR>
 nnoremap ]e :action GotoNextError<CR>
 nnoremap <C-P> :action GotoFile<CR>

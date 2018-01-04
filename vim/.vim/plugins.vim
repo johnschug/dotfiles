@@ -69,7 +69,7 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
 
 " completor {{{
   let g:completor_ocaml_omni_trigger = '(?:\w{2,}|\.\w*|\#\w*)$'
-  let g:completor_haskell_trigger = '(?:\w{2,}|\.\w*)$'
+  let g:completor_haskell_omni_trigger = '(?:\w{2,}|\.\w*)$'
 " }}}
 
 " delimitMate {{{
@@ -126,4 +126,4 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
   nmap ga <Plug>(UnicodeGA)
 " }}}
 
-" vim:set sw=2 ts=2 et fdm=marker fdl=0:
+" vim:set sw=2 ts=2 et fdm=marker:

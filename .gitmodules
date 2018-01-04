@@ -13,9 +13,6 @@
 [submodule "vim/.vim/pack/bundle/start/targets.vim"]
 	path = vim/.vim/pack/bundle/start/targets.vim
 	url = https://github.com/wellle/targets.vim
-[submodule "vim/.vim/pack/bundle/start/vim-surround"]
-	path = vim/.vim/pack/bundle/start/vim-surround
-	url = https://github.com/tpope/vim-surround
 [submodule "vim/.vim/pack/bundle/start/vim-fugitive"]
 	path = vim/.vim/pack/bundle/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
@@ -82,3 +79,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-tmux"]
 	path = vim/.vim/pack/bundle/start/vim-tmux
 	url = https://github.com/tmux-plugins/vim-tmux.git
+[submodule "vim/.vim/pack/bundle/start/vim-sandwich"]
+	path = vim/.vim/pack/bundle/start/vim-sandwich
+	url = https://github.com/machakann/vim-sandwich.git
