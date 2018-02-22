@@ -4,6 +4,9 @@
 !.gitignore
 !.gitmodules
 
+ehthumbs.db
+Thumbs.db
+
 *~
 *.orig
 *.diff
@@ -12,5 +15,4 @@ tmp*
 tags
 cscope.*
 
-# vim specific
 Session.vim

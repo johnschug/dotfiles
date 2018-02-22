@@ -81,6 +81,8 @@ endif
   set display+=lastline
 
   set splitbelow splitright
+  set winminheight=0
+  set previewheight=7
 
   set nowrap
   set linebreak
@@ -121,12 +123,12 @@ endif
     set browsedir=buffer
   endif
 
-  syntax enable
   if has('termguicolors') && (&t_Co > 256 || $COLORTERM =~# 'truecolor')
     let &t_8f = "\e[38;2;%lu;%lu;%lum"
     let &t_8b = "\e[48;2;%lu;%lu;%lum"
     set termguicolors
   endif
+  syntax enable
   try
     let g:breeze_use_palette = !$NOPALETTE
     colorscheme breeze
@@ -145,7 +147,7 @@ endif
         \ setlocal nocursorline nocursorcolumn
   autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn |
         \ nnoremap <silent> <buffer> q <C-W>c
-  autocmd vimrc FileType help wincmd L
+  autocmd vimrc BufWinEnter * if &buftype ==# 'help' | wincmd L | endif
 " }}}
 
 " Editing {{{

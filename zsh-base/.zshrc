@@ -5,7 +5,7 @@ if (( $+commands[tmux] )); then
       read -sk '?Press any key to continue...'
     fi
     if (( $+commands[systemd-run] )); then
-      systemd-run --user --scope -q tmux new -d -s DEFAULT &>/dev/null
+      systemd-run --scope --user -q tmux new -d -s DEFAULT &>/dev/null
     fi
     exec tmux new -A -s DEFAULT
   fi
@@ -262,6 +262,7 @@ alias ip='ip -c'
 alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
 alias strace='strace -y '
+alias mps='ps -u $USER'
 if (( $+commands[gpg2] )); then
   alias gpg=gpg2
 fi

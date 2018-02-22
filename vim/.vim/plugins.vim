@@ -2,6 +2,81 @@ scriptencoding utf-8
 
 autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
 
+" Ale {{{
+  autocmd vimrc User ALELint call lightline#update()
+
+  let g:ale_sign_warning = '⚠'
+  let g:ale_sign_error = '✖'
+  let g:ale_linters = {
+        \ 'rust': ['rustc'],
+        \ 'markdown': ['proselint', 'vale'],
+        \ 'text': ['proselint', 'vale'],
+        \ }
+
+  nmap <silent> [e <Plug>(ale_previous_wrap)
+  nmap <silent> ]e <Plug>(ale_next_wrap)
+
+  function! StatusLineError() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+    let l:symbols = ['E:', 'W:']
+    let l:counts = [l:counts.error + l:counts.style_error,
+          \ l:counts.warning + l:counts.style_warning]
+    return join(map(filter(range(2), 'l:counts[v:val] > 0'),
+          \ 'l:symbols[v:val].l:counts[v:val]'))
+  endfunction
+" }}}
+
+" asyncomplete {{{
+  let g:asyncomplete_remove_duplicates = 1
+
+  imap <c-space> <Plug>(asyncomplete_force_refresh)
+
+  function! s:RegisterAsyncSources() abort
+    call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+          \ 'name': 'file',
+          \ 'whitelist': ['*'],
+          \ 'priority': 10,
+          \ 'completor': function('asyncomplete#sources#file#completor')
+          \ }))
+    call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
+          \ 'name': 'ultisnips',
+          \ 'whitelist': ['*'],
+          \ 'priority': 5,
+          \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
+          \ }))
+    call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+          \ 'name': 'omni',
+          \ 'whitelist': ['*'],
+          \ 'blacklist': ['html'],
+          \ 'completor': function('asyncomplete#sources#omni#completor')
+          \  }))
+  endfunction
+
+  autocmd vimrc User asyncomplete_setup call s:RegisterAsyncSources()
+" }}}
+
+" delimitMate {{{
+  let g:delimitMate_expand_space = 1
+  let g:delimitMate_expand_cr = 2
+  let g:delimitMate_jump_expansion = 1
+" }}}
+
+" editorconfig {{{
+  let g:EditorConfig_disable_rules = ['trim_trailing_whitespace']
+" }}}
+
+" EnhancedDiff {{{
+  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+" }}}
+
+" Fugitive {{{
+  nnoremap <Leader>gs :Gstatus<CR>
+  nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
+  nnoremap <Leader>gl :silent! Gllog!<CR>
+  nnoremap <Leader>gd :Gvdiff<CR>
+  nnoremap <Leader>gw :Gwrite<CR>
+" }}}
+
 " lightline {{{
   let g:lightline = {
         \ 'colorscheme': 'breeze',
@@ -33,57 +108,6 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
         \ },
         \ 'component_type': { 'errors': 'error' },
         \ }
-" }}}
-
-" Fugitive {{{
-  nnoremap <Leader>gs :Gstatus<CR>
-  nnoremap <Leader>gb :leftabove Gblame<CR><C-W>p
-  nnoremap <Leader>gl :silent! Gllog!<CR>
-  nnoremap <Leader>gd :Gvdiff<CR>
-  nnoremap <Leader>gw :Gwrite<CR>
-" }}}
-
-" Ale {{{
-  autocmd vimrc User ALELint call lightline#update()
-
-  let g:ale_sign_warning = '⚠'
-  let g:ale_sign_error = '✖'
-  let g:ale_linters = {
-        \ 'rust': ['rustc'],
-        \ 'markdown': ['proselint', 'vale'],
-        \ 'text': ['proselint', 'vale'],
-        \ }
-
-  nmap <silent> [e <Plug>(ale_previous_wrap)
-  nmap <silent> ]e <Plug>(ale_next_wrap)
-
-  function! StatusLineError()
-    let l:counts = ale#statusline#Count(bufnr(''))
-    let l:symbols = ['E:', 'W:']
-    let l:counts = [l:counts.error + l:counts.style_error,
-          \ l:counts.warning + l:counts.style_warning]
-    return join(map(filter(range(2), 'l:counts[v:val] > 0'),
-          \ 'l:symbols[v:val].l:counts[v:val]'))
-  endfunction
-" }}}
-
-" completor {{{
-  let g:completor_ocaml_omni_trigger = '(?:\w{2,}|\.\w*|\#\w*)$'
-  let g:completor_haskell_omni_trigger = '(?:\w{2,}|\.\w*)$'
-" }}}
-
-" delimitMate {{{
-  let g:delimitMate_expand_space = 1
-  let g:delimitMate_expand_cr = 2
-  let g:delimitMate_jump_expansion = 1
-" }}}
-
-" editorconfig {{{
-  let g:EditorConfig_disable_rules = ['trim_trailing_whitespace']
-" }}}
-
-" EnchancedDiff {{{
-  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
 " }}}
 
 " signify {{{
@@ -126,4 +150,15 @@ autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
   nmap ga <Plug>(UnicodeGA)
 " }}}
 
+" vim-lsp {{{
+  let g:lsp_signs_enabled = 1
+
+  if executable('rls')
+    autocmd vimrc User lsp_setup call lsp#register_server({
+          \ 'name': 'rls',
+          \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
+          \ 'whitelist': ['rust'],
+          \})
+  endif
+" }}}
 " vim:set sw=2 ts=2 et fdm=marker:

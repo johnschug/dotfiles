@@ -55,9 +55,6 @@
 [submodule "vim/.vim/pack/bundle/start/rust.vim"]
 	path = vim/.vim/pack/bundle/start/rust.vim
 	url = https://github.com/rust-lang/rust.vim
-[submodule "vim/.vim/pack/bundle/start/completor.vim"]
-	path = vim/.vim/pack/bundle/start/completor.vim
-	url = https://github.com/maralla/completor.vim
 [submodule "vim/.vim/pack/bundle/start/delimitMate"]
 	path = vim/.vim/pack/bundle/start/delimitMate
 	url = https://github.com/Raimondi/delimitMate
@@ -82,3 +79,24 @@
 [submodule "vim/.vim/pack/bundle/start/vim-sandwich"]
 	path = vim/.vim/pack/bundle/start/vim-sandwich
 	url = https://github.com/machakann/vim-sandwich.git
+[submodule "vim/.vim/pack/bundle/start/async.vim"]
+	path = vim/.vim/pack/bundle/start/async.vim
+	url = https://github.com/prabirshrestha/async.vim.git
+[submodule "vim/.vim/pack/bundle/start/vim-lsp"]
+	path = vim/.vim/pack/bundle/start/vim-lsp
+	url = https://github.com/prabirshrestha/vim-lsp.git
+[submodule "vim/.vim/pack/bundle/start/asyncomplete.vim"]
+	path = vim/.vim/pack/bundle/start/asyncomplete.vim
+	url = https://github.com/prabirshrestha/asyncomplete.vim.git
+[submodule "vim/.vim/pack/bundle/start/asyncomplete-lsp.vim"]
+	path = vim/.vim/pack/bundle/start/asyncomplete-lsp.vim
+	url = https://github.com/prabirshrestha/asyncomplete-lsp.vim.git
+[submodule "vim/.vim/pack/bundle/start/asyncomplete-ultisnips.vim"]
+	path = vim/.vim/pack/bundle/start/asyncomplete-ultisnips.vim
+	url = https://github.com/prabirshrestha/asyncomplete-ultisnips.vim.git
+[submodule "vim/.vim/pack/bundle/start/asyncomplete-file.vim"]
+	path = vim/.vim/pack/bundle/start/asyncomplete-file.vim
+	url = https://github.com/prabirshrestha/asyncomplete-file.vim.git
+[submodule "vim/.vim/pack/bundle/start/asyncomplete-omni.vim"]
+	path = vim/.vim/pack/bundle/start/asyncomplete-omni.vim
+	url = https://github.com/yami-beta/asyncomplete-omni.vim.git
