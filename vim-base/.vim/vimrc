@@ -94,7 +94,7 @@ endif
   set foldcolumn=1
   set foldminlines=5
   set foldopen+=insert
-  set fillchars=diff:⎼,fold:⎼
+  set fillchars=diff:⎼,vert:│,fold:·
 
   set wrapscan
   set hlsearch
@@ -145,9 +145,10 @@ endif
         \ endif
   autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn] |
         \ setlocal nocursorline nocursorcolumn
+  autocmd vimrc BufWinEnter * if &buftype ==# 'help' | wincmd L | endif
   autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn |
         \ nnoremap <silent> <buffer> q <C-W>c
-  autocmd vimrc BufWinEnter * if &buftype ==# 'help' | wincmd L | endif
+  autocmd vimrc FileType netrw setlocal bufhidden=wipe
 " }}}
 
 " Editing {{{

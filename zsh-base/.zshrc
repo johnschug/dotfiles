@@ -33,6 +33,7 @@ setopt hist_reduce_blanks
 setopt hist_save_no_dups
 setopt inc_append_history
 setopt interactive_comments
+setopt nolist_ambiguous
 setopt noclobber
 setopt notify
 setopt pushd_ignore_dups
@@ -68,9 +69,8 @@ bindkey -M vicmd '~' vi-swap-case
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 
-# VI mode indicator
 function zle-line-init zle-keymap-select zle-line-finish {
-  psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}"
+  psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}" # VI mode indicator
   zle reset-prompt
   zle -R
 }
@@ -118,31 +118,24 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
-zstyle ':completion:*' group-name ''
 zstyle ':completion:*' expand prefix suffix
-zstyle ':completion:*' menu select
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-zstyle ':completion:*' insert-unambiguous true
-zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':completion:*:match:*' original only
+zstyle ':completion:*' menu select
+zstyle ':completion:*' select-prompt ''
+zstyle ':completion:*' group-name ''
 zstyle ':completion:*:matches' group yes
-zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BNo matches for: %d%b'
+zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 zstyle ':completion:*:approximate:*' max-errors 2 numeric
 zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
 zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
 
-function {
-  local _zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-${ZSH_VERSION}"
-  if [[ -r "$_zcompdump" && ( "$_zcompdump" -nt "${_zcompdump}.zwc" || ! -e "${_zcompdump}.zwc" ) ]]; then
-    zcompile "$_zcompdump"
-  fi
-
-  compinit -i -d "$_zcompdump"
-  bashcompinit
-  compdef gpg2=gpg
-}
+compinit -i -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+bashcompinit
+compdef -n gpg2=gpg
 
 # VCS Info
 autoload -Uz vcs_info
@@ -178,19 +171,9 @@ function {
   }
 }
 
-function preexec {
-  typeset -ig _starttime=SECONDS
-}
-
 function precmd {
-  local elapsed=0
-  if (( _starttime >= 0 )) ; then
-    elapsed=$((SECONDS - _starttime))
-  fi
-  _starttime=-1
-
   vcs_info
-  psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_" "$elapsed")
+  psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_")
   set-title "%n${SSH_CLIENT:+@%m}:%1~"
 }
 
@@ -238,10 +221,10 @@ function {
   PROMPT="${COLOR0}%1v%h ["
   PROMPT+="${COLOR1}%n"
   PROMPT+="${SSH_CLIENT:+${COLOR0}@${COLOR2}%m}"
-  PROMPT+="${COLOR0}:${COLOR3}%3~"
-  PROMPT+="%(2V. ${COLOR4}%2v.)"
-  PROMPT+="${COLOR0}]%(!.#.$)%b%f "
-  RPROMPT="${COLOR0}[%(0?.${COLOR5}%?.${COLOR6}%?) ${COLOR0}%3vs %j]%b%f"
+  PROMPT+="${COLOR0}:${COLOR3}%(4~:%-1~/…/%2~:%~)"
+  PROMPT+="%(2V: ${COLOR4}%2v:)"
+  PROMPT+="${COLOR0}]"
+  PROMPT+="%(0?::${COLOR6}(%?%))%(!:#:$)%b%f "
 }
 
 # Aliases
@@ -278,7 +261,7 @@ else
   alias bview='vim -Rb'
 fi
 if (( $+commands[rg] )); then
-  alias rg='rg'
+  alias rg='rg -S'
   alias grep='rg -S'
   function vim-grep {
     vim -q <(rg --vimgrep --no-heading -S "$@")

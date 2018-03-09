@@ -2,10 +2,12 @@ umask 077
 
 typeset -U fpath path manpath
 fpath=("${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/functions" $fpath)
-path=(~/.local/bin $path)
+path=("${XDG_BIN_HOME:-${HOME}/.local/bin}" $path)
 manpath=("${XDG_DATA_HOME:-${HOME}/.local/share}/man" $manpath "")
 
 export LANG='en_US.UTF-8'
+export LC_MEASUREMENT='en_CA.UTF-8'
+
 export PAGER='less'
 export LESS='-Rgi'
 export LESSHISTFILE='-'
