@@ -1,0 +1,5 @@
+--recurse=yes
+--tag-relative=yes
+--file-scope=no
+--exclude=.git
+--exclude=.svn

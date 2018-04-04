@@ -1,0 +1,42 @@
+#!/bin/sh
+
+find() {
+  rpm -Va --nomtime | sed 's:^[^/]*::' | tee "${1:-pkgs}"
+  command find /etc -xdev -type f \( -execdir sh -c 'rpm -qf $1 &>/dev/null' -- \{\} \; -or -print \) | tee -a "${1:-pkgs}"
+}
+
+list() {
+  xargs -r rpm -qf <"${1:-pkgs}" | sort -u
+}
+
+fix() {
+  list "$@" | xargs -r rpm -q \
+    --qf "[ch %{FILENAMES:shescape} %{FILEUSERNAME:shescape} %{FILEGROUPNAME:shescape} '%7{FILEMODES:octal}' '%{FILECAPS}'\\n]" \
+    --pipe "(echo 'ch() { chown -ch -- \"\${2}:\${3}\" \"\$1\"; [ -L \"\$1\" ] || \
+    { chmod -c -- \${4#???} \"\$1\"; [ \"\${5:-(none)}\" = \"(none)\" ] || setcap \"\$5\" \"\$1\"; }; }'; grep '^ch ')|sh"
+}
+
+download() {
+  list "$@" | xargs -r dnf download
+  for f in *.rpm ; do
+    rpm2cpio "$f" | cpio -idmuv --sparse
+  done
+}
+
+view() {
+  while read -r f; do
+    "$EDITOR" -d "$f" "./$f"
+  done <"${1:-pkgs}"
+}
+
+cmd="$1"
+shift
+case "$cmd" in
+  find) find "$@";;
+  list) list "$@";;
+  download) download "$@";;
+  view) view "$@";;
+  fix) fix "$@";;
+  *) exit 1;;
+esac
+

@@ -25,7 +25,7 @@ __fsel() {
     -o -type d -print \
     -o -type l -print 2> /dev/null | cut -b3-"}"
   setopt localoptions pipefail 2> /dev/null
-  eval "$cmd" | env "${__skimopts}=${SKIM_FSEL_OPTIONS:-${(P)__skimopts} --reverse}" $__skimcmd -m "$@" | while read item; do
+  eval "$cmd" | env "${__skimopts}=--reverse ${(P)__skimopts} ${SKIM_FSEL_OPTIONS}" $__skimcmd -m "$@" | while read item; do
     echo -n "${(q)item} "
   done
   local ret=$?
@@ -45,7 +45,12 @@ zle -N skim-file-widget
 skim-cd-widget() {
   local cmd="${SKIM_CD_COMMAND:-"command find -L . -mindepth 1 -path '*/\\.*' -prune -o -type d -print 2> /dev/null | cut -b3-"}"
   setopt localoptions pipefail 2> /dev/null
-  cd "${$(eval "$cmd" | env "${__skimopts}=${SKIM_CD_OPTS:-${(P)__skimopts} --reverse}" $__skimcmd +m):-.}"
+  local dir="$(eval "$cmd" | env "${__skimopts}=--reverse ${(P)__skimopts} ${SKIM_CD_OPTS}" $__skimcmd -m)"
+  if [[ -z "$dir" ]]; then
+    zle redisplay
+    return 0
+  fi
+  cd "$dir"
   local ret=$?
   typeset -f precmd >/dev/null && precmd
   zle reset-prompt
@@ -56,10 +61,9 @@ zle -N skim-cd-widget
 
 skim-history-widget() {
   local selected num
-  setopt localoptions noglobsubst pipefail 2> /dev/null
+  setopt localoptions noglobsubst noposixbuiltins pipefail 2> /dev/null
   selected=( $(fc -l 1 |
-    env "${__skimopts}=${SKIM_HIST_OPTS:-${(P)__skimopts} --reverse +s +m --tiebreak=index}" \
-      $__skimcmd -d '\s+' -n 2.. -q "${LBUFFER}") )
+    env "${__skimopts}=--reverse ${(P)__skimopts} -n2..,.. --tac ${SKIM_HIST_OPTS} --query=${(q)LBUFFER} -m" $__skimcmd) )
   local ret=$?
   if [ -n "$selected" ]; then
     num=$selected[1]

@@ -174,7 +174,7 @@ function {
 function precmd {
   vcs_info
   psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_")
-  set-title "%n${SSH_CLIENT:+@%m}:%1~"
+  set-title "%n:%1~"
 }
 
 # Prompt
@@ -220,7 +220,6 @@ function {
 
   PROMPT="${COLOR0}%1v%h ["
   PROMPT+="${COLOR1}%n"
-  PROMPT+="${SSH_CLIENT:+${COLOR0}@${COLOR2}%m}"
   PROMPT+="${COLOR0}:${COLOR3}%(4~:%-1~/…/%2~:%~)"
   PROMPT+="%(2V: ${COLOR4}%2v:)"
   PROMPT+="${COLOR0}]"
@@ -241,11 +240,12 @@ alias mv='mv -iv'
 alias ln='ln -v'
 alias rm='rm -Iv --preserve-root'
 alias rename='rename -v'
+alias mps='ps -u $USER'
 alias ip='ip -c'
 alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
 alias strace='strace -y '
-alias mps='ps -u $USER'
+alias gdb='gdb -q '
 if (( $+commands[gpg2] )); then
   alias gpg=gpg2
 fi

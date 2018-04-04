@@ -15,7 +15,7 @@ if (( $+commands[nvim] )); then
   export MANPAGER="env MANPATH=\"${MANPATH}\" nvim -c 'set ft=man' -"
   export EDITOR='nvim'
 else
-  export MANPAGER="env MAN_PN=1 MANPATH=\"${MANPATH}\" vim -RM +MANPAGER -"
+  export MANPAGER="env MAN_PN=1 MANPATH=\"${MANPATH}\" vim -M +MANPAGER -"
   export EDITOR='vim'
 fi
 export VISUAL="$EDITOR"
