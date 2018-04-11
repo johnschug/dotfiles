@@ -62,6 +62,9 @@ CHR  37;44	# character device
 
 ORPHAN  05;37;41	# symlink to nonexistent file, or non-stat'able file ...
 MISSING 05;37;41	# ... and the files they point to
+SETUID 01;04;31		# file that is setuid (u+s)
+SETGID 01;04;31		# file that is setgid (g+s)
+CAPABILITY 01;04;31	# file with capability
 OTHER_WRITABLE 34;40	# dir that is other-writable (o+w) and not sticky
 
 # This is for files with execute permission:
@@ -74,32 +77,43 @@ EXEC 01;31
 *.app 01;31
 
 # documentation files
-*.1 32
-*.2 32
-*.3 32
-*.4 32
-*.5 32
-*.6 32
-*.7 32
-*.8 32
-*.9 32
-*.md 32
-*.mkd 32
-*.org 32
-*.rst 32
-*.txt 32
-*COPYING 32
-*INSTALL 32
-*LICENSE 32
-*README 32
+*.1 04;32
+*.2 04;32
+*.3 04;32
+*.4 04;32
+*.5 04;32
+*.6 04;32
+*.7 04;32
+*.8 04;32
+*.9 04;32
+*.md 04;32
+*.mkd 04;32
+*.org 04;32
+*.rst 04;32
+*.txt 04;32
+*COPYING 04;32
+*INSTALL 04;32
+*LICENSE 04;32
+*README 04;32
+*COPYRIGHT 04;32
+*AUTHORS 04;32
+*HISTORY 04;32
+*NOTICE 04;32
+*CHANGES 04;32
+*NEWS 04;32
 
 # source files
+*.asp 32
+*.aspx 32
 *.c 32
 *.C 32
 *.cc 32
+*.cl 32
 *.clj 32
 *.cljs 32
+*.coffee 32
 *.cpp 32
+*.cr 32
 *.cs 32
 *.csh 32
 *.css 32
@@ -108,32 +122,49 @@ EXEC 01;31
 *.erb 32
 *.f 32
 *.F 32
+*.for 32
 *.fs 32
 *.fsi 32
+*.ftn 32
 *.go 32
 *.h 32
 *.H 32
 *.haml 32
 *.hh 32
+*.hi 32
 *.hpp 32
 *.hs 32
 *.htm 32
 *.html 32
 *.hxx 32
 *.java 32
+*.jhtm 32
 *.js 32
+*.jsm 32
+*.jsp 32
 *.ksh 32
 *.kt 32
+*.less 32
+*.lhs 32
+*.lisp 32
 *.lua 32
+*.m 32
+*.M 32
+*.mht 32
 *.ml 32
 *.mli 32
+*.msql 32
+*.mysql 32
 *.objc 32
+*.pgsql 32
 *.php 32
 *.pl 32
 *.pm 32
 *.pm 32
 *.ps1 32
 *.py 32
+*.r 32
+*.R 32
 *.rb 32
 *.rdf 32
 *.rs 32
@@ -145,26 +176,30 @@ EXEC 01;31
 *.sh 32
 *.shtml 32
 *.sql 32
+*.swift 32
+*.tcc 32
+*.tcl 32
 *.tcsh 32
 *.tex 32
 *.ts 32
 *.vb 32
+*.vba 32
 *.vbs 32
 *.vim 32
 *.xslt 32
 *.zsh 32
 
 # configuration data files
-*.cfg 36
-*.conf 36
 *.csv 36
-*.in 36
 *.ini 36
 *.json 36
+*.plist 36
 *.toml 36
 *.xml 36
 *.yaml 36
 *.yml 36
+*cfg 36
+*conf 36
 *rc 36
 
 # project/build files
@@ -174,6 +209,7 @@ EXEC 01;31
 *.gradle 1;36
 *.gradle.kts 1;36
 *.gyp 1;36
+*.in 1;36
 *.m4 1;36
 *.mak 1;36
 *.mk 1;36
@@ -252,6 +288,8 @@ EXEC 01;31
 *.zst 01;35
 
 # image/video formats
+*.3g2 33
+*.3gp 33
 *.anx 33
 *.asf 33
 *.avi 33
@@ -259,16 +297,19 @@ EXEC 01;31
 *.bmp 33
 *.cbr 33
 *.cgm 33
+*.divx 33
 *.dl 33
 *.dvi 33
 *.emf 33
 *.eps 33
 *.epub 33
+*.f4v 33
 *.flc 33
 *.fli 33
 *.flv 33
 *.gif 33
 *.gl 33
+*.ico 33
 *.jpeg 33
 *.jpg 33
 *.JPG 33
@@ -354,3 +395,5 @@ EXEC 01;31
 .ANSI-01;36-brcyan 01;36
 .ANSI-37-white 37
 .ANSI-01;37-brwhite 01;37
+
+TERM *256color*
