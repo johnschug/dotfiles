@@ -1,12 +1,21 @@
 #!/bin/sh
 
 find() {
-  rpm -Va --nomtime | sed 's:^[^/]*::' | tee "${1:-pkgs}"
-  command find /etc -xdev -type f \( -execdir sh -c 'rpm -qf $1 &>/dev/null' -- \{\} \; -or -print \) | tee -a "${1:-pkgs}"
+  for d in "${@:-/etc}"; do
+    command find "$d" -xdev -type f \( -execdir sh -c 'rpm -qf $1 &>/dev/null' -- \{\} \; -or -print \)
+  done
+}
+
+all() {
+  { rpm -Va --nomtime | sed 's:^[^/]*::'; find "$@"; } | tee pkgs
 }
 
 list() {
-  xargs -r rpm -qf <"${1:-pkgs}" | sort -u
+  while read -r f; do
+    if pkg=$(rpm -qf "$f"); then
+      echo "$pkg"
+    fi
+  done <"${1:-pkgs}" | sort -u
 }
 
 fix() {
@@ -18,14 +27,20 @@ fix() {
 
 download() {
   list "$@" | xargs -r dnf download
-  for f in *.rpm ; do
+  for f in *.rpm; do
     rpm2cpio "$f" | cpio -idmuv --sparse
   done
 }
 
 view() {
   while read -r f; do
-    "$EDITOR" -d "$f" "./$f"
+    printf 'Change found in %s\nView changes (Y/n/c)? ' "$f" 1>&2
+    read -r answer
+    case "$answer" in
+      [Nn]*) continue;;
+      [Cc]*) break;;
+      *) ${MERGE:-$EDITOR -d} "$f" "./$f" ;;
+    esac
   done <"${1:-pkgs}"
 }
 
@@ -37,6 +52,7 @@ case "$cmd" in
   download) download "$@";;
   view) view "$@";;
   fix) fix "$@";;
-  *) exit 1;;
+  all) all "$@";;
+  *) all "$cmd" "$@";;
 esac
 

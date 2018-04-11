@@ -14,9 +14,11 @@ export LESSHISTFILE='-'
 if (( $+commands[nvim] )); then
   export MANPAGER="env MANPATH=\"${MANPATH}\" nvim -c 'set ft=man' -"
   export EDITOR='nvim'
+  export MERGE='nvim -d'
 else
   export MANPAGER="env MAN_PN=1 MANPATH=\"${MANPATH}\" vim -M +MANPAGER -"
   export EDITOR='vim'
+  export MERGE='vimdiff'
 fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR='vim'
