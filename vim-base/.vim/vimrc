@@ -31,9 +31,12 @@ endif
   set path& path+=**
   set fileformats=unix,dos,mac
   set shortmess+=a
-  set viminfo=
+  set viminfo&
+  set viminfo='100,s10,<0,/0,:0,@0,h
+  set viminfo+=r/tmp,r/dev/shm,r/var/run
+  let &viminfo .= ',n'.g:vimdata.(has('nvim')?'/nviminfo':'/viminfo')
 
-  set backupskip& backupskip+=*/tmp/*,/dev/shm/*
+  set backupskip& backupskip+=*/tmp/*,/dev/shm/*,/var/run/*
   let &backupdir = g:vimdata.'/backup'
   if !isdirectory(&backupdir)
     call mkdir(&backupdir, 'p')
@@ -50,9 +53,12 @@ endif
   endif
   set undofile
 
-  autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/* setlocal noundofile
-  autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/* setlocal noswapfile
-  autocmd vimrc BufWritePost $MYVIMRC nested source $MYVIMRC
+  autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/*,/var/run/* setlocal noundofile
+  autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/*,/var/run/* setlocal noswapfile
+  autocmd vimrc BufReadPost *
+        \ if line("'\"") >= 1 && line("'\"") <= line('$') && &ft !~# 'commit'
+        \ | execute "normal! g`\""
+        \ | endif
 " }}}
 
 " Interface {{{
@@ -123,7 +129,8 @@ endif
     set browsedir=buffer
   endif
 
-  if has('termguicolors') && (&t_Co > 256 || $COLORTERM =~# 'truecolor')
+  if exists('&termguicolors')
+        \ && (&t_Co > 256 || $COLORTERM =~# '^\%(truecolor\|24bit\)$')
     let &t_8f = "\e[38;2;%lu;%lu;%lum"
     let &t_8b = "\e[48;2;%lu;%lu;%lum"
     set termguicolors
@@ -138,16 +145,16 @@ endif
 
   autocmd vimrc InsertEnter * set norelativenumber
   autocmd vimrc InsertLeave * set relativenumber
-  autocmd vimrc WinEnter * if exists('w:cursor') |
-        \ let [&cursorline, &cursorcolumn] = w:cursor |
-        \ elseif &buftype ==# 'terminal' |
-        \ setlocal nocursorcolumn nocursorline |
-        \ endif
-  autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn] |
-        \ setlocal nocursorline nocursorcolumn
+  autocmd vimrc WinEnter * if exists('w:cursor')
+        \ | let [&cursorline, &cursorcolumn] = w:cursor
+        \ | elseif &buftype ==# 'terminal'
+        \ | setlocal nocursorcolumn nocursorline
+        \ | endif
+  autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn]
+        \ | setlocal nocursorline nocursorcolumn
   autocmd vimrc BufWinEnter * if &buftype ==# 'help' | wincmd L | endif
-  autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn |
-        \ nnoremap <silent> <buffer> q <C-W>c
+  autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn
+        \ | nnoremap <silent> <buffer> q <C-W>c
   autocmd vimrc FileType netrw setlocal bufhidden=wipe
 " }}}
 

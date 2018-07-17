@@ -39,7 +39,7 @@ view() {
     case "$answer" in
       [Nn]*) continue;;
       [Cc]*) break;;
-      *) ${MERGE:-$EDITOR -d} "$f" "./$f" ;;
+      *) ${MERGE:-$EDITOR -d} "./$f" "$f" ;;
     esac
   done <"${1:-pkgs}"
 }

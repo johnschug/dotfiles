@@ -4,6 +4,9 @@
 !.gitignore
 !.gitmodules
 
+!.travis.yml
+!.appveyor.yml
+
 ehthumbs.db
 Thumbs.db
 

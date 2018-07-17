@@ -1,79 +1,78 @@
-[core]
-	excludesfile = ~/.config/git/ignore
-	autocrlf = input
-	untrackedCache = true
+[alias]
+	aliases = config --get-regexp alias
+	amend = commit --amend -C HEAD
+	assume = update-index --assume-unchanged --
+	assumed = !git ls-files -v | grep ^h | cut -c 3-
+	br = branch -av
+	clog = log --pretty=compact
+	compact-log = log --pretty=compact
+	dump = cat-file -p
+	ignore = !echo "$1" >>.gitignore
+	pushf = push --force-with-lease
+	st = status
+	tlog = log --pretty=compact --graph
+	tree-log = log --pretty=compact --graph
+	type = cat-file -t
+	unassume = update-index --no-assume-unchanged --
 [color]
 	ui = auto
+[commit]
+	template = ~/.config/git/commit-template
+[core]
+	autocrlf = input
+	untrackedCache = true
 [diff]
 	algorithm = histogram
 	compactionHeuristic = true
+	mnemonicPrefix = true
 	renames = copies
 	tool = vimdiff
-	mnemonicPrefix = true
-[merge]
-	tool = vimdiff
-[submodule]
-	fetchJobs = 8
 [difftool]
 	prompt = false
-[mergetool]
-	prompt = false
-[rebase]
-	autoStash = true
 [fetch]
 	prune = true
+[gpg]
+	program = gpg2
+[include]
+	path = ~/.config/git/local.conf
+[log]
+	decorate = auto
+	follow = true
+	mailmap = true
+[merge]
+	tool = vimdiff
+[mergetool]
+	prompt = false
+[pretty]
+	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
 [pull]
 	ff = only
 [push]
 	default = upstream
 	followTags = true
 	recurseSubmodules = check
-[log]
-	mailmap = true
-	decorate = auto
-	follow = true
+[rebase]
+	autoStash = true
 [status]
 	short = true
-[commit]
-	template = ~/.config/git/commit-template
-[gpg]
-	program = gpg2
-[user]
-	signingkey = A7D81D8297B90E18
-	name = John Schug
-	email = john.ips.schug@gmail.com
-[url "git@github.com:"]
-	pushInsteadOf = gh:
-	pushInsteadOf = git://github.com/
-	pushInsteadOf = https://github.com/
-[url "https://github.com/"]
-	insteadOf = gh:
-[url "https://gist.github.com/"]
-	insteadOf = gist:
+[submodule]
+	fetchJobs = 8
 [url "git@bitbucket.org:"]
 	pushInsteadOf = bb:
 	pushInsteadOf = git://bitbucket.org/
 	pushInsteadOf = https://bitbucket.org/
+[url "git@github.com:"]
+	pushInsteadOf = gh:
+	pushInsteadOf = git://github.com/
+	pushInsteadOf = https://github.com/
 [url "https://bitbucket.org/"]
 	insteadOf = bb:
-[pretty]
-	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
-[alias]
-	aliases = config --get-regexp alias
-	amend = commit --amend -C HEAD
-	snapshot = !git stash save "snapshot: $(date -Imin)" && git stash apply "stash@{0}"
-	assume = update-index --assume-unchanged --
-	unassume = update-index --no-assume-unchanged --
-	assumed = !git ls-files -v | grep ^h | cut -c 3-
-	compact-log = log --pretty=compact
-	tree-log = log --pretty=compact --graph
-	clog = log --pretty=compact
-	tlog = log --pretty=compact --graph
-	ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo "$1" >>.gitignore
-	type = cat-file -t
-	dump = cat-file -p
-	st = status
-	pushf = push --force-with-lease
-[include]
-	path = ~/.config/git/local.conf
+[url "https://gist.github.com/"]
+	insteadOf = gist:
+[url "https://github.com/"]
+	insteadOf = gh:
+[user]
+	email = john.ips.schug@gmail.com
+	name = John Schug
+	signingkey = A7D81D8297B90E18
 # vim:set sw=4 sts=4 ts=4 noet:

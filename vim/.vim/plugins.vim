@@ -1,7 +1,5 @@
 scriptencoding utf-8
 
-autocmd vimrc BufWritePost plugins.vim nested source $MYVIMRC
-
 " Ale {{{
   autocmd vimrc User ALELint call lightline#update()
 
