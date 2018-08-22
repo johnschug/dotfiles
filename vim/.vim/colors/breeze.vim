@@ -166,8 +166,8 @@ exe 'hi! Todo'           .s:fmt_bold   .s:fg_base1  .s:bg_none
 " ---------------------------------------------------------------------
 exe 'hi! SpecialKey'     .s:fmt_bold   .s:fg_base00 .s:bg_none
 exe 'hi! NonText'        .s:fmt_bold   .s:fg_base00 .s:bg_none
-exe 'hi! StatusLine'     .s:fmt_none   .s:fg_base1  .s:bg_base02 .s:fmt_revbb
-exe 'hi! StatusLineNC'   .s:fmt_none   .s:fg_base00 .s:bg_base02 .s:fmt_revbb
+exe 'hi! StatusLine'     .s:fmt_none   .s:fg_base1  .s:bg_base02
+exe 'hi! StatusLineNC'   .s:fmt_none   .s:fg_base00 .s:bg_base02
 exe 'hi! Visual'         .s:fmt_none   .s:fg_base01 .s:bg_base03 .s:fmt_revbb
 exe 'hi! Directory'      .s:fmt_none   .s:fg_blue   .s:bg_none
 exe 'hi! ErrorMsg'       .s:fmt_revr   .s:fg_red    .s:bg_none
@@ -515,16 +515,16 @@ let g:lightline#colorscheme#breeze#palette = {
       \               s:base03[0][s:mode], s:base1[0][s:mode]]],
       \ },
       \ 'inactive': {
-      \   'left': [[s:base0[1], s:base02[1],
-      \             s:base0[0][s:mode], s:base02[0][s:mode]],
-      \            [s:base0[1], s:base02[1],
-      \             s:base0[0][s:mode], s:base02[0][s:mode]]],
+      \   'left': [[s:base00[1], s:base02[1],
+      \             s:base00[0][s:mode], s:base02[0][s:mode]],
+      \            [s:base00[1], s:base02[1],
+      \             s:base00[0][s:mode], s:base02[0][s:mode]]],
       \   'right': [[s:base03[1], s:base00[1],
       \              s:base03[0][s:mode], s:base00[0][s:mode]],
-      \             [s:base0[1], s:base02[1],
-      \              s:base0[0][s:mode], s:base02[0][s:mode]]],
-      \   'middle': [[s:base01[1], s:base02[1],
-      \               s:base01[0][s:mode], s:base02[0][s:mode]]],
+      \             [s:base00[1], s:base02[1],
+      \              s:base00[0][s:mode], s:base02[0][s:mode]]],
+      \   'middle': [[s:base00[1], s:base02[1],
+      \               s:base00[0][s:mode], s:base02[0][s:mode]]],
       \ },
       \ 'insert': {
       \   'left': [[s:base03[1], s:green[1],

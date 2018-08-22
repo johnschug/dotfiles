@@ -59,7 +59,9 @@ bindkey '^p' history-beginning-search-backward-end
 bindkey '^n' history-beginning-search-forward-end
 bindkey '^t' cd-parent
 bindkey '^e' cd-undo
+bindkey '^o' insert-files
 bindkey '^[s' toggle-sudo
+bindkey "^['" toggle-quoted
 bindkey -M vicmd '^f' edit-command-line
 bindkey -M vicmd 'v' edit-command-line
 bindkey -M vicmd 'q' push-input
@@ -69,11 +71,45 @@ bindkey -M vicmd '~' vi-swap-case
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
 
+# Widgets
+autoload -Uz edit-command-line insert-composed-char insert-unicode-char history-search-end insert-files
+autoload -Uz split-shell-arguments modify-current-argument
+zle -N edit-command-line
+zle -N insert-composed-char
+zle -N insert-unicode-char
+zle -N insert-files
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+
 function zle-line-init zle-keymap-select zle-line-finish {
   psvar[1]="${${KEYMAP/vicmd/:}/(main|viins)/+}" # VI mode indicator
   zle reset-prompt
   zle -R
 }
+zle -N zle-line-init
+zle -N zle-line-finish
+zle -N zle-keymap-select
+
+function toggle-quoted {
+  local -a reply
+  integer REPLY REPLY2
+  split-shell-arguments
+  if (( REPLY & 1 )); then
+    (( REPLY-- ))
+  fi
+
+  local word=${reply[$REPLY]}
+  if [[ "${(Q)word}" = "$word" ]]; then
+    modify-current-argument '${(qq)${(Q)ARG}}'
+  elif [[ "${(qq)${(Q)word}}" = "$word" ]]; then
+    modify-current-argument '${(qqq)${(Q)ARG}}'
+  else
+    modify-current-argument '${(Q)ARG}'
+  fi
+
+  zle redisplay
+}
+zle -N toggle-quoted
 
 function toggle-sudo {
   if [[ "$BUFFER" != su(do|)\ * ]]; then
@@ -84,6 +120,7 @@ function toggle-sudo {
     BUFFER=${BUFFER#"sudo "}
   fi
 }
+zle -N toggle-sudo
 
 function cd-parent {
   pushd .. &>/dev/null
@@ -91,6 +128,7 @@ function cd-parent {
   zle reset-prompt
   zle zle-line-init
 }
+zle -N cd-parent
 
 function cd-undo {
   popd &>/dev/null
@@ -98,19 +136,7 @@ function cd-undo {
   zle reset-prompt
   zle zle-line-init
 }
-
-autoload -Uz edit-command-line insert-composed-char insert-unicode-char history-search-end
-zle -N zle-line-init
-zle -N zle-line-finish
-zle -N zle-keymap-select
-zle -N edit-command-line
-zle -N insert-composed-char
-zle -N insert-unicode-char
-zle -N toggle-sudo
-zle -N cd-parent
 zle -N cd-undo
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
 
 # Completion
 autoload -Uz compinit bashcompinit
@@ -119,17 +145,18 @@ zstyle ':completion:*' use-compctl true
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/completions"
 zstyle ':completion:*' expand prefix suffix
-zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*' completer _oldlist _expand _complete _approximate _files _ignored
 zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' menu select
 zstyle ':completion:*' select-prompt ''
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:matches' group yes
+zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BNo matches for: %d%b'
-zstyle ':completion:*:default' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3)) numeric)'
+zstyle ':completion:*:expand:*' tag-order all-expansions
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
-zstyle ':completion:*:approximate:*' max-errors 2 numeric
 zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
 zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
 
@@ -244,7 +271,7 @@ alias mps='ps -u $USER'
 alias ip='ip -c'
 alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
-alias strace='strace -y '
+alias strace='strace -xy '
 alias gdb='gdb -q '
 if (( $+commands[gpg2] )); then
   alias gpg=gpg2

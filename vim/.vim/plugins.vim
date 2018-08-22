@@ -6,7 +6,6 @@ scriptencoding utf-8
   let g:ale_sign_warning = '⚠'
   let g:ale_sign_error = '✖'
   let g:ale_linters = {
-        \ 'rust': ['rustc'],
         \ 'markdown': ['proselint', 'vale'],
         \ 'text': ['proselint', 'vale'],
         \ }
@@ -25,6 +24,7 @@ scriptencoding utf-8
 " }}}
 
 " asyncomplete {{{
+  let g:asyncomplete_smart_completion = 1
   let g:asyncomplete_remove_duplicates = 1
 
   imap <c-space> <Plug>(asyncomplete_force_refresh)
@@ -124,18 +124,6 @@ scriptencoding utf-8
     return join(map(filter(range(len(l:stats)), 'l:stats[v:val] > 0'),
            \ 'l:symbols[v:val].l:stats[v:val]'))
   endfunction
-" }}}
-
-" Skim / FZF {{{
-  if executable('rg')
-    let $SKIM_DEFAULT_COMMAND='rg --files'
-  elseif executable('ag')
-    let $SKIM_DEFAULT_COMMAND='ag -l -g ""'
-  endif
-  let $FZF_DEFAULT_COMMAND=$SKIM_DEFAULT_COMMAND
-
-  nnoremap <silent> <C-Space> :Buffers<CR>
-  nnoremap <silent> <C-P> :Files<CR>
 " }}}
 
 " UltiSnips {{{

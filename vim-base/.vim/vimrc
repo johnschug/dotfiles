@@ -62,6 +62,8 @@ endif
 " }}}
 
 " Interface {{{
+  set titlestring=%t%(\ %M%)
+  set title
   set ttyfast
   set lazyredraw
   set scrolloff=5
@@ -76,15 +78,20 @@ endif
   set colorcolumn=+1
   set showcmd
   set noshowmode
+  set display+=lastline
   set laststatus=2
   set statusline=
-  set statusline+=%{&paste?'[PASTE]\ ':''}%r%f%(\ %M%)%=
+  set statusline+=%{&paste?'[PASTE]\ ':''}
+  set statusline+=%(%R\ \|\ %)%f%(\ %M%)%=
   set statusline+=%{&spell?&spelllang.'\ ':''}
   set statusline+=%{!empty(&ft)?&ft:'no\ ft'}
   set statusline+=\ \|\ %{strlen(&fenc)?&fenc:&enc}
   set statusline+=\ \|\ %{&ff}
-  set statusline+=\ :\ %3p%%\ :%3l:%-3v
-  set display+=lastline
+  set statusline+=\ :\ %3p%%\ :%3l:%-2v
+
+  autocmd vimrc WinEnter * setlocal statusline<
+  autocmd vimrc WinLeave * setlocal statusline=%f%(\ %M%)%=%3p%%\ :%3l:%-2v
+        \ | let &ro=&ro
 
   set splitbelow splitright
   set winminheight=0
@@ -116,6 +123,7 @@ endif
   set suffixes&
   set suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
 
+  set guicursor=
   if has('gui_running')
     if has('gui_win32')
       if exists('&renderoptions')
