@@ -1,12 +1,8 @@
 #!/usr/bin/zsh
 function {
-  local plugindir=${${(%):-%x}:A:h}
-  local plugins=('zsh-completions' 'zsh-syntax-highlighting' 'zsh-autosuggestions')
-  local p
-  for p in $plugins; do
-    if [ -f "${plugindir}/${p}/${p}.plugin.zsh" ]; then
-      source "${plugindir}/${p}/${p}.plugin.zsh"
-    fi
+  local plugindir=${${(%):-%x}:A:h} p
+  for p in "$plugindir"/*/*.plugin.zsh(r); do
+    source $p
   done
 }
 

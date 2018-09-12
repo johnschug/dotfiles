@@ -201,6 +201,10 @@ EXEC 01;31
 *cfg 36
 *conf 36
 *rc 36
+*.profile 36
+*.bash_profile 36
+*.zshenv 36
+*.zprofile 36
 
 # project/build files
 *.ac 1;36

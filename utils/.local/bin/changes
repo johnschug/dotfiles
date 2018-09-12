@@ -34,12 +34,13 @@ download() {
 
 view() {
   while read -r f; do
+    [ -f "$f" ] || continue
     printf 'Change found in %s\nView changes (Y/n/c)? ' "$f" 1>&2
-    read -r answer
+    read -r answer </dev/tty
     case "$answer" in
       [Nn]*) continue;;
       [Cc]*) break;;
-      *) ${MERGE:-$EDITOR -d} "./$f" "$f" ;;
+      *) ${MERGE:-$EDITOR -d} "./$f" "$f" </dev/tty ;;
     esac
   done <"${1:-pkgs}"
 }

@@ -1,6 +1,6 @@
 [Appearance]
 ColorScheme=Breeze
-Font=Source Code Pro,10,-1,5,50,0,0,0,0,0
+Font=Monospace,10,-1,5,50,0,0,0,0,0
 UseFontLineChararacters=true
 
 [Cursor Options]

@@ -1,5 +1,7 @@
 $include /etc/inputrc
 
+set colored-completion-prefix on
+set colored-stats on
 set completion-ignore-case on
 set completion-map-case on
 set mark-symlinked-directories on
@@ -7,6 +9,8 @@ set match-hidden-files off
 set show-all-if-ambiguous on
 set show-mode-in-prompt on
 set skip-completed-text on
+set vi-cmd-mode-string :
+set vi-ins-mode-string +
 set visible-stats on
 
 set editing-mode vi

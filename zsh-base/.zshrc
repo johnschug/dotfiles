@@ -173,91 +173,46 @@ zstyle ':vcs_info:*' unstagedstr '*'
 zstyle ':vcs_info:*' formats '([%b]%u%c)'
 zstyle ':vcs_info:*' actionformats '([%b|%a]%u%c)'
 
-function {
-  case $TERM in
-    termite|xterm*|rxvt*|(dt|k|E)term)
-      _titlestart='\e]0;'
-      _titlefinish='\a'
-      ;;
-    screen*)
-      _titlestart='\ek'
-      _titlefinish='\e\'
-      ;;
-    *)
-      if tput hs; then
-        _titlestart="$(tput tsl)"
-        _titlefinish="$(tput fsl)"
-      else
-        function set-title {}
-        return
-      fi
-  esac
-
-  function set-title {
-    print -Pn "$_titlestart$@$_titlefinish"
-  }
-}
-
 function precmd {
   vcs_info
   psvar=("${${KEYMAP/vicmd/:}/(main|viins)/+}" "$vcs_info_msg_0_")
-  set-title "%n:%1~"
+  print -Pf "${terminfo[tsl]}%s:%s${terminfo[fsl]}" '%n' '%1~'
 }
 
 # Prompt
 function {
-  if (( $+commands[tput] )); then
-    local COLORS="$(tput colors)"
+  if [ "${terminfo[colors]}" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
+    local -A colors=(
+      default "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)%}"
+      user "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)%}"
+      cwd "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)%}"
+      vcs "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)%}"
+      fail "%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
+    )
+  elif [ "${terminfo[colors]}" -eq 256 ] && [ -n "$NOPALETTE" ]; then
+    local -A colors=(default '%243F' user '%31F' cwd '%33F' vcs '%245F' fail '%160F')
+  elif [ "${terminfo[colors]}" -ge 16 ]; then
+    local -A colors=(default '%11F' user '%F{yellow}' cwd '%F{blue}' vcs '%12F' fail '%F{red}')
   else
-    local COLORS=
-  fi
-  if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-    local COLOR0="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)%}"
-    local COLOR1="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)%}"
-    local COLOR2="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x34 0x49 0x5e)%}"
-    local COLOR3="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)%}"
-    local COLOR4="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)%}"
-    local COLOR5="%{$(printf '\e[38;2;%lu;%lu;%lum' 0x85 0x99 0x00)%}"
-    local COLOR6="%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
-  elif [ -n "$NOPALETTE" ]; then
-    local COLOR0='%243F'
-    local COLOR1='%31F'
-    local COLOR2='%25F'
-    local COLOR3='%33F'
-    local COLOR4='%245F'
-    local COLOR5='%100F'
-    local COLOR6='%160F'
-  elif [ "$COLORS" -ge 16 ]; then
-    local COLOR0='%11F'
-    local COLOR1='%F{yellow}'
-    local COLOR2='%F{magenta}'
-    local COLOR3='%F{blue}'
-    local COLOR4='%12F'
-    local COLOR5='%F{green}'
-    local COLOR6='%F{red}'
-  else
-    local COLOR0='%F{white}'
-    local COLOR1='%F{blue}'
-    local COLOR2='%F{blue}'
-    local COLOR3='%F{cyan}'
-    local COLOR4='%F{white}'
-    local COLOR5='%F{green}'
-    local COLOR6='%F{red}'
+    local -A colors=(default '%F{white}' user '%F{blue}' cwd '%F{cyan}' vcs '%F{white}' fail '%F{red}')
   fi
 
-  PROMPT="${COLOR0}%1v%h ["
-  PROMPT+="${COLOR1}%n"
-  PROMPT+="${COLOR0}:${COLOR3}%(4~:%-1~/…/%2~:%~)"
-  PROMPT+="%(2V: ${COLOR4}%2v:)"
-  PROMPT+="${COLOR0}]"
-  PROMPT+="%(0?::${COLOR6}(%?%))%(!:#:$)%b%f "
+  PROMPT="${colors[default]}%1v%h ["
+  PROMPT+="${colors[user]}%n"
+  PROMPT+="${colors[default]}:${colors[cwd]}%(4~:%-1~/…/%2~:%~)"
+  PROMPT+="%(2V: ${colors[vcs]}%2v:)"
+  PROMPT+="${colors[default]}]"
+  PROMPT+="%(0?::${colors[fail]}(%?%))%(!:#:$)%b%f "
 }
 
 # Aliases
+autoload -Uz run-help
+alias help=run-help
+alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
 alias ls='ls --color=auto'
-alias l.="ls --color=auto -AI '[^.]*'"
+alias l.=$'ls --color=auto -AI \'[^.]*\''
 alias ll='ls --color=auto -l'
-alias ll.="ls --color=auto -lAI '[^.]*'"
+alias ll.=$'ls --color=auto -lAI \'[^.]*\''
 alias info='info --vi-keys'
 alias chown='chown -c --preserve-root'
 alias chmod='chmod -c --preserve-root'
@@ -273,8 +228,10 @@ alias sudo='sudo '
 alias sudop='sudo env PATH="$PATH" '
 alias strace='strace -xy '
 alias gdb='gdb -q '
+alias vi='vim'
+alias rvi='rvim'
 if (( $+commands[gpg2] )); then
-  alias gpg=gpg2
+  alias gpg='gpg2'
 fi
 if (( $+commands[nvim] )); then
   alias vim='nvim'

@@ -39,7 +39,6 @@ scriptencoding utf-8
     call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
           \ 'name': 'ultisnips',
           \ 'whitelist': ['*'],
-          \ 'priority': 5,
           \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
           \ }))
     call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
@@ -51,6 +50,7 @@ scriptencoding utf-8
   endfunction
 
   autocmd vimrc User asyncomplete_setup call s:RegisterAsyncSources()
+  autocmd vimrc CompleteDone * if pumvisible() == 0 | pclose | endif
 " }}}
 
 " delimitMate {{{
@@ -64,7 +64,9 @@ scriptencoding utf-8
 " }}}
 
 " EnhancedDiff {{{
-  let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+  if index(split(&diffopt, ','), 'internal') < 0
+    let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=histogram")'
+  endif
 " }}}
 
 " Fugitive {{{

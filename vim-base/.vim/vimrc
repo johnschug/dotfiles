@@ -62,7 +62,7 @@ endif
 " }}}
 
 " Interface {{{
-  set titlestring=%t%(\ %M%)
+  set titlestring=%t
   set title
   set ttyfast
   set lazyredraw
@@ -117,7 +117,7 @@ endif
 
   set wildmenu
   set wildignorecase
-  set wildmode=full
+  set wildmode=longest:full,full
   set wildignore&
   set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
   set suffixes&
@@ -189,6 +189,9 @@ endif
     set dictionary+=/usr/share/dict/words
   endif
   set diffopt+=iwhite
+  if has('patch-8.1.360')
+    set diffopt+=indent-heuristic,algorithm:histogram
+  endif
 
   if exists('&inccommand')
     set inccommand=nosplit
@@ -205,19 +208,27 @@ endif
     command! -bar Paste read !xclip -o -sel clip
   endif
 
-  command! -bar -nargs=+ EditConfig call <SID>EditConfig(<f-args>)
-  function! s:EditConfig(what, ...) abort
-    let l:name = get(a:000, 0, &filetype)
-    if empty(l:name)
+  command! -bar -nargs=+ SplitNonEmpty call <SID>SplitNonEmpty(<q-mods>, <q-args>)
+  function! s:SplitNonEmpty(mods, args) abort
+    let l:cmd = 'split'
+    if !&modified && (line('$') == 1) && empty(getline(1))
+      let l:cmd = 'edit'
+    endif
+    execute a:mods.' '.l:cmd.' '.a:args
+  endfunction
+
+  command! -bar -nargs=+ EditConfig call <SID>EditConfig(<q-mods>, <f-args>)
+  function! s:EditConfig(mods, what, ...) abort
+    let l:type = get(a:000, 0, &filetype)
+    if empty(l:type)
       return
     endif
-    let l:stem = a:what.'/'.l:name.'.vim'
-    if filewritable(g:vimconf.'/after/'.l:stem) ||
-          \ (!filewritable(g:vimconf.'/'.l:stem) && findfile(l:stem, &runtimepath) !=# '')
-      execute ':vsplit '.g:vimconf.'/after/'.l:stem
-    else
-      execute ':vsplit '.g:vimconf.'/'.l:stem
+    let l:path = a:what.'/'.l:type.'.vim'
+    if filewritable(g:vimconf.'/after/'.l:path) ||
+          \ (!filewritable(g:vimconf.'/'.l:path) && findfile(l:path, &runtimepath) !=# '')
+      let l:path = 'after/'.l:path
     endif
+    call s:SplitNonEmpty(a:mods, g:vimconf.'/'.l:path)
   endfunction
 
   command! -bar StripTrailingWhitespace call <SID>StripTrailingWhitespace()
@@ -301,12 +312,12 @@ endif
   nnoremap <silent> <Leader>i4n :setlocal noexpandtab shiftwidth=4 tabstop=4<CR>
   nnoremap <silent> <Leader>i8 :setlocal noexpandtab shiftwidth=8 tabstop=8<CR>
   nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
-  nnoremap <silent> <Leader>ev :vsplit $MYVIMRC<CR>
-  nnoremap <silent> <expr> <Leader>el ':vsplit '.g:vimconf.'/local.vim<CR>'
-  nnoremap <silent> <expr> <Leader>ep ':vsplit '.g:vimconf.'/plugins.vim<CR>'
-  nnoremap <silent> <Leader>ec :EditConfig colors <C-R>=g:colors_name<CR><CR>
-  nnoremap <silent> <Leader>ef :EditConfig ftplugin<CR>
-  nnoremap <silent> <Leader>es :EditConfig syntax<CR>
+  nnoremap <silent> <Leader>ev :vertical SplitNonEmpty $MYVIMRC<CR>
+  nnoremap <silent> <expr> <Leader>el ':vertical SplitNonEmpty '.g:vimconf.'/local.vim<CR>'
+  nnoremap <silent> <expr> <Leader>ep ':vertical SplitNonEmpty '.g:vimconf.'/plugins.vim<CR>'
+  nnoremap <silent> <Leader>ec :vertical EditConfig colors <C-R>=g:colors_name<CR><CR>
+  nnoremap <silent> <Leader>ef :vertical EditConfig ftplugin<CR>
+  nnoremap <silent> <Leader>es :vertical EditConfig syntax<CR>
   nnoremap <silent> <Leader>ss :syntax sync fromstart<CR>
 
   inoremap <C-W> <C-G>u<C-W>
@@ -335,7 +346,8 @@ endif
   set tagcase=smart
   set tags=./tags;,tags
   set sessionoptions-=curdir
-  set sessionoptions+=winpos,sesdir
+  set sessionoptions-=options
+  set sessionoptions+=localoptions,unix,sesdir
 
   let s:gitroot = get(systemlist('git rev-parse --show-toplevel'), 0, '')
   if v:shell_error == 0 && !empty(s:gitroot)
