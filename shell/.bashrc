@@ -71,6 +71,8 @@ function __precmd {
     )
   fi
 
+  printf '%s%s:%s%s' "$(tput tsl)" "$USER" "${PWD/#$HOME/~}" "$(tput fsl)"
+
   PS1="${colors["default"]}\\! ["
   PS1+="${colors["user"]}\\u"
   PS1+="${colors["default"]}:${colors[cwd]}\\w"

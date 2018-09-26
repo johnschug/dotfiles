@@ -306,6 +306,7 @@ endif
   nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
   nnoremap <silent> <C-L> :nohlsearch<Bar>checktime<Bar>diffupdate<CR><C-L>
   nnoremap <silent> <Leader>d :bd<CR>
+  nnoremap <silent> <Leader>w :update<CR>
   nnoremap <silent> <Leader>$ :StripTrailingWhitespace<CR>
   nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=2<CR>
   nnoremap <silent> <Leader>i4e :setlocal expandtab shiftwidth=4<CR>

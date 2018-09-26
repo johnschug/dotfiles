@@ -4,9 +4,6 @@ if command -v tput >/dev/null 2>&1; then
 else
   COLORS=
 fi
-if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-    tmux set-option -ga terminal-overrides ",${1:-$TERM}:Tc"
-fi
 
 if [ "$COLORS" -ge 256 ] || [ "$COLORTERM" = "truecolor" ]; then
   if infocmp tmux-256color >/dev/null 2>&1; then
@@ -28,9 +25,8 @@ else
   fi
 fi
 
-VERSION="$(tmux -V | cut -d' ' -f2)"
-if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ] &&
-  [ "$(printf '2.3\n%s\n' "$VERSION" | sort -V | head -n1)" = "2.3" ]; then
+if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
+  tmux set-option -sa terminal-overrides ",${1:-$TERM}:RGB"
   COLOR0="#232629"
   COLOR1="#eee8d5"
   COLOR2="#31363b"
@@ -39,7 +35,7 @@ if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ] &&
   COLOR5="#657b83"
   COLOR6="#1d99f3"
   COLOR7="#2c3e50"
-elif [ -n "$NOPALETTE" ]; then
+elif [ "$COLORS" -eq 256 ] && [ -n "$NOPALETTE" ]; then
   COLOR0="colour235"
   COLOR1="colour255"
   COLOR2="colour237"
