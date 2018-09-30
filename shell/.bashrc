@@ -95,6 +95,18 @@ function __precmd {
   PS1+="${colors["default"]}]\\$ ${colors[reset]}"
 }
 
+function _toggle-sudo {
+  if [[ ! "$READLINE_LINE" =~ ^su(do|)\  ]]; then
+    READLINE_LINE="sudo $READLINE_LINE"
+    (( READLINE_POINT += 5 ))
+  elif [[ "$READLINE_LINE" =~ ^sudo\  ]]; then
+    READLINE_LINE=${READLINE_LINE#"sudo "}
+    (( READLINE_POINT -= 5 ))
+  fi
+}
+
+bind -m vi-insert -x '"\es":"_toggle-sudo"'
+
 alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
 alias ls='ls --color=auto'
 alias l.=$'ls --color=auto -AI \'[^.]*\''
@@ -106,8 +118,8 @@ alias chmod='chmod -c --preserve-root'
 alias mkdir='mkdir -pv'
 alias cp='cp -iv --reflink=auto --sparse=always'
 alias mv='mv -iv'
-alias ln='ln -v'
-alias rm='rm -Iv --preserve-root'
+alias ln='ln -iv'
+alias rm='rm -Iv --preserve-root --one-file-system'
 alias rename='rename -v'
 alias mps='ps -u $USER'
 alias ip='ip -c'

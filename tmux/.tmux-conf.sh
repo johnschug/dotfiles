@@ -35,6 +35,7 @@ if [ "$COLORS" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
   COLOR5="#657b83"
   COLOR6="#1d99f3"
   COLOR7="#2c3e50"
+  SEARCH="#2980b9"
 elif [ "$COLORS" -eq 256 ] && [ -n "$NOPALETTE" ]; then
   COLOR0="colour235"
   COLOR1="colour255"
@@ -44,6 +45,7 @@ elif [ "$COLORS" -eq 256 ] && [ -n "$NOPALETTE" ]; then
   COLOR5="colour243"
   COLOR6="colour33"
   COLOR7="colour24"
+  SEARCH="colour33"
 elif [ "$COLORS" -ge 16 ]; then
   COLOR0="brightblack"
   COLOR1="white"
@@ -53,6 +55,7 @@ elif [ "$COLORS" -ge 16 ]; then
   COLOR5="brightyellow"
   COLOR6="blue"
   COLOR7="brightmagenta"
+  SEARCH="blue"
 else
   COLOR0="black"
   COLOR1="white"
@@ -62,9 +65,11 @@ else
   COLOR5="white"
   COLOR6="cyan"
   COLOR7="blue"
+  SEARCH="blue"
 fi
 tmux set-option -wg window-style "bg=${COLOR0},fg=${COLOR1}"
 tmux set-option -g message-style "bg=${COLOR2},fg=${COLOR3}"
+tmux set-option -g mode-style "fg=${SEARCH},reverse"
 tmux set-option -g message-command-style "bg=${COLOR2},fg=${COLOR3}"
 tmux set-option -g status-style "bg=${COLOR2},fg=${COLOR3}"
 tmux set-option -g status-left "#[bg=${COLOR4},fg=${COLOR0}] #S #[bg=${COLOR5}] #{session_width}x#{session_height} "

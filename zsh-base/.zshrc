@@ -48,6 +48,9 @@ fi
 # Bindings
 export KEYTIMEOUT=5
 bindkey -v
+bindkey '^b' beginning-of-line
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
 bindkey '^h' backward-delete-char
 bindkey '^?' backward-delete-char
 bindkey '^w' backward-kill-word
@@ -58,7 +61,7 @@ bindkey '^v' insert-unicode-char
 bindkey '^p' history-beginning-search-backward-end
 bindkey '^n' history-beginning-search-forward-end
 bindkey '^t' cd-parent
-bindkey '^e' cd-undo
+bindkey '^y' cd-undo
 bindkey '^o' insert-files
 bindkey '^[s' toggle-sudo
 bindkey "^['" toggle-quoted
@@ -112,10 +115,10 @@ function toggle-quoted {
 zle -N toggle-quoted
 
 function toggle-sudo {
-  if [[ "$BUFFER" != su(do|)\ * ]]; then
+  if [[ ! "$BUFFER" =~ ^su(do|)\  ]]; then
     BUFFER="sudo $BUFFER"
     (( CURSOR += 5 ))
-  elif [[ "$BUFFER" == sudo\ * ]]; then
+  elif [[ "$BUFFER" =~ ^sudo\  ]]; then
     (( CURSOR -= 5 ))
     BUFFER=${BUFFER#"sudo "}
   fi
@@ -219,8 +222,8 @@ alias chmod='chmod -c --preserve-root'
 alias mkdir='mkdir -pv'
 alias cp='cp -iv --reflink=auto --sparse=always'
 alias mv='mv -iv'
-alias ln='ln -v'
-alias rm='rm -Iv --preserve-root'
+alias ln='ln -iv'
+alias rm='rm -Iv --preserve-root --one-file-system'
 alias rename='rename -v'
 alias mps='ps -u $USER'
 alias ip='ip -c'

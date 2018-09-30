@@ -4,9 +4,12 @@ set colored-completion-prefix on
 set colored-stats on
 set completion-ignore-case on
 set completion-map-case on
+set expand-tilde on
+set history-preserve-point on
 set mark-symlinked-directories on
 set match-hidden-files off
 set show-all-if-ambiguous on
+set show-all-if-unmodified on
 set show-mode-in-prompt on
 set skip-completed-text on
 set vi-cmd-mode-string :
@@ -15,15 +18,20 @@ set visible-stats on
 
 set editing-mode vi
 set keymap vi-command
+Control-x: emacs-editing-mode
+Control-f: edit-and-execute-command
 Control-p: history-search-backward
 Control-n: history-search-forward
-Control-e: emacs-editing-mode
-Control-f: edit-and-execute-command
+u: undo
 set keymap vi-insert
+Control-x: emacs-editing-mode
+Control-f: edit-and-execute-command
 Control-l: clear-screen
 Control-p: history-search-backward
 Control-n: history-search-forward
-Control-e: emacs-editing-mode
-Control-f: edit-and-execute-command
+Control-b: beginning-of-line
+Control-a: beginning-of-line
+Control-e: end-of-line
+Control-w: backward-kill-line
 set keymap emacs
 Control-e: vi-editing-mode
