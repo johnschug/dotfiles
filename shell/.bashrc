@@ -15,6 +15,19 @@ fi
 # If not running interactively, don't do anything
 [[ $- =~ i ]] || return
 
+# Start tmux
+if hash tmux &>/dev/null; then
+  if [ -z "$TMUX" ]; then
+    if [ -n "$SSH_CLIENT" ]; then
+      read -rsk '?Press any key to continue...'
+    fi
+    if hash systemd-run &>/dev/null; then
+      systemd-run --scope --user -q tmux new -d -s DEFAULT &>/dev/null
+    fi
+    exec tmux new -A -s DEFAULT
+  fi
+fi
+
 set -o noclobber
 
 shopt -s autocd

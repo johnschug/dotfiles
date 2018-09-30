@@ -20,6 +20,7 @@ Control-n: history-search-forward
 Control-e: emacs-editing-mode
 Control-f: edit-and-execute-command
 set keymap vi-insert
+Control-l: clear-screen
 Control-p: history-search-backward
 Control-n: history-search-forward
 Control-e: emacs-editing-mode

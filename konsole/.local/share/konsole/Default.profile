@@ -1,4 +1,5 @@
 [Appearance]
+BoldIntense=true
 ColorScheme=Breeze
 Font=Monospace,10,-1,5,50,0,0,0,0,0
 UseFontLineChararacters=true
