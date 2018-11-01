@@ -1,14 +1,12 @@
 # Start tmux
-if (( $+commands[tmux] )); then
-  if [ -z "$TMUX" ]; then
-    if [ -n "$SSH_CLIENT" ]; then
-      read -sk '?Press any key to continue...'
-    fi
-    if (( $+commands[systemd-run] )); then
-      systemd-run --scope --user -q tmux new -d -s DEFAULT &>/dev/null
-    fi
-    exec tmux new -A -s DEFAULT
+if (( $+commands[tmux] )) && [ -z "$TMUX" ]; then
+  if [ -n "$SSH_CONNECTION" ]; then
+    read -sk '?Press any key to continue...'
   fi
+  if (( $+commands[systemd-run] )); then
+    systemd-run --scope --user -qG tmux new -d -s DEFAULT &>/dev/null
+  fi
+  exec tmux new -A -s DEFAULT
 fi
 
 # Plugins
@@ -33,16 +31,16 @@ setopt hist_reduce_blanks
 setopt hist_save_no_dups
 setopt inc_append_history
 setopt interactive_comments
-setopt nolist_ambiguous
 setopt noclobber
+setopt nolist_ambiguous
 setopt notify
 setopt pushd_ignore_dups
 
 WORDCHARS="${WORDCHARS/\/}"
 if [ "$EUID" -ne 0 ]; then
   HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
-  SAVEHIST=10000
-  HISTSIZE=10000
+  SAVEHIST=1000
+  HISTSIZE=1000
 fi
 
 # Bindings
@@ -61,8 +59,8 @@ bindkey '^v' insert-unicode-char
 bindkey '^p' history-beginning-search-backward-end
 bindkey '^n' history-beginning-search-forward-end
 bindkey '^t' cd-parent
-bindkey '^y' cd-undo
-bindkey '^o' insert-files
+bindkey '^o' cd-back
+bindkey '^xo' insert-files
 bindkey '^[s' toggle-sudo
 bindkey "^['" toggle-quoted
 bindkey -M vicmd '^f' edit-command-line
@@ -73,6 +71,8 @@ bindkey -M vicmd '^r' redo
 bindkey -M vicmd '~' vi-swap-case
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
+bindkey -M vicmd '^o' cd-back
+bindkey -M vicmd '^i' cd-forward
 
 # Widgets
 autoload -Uz edit-command-line insert-composed-char insert-unicode-char history-search-end insert-files
@@ -133,13 +133,25 @@ function cd-parent {
 }
 zle -N cd-parent
 
-function cd-undo {
-  popd &>/dev/null
+function cd-forward {
+  emulate -L zsh
+  setopt pushd_silent
+  pushd -0
   precmd
   zle reset-prompt
   zle zle-line-init
 }
-zle -N cd-undo
+zle -N cd-forward
+
+function cd-back {
+  emulate -L zsh
+  setopt pushd_silent
+  pushd +1
+  precmd
+  zle reset-prompt
+  zle zle-line-init
+}
+zle -N cd-back
 
 # Completion
 autoload -Uz compinit bashcompinit
@@ -210,6 +222,7 @@ function {
 
 # Aliases
 autoload -Uz run-help
+unalias run-help &>/dev/null
 alias help=run-help
 alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
 alias ls='ls --color=auto'

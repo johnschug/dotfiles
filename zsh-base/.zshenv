@@ -23,6 +23,7 @@ fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR='vim'
 
+unset SSH_AGENT_PID
 if (( $+commands[gpgconf] )) && [ -S "$(gpgconf --list-dirs agent-ssh-socket)" ]; then
   export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 elif [ -S "$HOME/.gnupg/S.gpg-agent.ssh" ]; then

@@ -185,17 +185,23 @@ call s:h('MatchParen', {'fg': s:red, 'fmt': 'bold'})
 call s:h('QuickFixLine', {'bg': s:charcoal_grey})
 "}}}
 " Plugins {{{
+  call s:h('WarningSign', {'fg': s:orange, 'bg': s:charcoal_grey, 'fmt': 'bold'})
+  call s:h('ErrorSign', {'fg': s:red, 'bg': s:charcoal_grey, 'fmt': 'bold'})
   " Syntastic {{{
-  call s:h('SyntasticWarningSign', {'fg': s:orange, 'bg': s:charcoal_grey, 'fmt': 'bold'})
-  call s:h('SyntasticErrorSign', {'fg': s:red, 'bg': s:charcoal_grey, 'fmt': 'bold'})
+  hi! link SyntasticWarningSign WarningSign
+  hi! link SyntasticErrorSign ErrorSign
   "}}}
   " Neomake {{{
-  call s:h('NeomakeWarningSign', {'fg': s:orange, 'bg': s:charcoal_grey, 'fmt': 'bold'})
-  call s:h('NeomakeErrorSign', {'fg': s:red, 'bg': s:charcoal_grey, 'fmt': 'bold'})
+  hi! link NeomakeWarningSign WarningSign
+  hi! link NeomakeErrorSign ErrorSign
   "}}}
   " Ale {{{
-  call s:h('ALEWarningSign', {'fg': s:orange, 'bg': s:charcoal_grey, 'fmt': 'bold'})
-  call s:h('ALEErrorSign', {'fg': s:red, 'bg': s:charcoal_grey, 'fmt': 'bold'})
+  hi! link ALEWarningSign WarningSign
+  hi! link ALEErrorSign ErrorSign
+  "}}}
+  " Lsp {{{
+  hi! link LspWarningText WarningSign
+  hi! link LspErrorText ErrorSign
   "}}}
 "}}}
 set background=dark

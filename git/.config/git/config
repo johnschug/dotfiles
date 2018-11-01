@@ -50,7 +50,7 @@
 [push]
 	default = upstream
 	followTags = true
-	recurseSubmodules = check
+	recurseSubmodules = on-demand
 [rebase]
 	autoStash = true
 [status]

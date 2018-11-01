@@ -33,10 +33,10 @@ endif
   set shortmess+=a
   set viminfo&
   set viminfo='100,s10,<0,/0,:0,@0,h
-  set viminfo+=r/tmp,r/dev/shm,r/var/run
+  set viminfo+=r/tmp,r/dev/shm,r/var/run,r/run
   let &viminfo .= ',n'.g:vimdata.(has('nvim')?'/nviminfo':'/viminfo')
 
-  set backupskip& backupskip+=*/tmp/*,/dev/shm/*,/var/run/*
+  set backupskip& backupskip+=*/tmp/*,/dev/shm/*,/var/run/*,/run/*
   let &backupdir = g:vimdata.'/backup'
   if !isdirectory(&backupdir)
     call mkdir(&backupdir, 'p')
@@ -53,8 +53,9 @@ endif
   endif
   set undofile
 
-  autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/*,/var/run/* setlocal noundofile
-  autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/*,/var/run/* setlocal noswapfile
+  autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * silent! checktime
+  autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/*,/var/run/*,/run/* setlocal noundofile
+  autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/*,/var/run/*,/run/* setlocal noswapfile
   autocmd vimrc BufReadPost *
         \ if line("'\"") >= 1 && line("'\"") <= line('$') && &ft !~# 'commit'
         \ | execute "normal! g`\""
@@ -189,7 +190,7 @@ endif
     set dictionary+=/usr/share/dict/words
   endif
   set diffopt+=iwhite
-  if has('patch-8.1.360')
+  if index(split(&diffopt, ','), 'internal') >= 0
     set diffopt+=indent-heuristic,algorithm:histogram
   endif
 

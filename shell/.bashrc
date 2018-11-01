@@ -6,6 +6,7 @@ export LC_MEASUREMENT='en_CA.UTF-8'
 export PATH=${XDG_BIN_HOME:-$HOME/.local/bin}:$PATH
 export MANPATH=${XDG_DATA_HOME:-$HOME/.local/share}/man:$MANPATH:
 
+unset SSH_AGENT_PID
 if hash gpgconf &>/dev/null && [ -S "$(gpgconf --list-dirs agent-ssh-socket)" ]; then
   export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 elif [ -S "$HOME/.gnupg/S.gpg-agent.ssh" ]; then
@@ -16,32 +17,38 @@ fi
 [[ $- =~ i ]] || return
 
 # Start tmux
-if hash tmux &>/dev/null; then
-  if [ -z "$TMUX" ]; then
-    if [ -n "$SSH_CLIENT" ]; then
-      read -rsk '?Press any key to continue...'
-    fi
-    if hash systemd-run &>/dev/null; then
-      systemd-run --scope --user -q tmux new -d -s DEFAULT &>/dev/null
-    fi
-    exec tmux new -A -s DEFAULT
+if hash tmux &>/dev/null && [ -z "$TMUX" ]; then
+  if [ -n "$SSH_CONNECTION" ]; then
+    read -rsk '?Press any key to continue...'
   fi
+  if hash systemd-run &>/dev/null; then
+    systemd-run --scope --user -qG tmux new -d -s DEFAULT &>/dev/null
+  fi
+  exec tmux new -A -s DEFAULT
+fi
+
+if [ -r /etc/bashrc ]; then
+  source /etc/bashrc
 fi
 
 set -o noclobber
 
 shopt -s autocd
 shopt -s cdspell
+shopt -s checkhash
 shopt -s checkwinsize
 shopt -s cmdhist
 shopt -s dirspell
+shopt -s extglob
 shopt -s globstar
 shopt -s histappend
 shopt -s nocaseglob
+shopt -s progcomp
 
 bind Space:magic-space
 
-HISTCONTROL="erasedups:ignoreboth"
+HISTTIMEFORMAT='%F %T '
+HISTCONTROL='erasedups:ignoreboth'
 
 export PAGER='less'
 export LESS='-FRJgij4'
