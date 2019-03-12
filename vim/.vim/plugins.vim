@@ -3,6 +3,7 @@ scriptencoding utf-8
 " Ale {{{
   autocmd vimrc User ALELint call lightline#update()
 
+  let g:ale_virtualtext_cursor = 1
   let g:ale_sign_warning = 'W>'
   let g:ale_sign_error = 'E>'
   let g:ale_linters = {

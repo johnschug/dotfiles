@@ -71,7 +71,7 @@ endif
   set sidescroll=1
   set sidescrolloff=10
   set list
-  set listchars=tab:▸\ ,nbsp:␣,trail:•,eol:¬,precedes:…,extends:…
+  set listchars=tab:▸\ ,nbsp:␣,trail:•,precedes:…,extends:…
   set number
   set relativenumber
   set cursorline

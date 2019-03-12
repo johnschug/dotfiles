@@ -39,6 +39,7 @@
 	decorate = auto
 	follow = true
 	mailmap = true
+	date = relative
 [merge]
 	tool = vimdiff
 [mergetool]

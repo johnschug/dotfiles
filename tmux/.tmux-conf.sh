@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v tput >/dev/null 2>&1; then
-  COLORS="$(tput "-T${1:-$TERM}" colors)"
+  COLORS=$(tput "-T${1:-$TERM}" colors)
 else
   COLORS=
 fi

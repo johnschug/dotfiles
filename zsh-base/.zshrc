@@ -14,6 +14,21 @@ if [ -r "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh" ]; then
   source "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh"
 fi
 
+export PAGER='less'
+export LESS='-FRJgij4'
+export LESSHISTFILE='-'
+if (( $+commands[nvim] )); then
+  export MANPAGER="env MANPATH=\"$MANPATH\" nvim -c 'set ft=man' -"
+  export EDITOR='nvim'
+  export MERGE='nvim -d'
+else
+  export MANPAGER="env MAN_PN=1 MANPATH=\"$MANPATH\" vim -M +MANPAGER -"
+  export EDITOR='vim'
+  export MERGE='vimdiff'
+fi
+export VISUAL="$EDITOR"
+export SUDO_EDITOR='vim'
+
 # Options
 setopt append_create
 setopt auto_cd
@@ -175,7 +190,13 @@ zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
 zstyle ':completion:*:processes' command "ps -u $USER -o pid,command"
 zstyle ':completion:*:processes-names' command "ps -u $USER -o comm | uniq"
 
-compinit -i -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+function {
+  local zcompdump=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump
+  compinit -i -d "$zcompdump"
+  if [[ -s "$zcompdump" && (! -e "$zcompdump.zwc" || "$zcompdump" -nt "$zcompdump.zwc") ]]; then
+    zcompile "$zcompdump" &!
+  fi
+}
 bashcompinit
 compdef -n gpg2=gpg
 
