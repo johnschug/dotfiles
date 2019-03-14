@@ -269,7 +269,8 @@ endif
 " Mappings {{{
   " Navigation {{{
     nnoremap <C-Space> :ls<CR>:b<SPACE>
-    nnoremap gb <C-^>
+    nmap <C-@> <C-Space>
+    nnoremap gz :ls<CR>:b<SPACE>
     nnoremap <Leader>f :find<Space>
     nnoremap <Leader>F :sfind<Space>
 
