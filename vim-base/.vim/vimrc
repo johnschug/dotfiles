@@ -8,13 +8,16 @@ augroup vimrc
   autocmd!
 augroup END
 
-let g:vimconf = split(&runtimepath, ',')[0]
-if !empty($XDG_DATA_HOME)
-  let g:vimdata = $XDG_DATA_HOME.'/vim'
-elseif has('win32') || has('win64')
-  let g:vimdata = !empty($LOCALAPPDATA) ? $LOCALAPPDATA.'/vim' : g:vimconf
+if exists('*stdpath')
+  let g:vimconf = stdpath('config')
+  let g:vimdata = stdpath('data')
 else
-  let g:vimdata = expand('~/.local/share/vim')
+  let g:vimconf = split(&runtimepath, ',')[0]
+  if has('win32') || has('win64')
+    let g:vimdata = !empty($LOCALAPPDATA)? expand($LOCALAPPDATA.'/vim') : g:vimconf
+  else
+    let g:vimdata = expand(!empty($XDG_DATA_HOME)? $XDG_DATA_HOME : '~/.local/share/vim')
+  endif
 endif
 
 runtime local.vim
@@ -34,7 +37,7 @@ endif
   set viminfo&
   set viminfo='100,s10,<0,/0,:0,@0,h
   set viminfo+=r/tmp,r/dev/shm,r/var/run,r/run
-  let &viminfo .= ',n'.g:vimdata.(has('nvim')?'/nviminfo':'/viminfo')
+  let &viminfo .= ',n'.g:vimdata.'/info'
 
   set backupskip& backupskip+=*/tmp/*,/dev/shm/*,/var/run/*,/run/*
   let &backupdir = g:vimdata.'/backup'
@@ -270,7 +273,7 @@ endif
   " Navigation {{{
     nnoremap <C-Space> :ls<CR>:b<SPACE>
     nmap <C-@> <C-Space>
-    nnoremap gz :ls<CR>:b<SPACE>
+    nnoremap gb <C-^>
     nnoremap <Leader>f :find<Space>
     nnoremap <Leader>F :sfind<Space>
 
@@ -279,6 +282,14 @@ endif
 
     nnoremap <C-]> g<C-]>
     nnoremap g<C-]> <C-]>
+
+    if has('nvim')
+      tnoremap <C-W>. <C-W>
+      tnoremap <C-W>: <C-\><C-N>:
+      tnoremap <C-W>n <C-\><C-N>
+      tnoremap <C-W><C-W> <C-\><C-N><C-W><C-W>
+      tnoremap <expr> <C-W>" '<C-\><C-N>"'.nr2char(getchar()).'pi'
+    endif
   " }}}
   " Unimpaired mappings {{{
     for s:cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
