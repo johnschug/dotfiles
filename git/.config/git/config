@@ -39,7 +39,7 @@
 	decorate = auto
 	follow = true
 	mailmap = true
-	date = relative
+	date = auto:human-local
 [merge]
 	tool = vimdiff
 [mergetool]
@@ -76,4 +76,3 @@
 	email = john.ips.schug@gmail.com
 	name = John Schug
 	signingkey = A7D81D8297B90E18
-# vim:set sw=4 sts=4 ts=4 noet:

@@ -64,13 +64,14 @@ else
   COLOR7="blue"
   SEARCH="blue"
 fi
-tmux set-option -wg window-style "bg=$COLOR0,fg=$COLOR1"
 tmux set-option -g message-style "bg=$COLOR2,fg=$COLOR3"
 tmux set-option -g mode-style "fg=$SEARCH,reverse"
 tmux set-option -g message-command-style "bg=$COLOR2,fg=$COLOR3"
-tmux set-option -g status-style "bg=$COLOR2,fg=$COLOR3"
 tmux set-option -g status-left-style "bg=$COLOR0,reverse"
 tmux set-option -g status-right-style "bg=$COLOR0,reverse"
-tmux set-option -g status-left "#[fg=$COLOR4] #S #[fg=$COLOR5] #{session_width}x#{session_height} "
-tmux set-option -g status-right "#{?client_prefix,#[fg=$COLOR6] P ,}#[fg=$COLOR5] #(cut -f1-4 -d' ' /proc/loadavg) #[fg=$COLOR4] %F %R "
+tmux set-option -g status-style "bg=$COLOR2,fg=$COLOR3"
+tmux set-option -wg window-style "bg=$COLOR0,fg=$COLOR1"
 tmux set-option -wg window-status-current-style "bg=$COLOR7,bold"
+
+tmux set-option -g status-left "#[fg=$COLOR4] #S #[fg=$COLOR5] #{window_width}x#{window_height} "
+tmux set-option -g status-right "#{?client_prefix,#[fg=$COLOR6] P ,}${SSH_CONNECTION:+ #h }#[fg=$COLOR5] #(cut -f1-4 -d' ' /proc/loadavg) #[fg=$COLOR4] %F %R "

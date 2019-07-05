@@ -233,7 +233,7 @@ function {
     local -A colors=(default '%F{white}' user '%F{blue}' cwd '%F{cyan}' vcs '%F{white}' fail '%F{red}')
   fi
 
-  PROMPT="${colors[default]}%1v%h ["
+  PROMPT="${colors[default]}%1v["
   PROMPT+="${colors[user]}%n"
   PROMPT+="${colors[default]}:${colors[cwd]}%(4~:%-1~/…/%2~:%~)"
   PROMPT+="%(2V: ${colors[vcs]}%2v:)"
@@ -245,7 +245,6 @@ function {
 autoload -Uz run-help
 unalias run-help &>/dev/null
 alias help=run-help
-alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
 alias ls='ls --color=auto'
 alias l.=$'ls --color=auto -AI \'[^.]*\''
 alias ll='ls --color=auto -l'
@@ -267,6 +266,9 @@ alias strace='strace -xy '
 alias gdb='gdb -q '
 alias vi='vim'
 alias rvi='rvim'
+if ! (( $+commands[open] )); then
+  alias open='xdg-open'
+fi
 if (( $+commands[gpg2] )); then
   alias gpg='gpg2'
 fi
@@ -283,7 +285,7 @@ else
 fi
 if (( $+commands[rg] )); then
   alias rg='rg -S'
-  alias grep='rg -S'
+  alias grep='rg'
   function vim-grep {
     vim -q <(rg --vimgrep --no-heading -S "$@")
   }
@@ -298,6 +300,11 @@ else
     vim -q <(grep -srnH "$@")
   }
 fi
+if (( $+commands[podman] )); then
+  alias docker='podman'
+fi
+alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
+alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
 
 if [ -r ~/.zshrc.local ]; then
   source ~/.zshrc.local

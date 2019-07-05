@@ -13,9 +13,13 @@ LocalTabTitleFormat=%w
 Name=Default
 Parent=FALLBACK/
 RemoteTabTitleFormat=(%u) %h
-ShowTerminalSizeHint=false
+ShowTerminalSizeHint=true
 
 [Interaction Options]
+OpenLinksByDirectClickEnabled=true
+TrimLeadingSpacesInSelectedText=true
+TrimTrailingSpacesInSelectedText=true
+UnderlineFilesEnabled=false
 UnderlineLinksEnabled=true
 
 [Scrolling]

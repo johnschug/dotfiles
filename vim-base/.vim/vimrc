@@ -33,7 +33,8 @@ endif
   set hidden
   set path& path+=**
   set fileformats=unix,dos,mac
-  set shortmess+=a
+  silent! set shortmess+=a
+  set nomodeline
   set viminfo&
   set viminfo='100,s10,<0,/0,:0,@0,h
   set viminfo+=r/tmp,r/dev/shm,r/var/run,r/run
@@ -287,6 +288,7 @@ endif
       tnoremap <C-W>. <C-W>
       tnoremap <C-W>: <C-\><C-N>:
       tnoremap <C-W>n <C-\><C-N>
+      tnoremap <C-W>q <C-\><C-N><C-W>q
       tnoremap <C-W><C-W> <C-\><C-N><C-W><C-W>
       tnoremap <expr> <C-W>" '<C-\><C-N>"'.nr2char(getchar()).'pi'
     endif

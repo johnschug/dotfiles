@@ -6,11 +6,14 @@ export LC_MEASUREMENT='en_CA.UTF-8'
 export PATH=${XDG_BIN_HOME:-$HOME/.local/bin}:$PATH
 export MANPATH=${XDG_DATA_HOME:-$HOME/.local/share}/man:$MANPATH:
 
-unset SSH_AGENT_PID
 if hash gpgconf &>/dev/null && [ -S "$(gpgconf --list-dirs agent-ssh-socket)" ]; then
   export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+  unset SSH_AGENT_PID
+  unset SSH_ASKPASS
 elif [ -S "$HOME/.gnupg/S.gpg-agent.ssh" ]; then
   export SSH_AUTH_SOCK="$HOME/.gnupg/S.gpg-agent.ssh"
+  unset SSH_AGENT_PID
+  unset SSH_ASKPASS
 fi
 
 # If not running interactively, don't do anything
@@ -114,7 +117,6 @@ function _toggle-sudo {
 
 bind -m vi-insert -x '"\es":"_toggle-sudo"'
 
-alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
 alias ls='ls --color=auto'
 alias l.=$'ls --color=auto -AI \'[^.]*\''
 alias ll='ls --color=auto -l'
@@ -167,6 +169,11 @@ else
     vim -q <(grep -srnH "$@")
   }
 fi
+if hash podman &>/dev/null; then
+  alias docker='podman'
+fi
+alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
+alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
 
 if [ -r ~/.bashrc.local ]; then
   source ~/.bashrc.local
