@@ -34,25 +34,7 @@ if [ -r /etc/bashrc ]; then
   source /etc/bashrc
 fi
 
-set -o noclobber
-
-shopt -s autocd
-shopt -s cdspell
-shopt -s checkhash
-shopt -s checkwinsize
-shopt -s cmdhist
-shopt -s dirspell
-shopt -s extglob
-shopt -s globstar
-shopt -s histappend
-shopt -s nocaseglob
-shopt -s progcomp
-
-bind Space:magic-space
-
-HISTTIMEFORMAT='%F %T '
-HISTCONTROL='erasedups:ignoreboth'
-
+# Environment Variables - Interactive Commands
 export PAGER='less'
 export LESS='-FRJgij4'
 export LESSHISTFILE='-'
@@ -70,9 +52,43 @@ fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR='vim'
 
+# Shell Options
+set -o noclobber
+
+shopt -s autocd
+shopt -s cdspell
+shopt -s checkhash
+shopt -s checkwinsize
+shopt -s cmdhist
+shopt -s dirspell
+shopt -s extglob
+shopt -s globstar
+shopt -s histappend
+shopt -s nocaseglob
+shopt -s progcomp
+
+HISTTIMEFORMAT='%F %T '
+HISTCONTROL='erasedups:ignoreboth'
+
+# Bindings
+function _toggle-sudo {
+  if [[ ! "$READLINE_LINE" =~ ^su(do|)\  ]]; then
+    READLINE_LINE="sudo $READLINE_LINE"
+    (( READLINE_POINT += 5 ))
+  elif [[ "$READLINE_LINE" =~ ^sudo\  ]]; then
+    READLINE_LINE=${READLINE_LINE#"sudo "}
+    (( READLINE_POINT -= 5 ))
+  fi
+}
+
+bind Space:magic-space
+bind -m vi-insert -x '"\es":"_toggle-sudo"'
+
+# Prompt
 PROMPT_DIRTRIM=3
-PROMPT_COMMAND="__precmd"
-function __precmd {
+PROMPT_COMMAND="__prompt_cmd"
+function __prompt_cmd {
+  local last_status=$?
   if [ "$(tput colors)" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
     local -A colors=(
       [default]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)\\]"
@@ -96,27 +112,17 @@ function __precmd {
 
   printf '%s%s:%s%s' "$(tput tsl)" "$USER" "${PWD/#$HOME/~}" "$(tput fsl)"
 
-  PS1="${colors["default"]}\\! ["
-  PS1+="${colors["user"]}\\u"
-  PS1+="${colors["default"]}:${colors[cwd]}\\w"
+  PS1="${colors[cwd]}\\w"
   if hash git &>/dev/null && git rev-parse --is-inside-work-tree &>/dev/null; then
     PS1+=" ${colors["vcs"]}([$(git name-rev --name-only --no-undefined @)])"
   fi
-  PS1+="${colors["default"]}]\\$ ${colors[reset]}"
-}
-
-function _toggle-sudo {
-  if [[ ! "$READLINE_LINE" =~ ^su(do|)\  ]]; then
-    READLINE_LINE="sudo $READLINE_LINE"
-    (( READLINE_POINT += 5 ))
-  elif [[ "$READLINE_LINE" =~ ^sudo\  ]]; then
-    READLINE_LINE=${READLINE_LINE#"sudo "}
-    (( READLINE_POINT -= 5 ))
+  if [ "$last_status" -ne 0 ]; then
+    PS1+=" ${colors["fail"]}[$last_status]"
   fi
+  PS1+="${colors["default"]}\\$ ${colors[reset]}"
 }
 
-bind -m vi-insert -x '"\es":"_toggle-sudo"'
-
+# Aliases
 alias ls='ls --color=auto'
 alias l.=$'ls --color=auto -AI \'[^.]*\''
 alias ll='ls --color=auto -l'
@@ -138,9 +144,6 @@ alias strace='strace -xy '
 alias gdb='gdb -q '
 alias vi='vim'
 alias rvi='rvim'
-if hash gpg2 &>/dev/null; then
-  alias gpg='gpg2'
-fi
 if hash nvim &>/dev/null; then
   alias vim='nvim'
   alias rvim='nvim -Z'
@@ -151,6 +154,16 @@ else
   alias view='vim -R'
   alias bvim='vim -b'
   alias bview='vim -Rb'
+fi
+if hash gpg2 &>/dev/null; then
+  alias gpg='gpg2'
+fi
+if ! hash open &>/dev/null; then
+  alias open='xdg-open'
+fi
+if ! hash scurl &>/dev/null && hash curl &>/dev/null; then
+  alias scurl="curl --tlsv1.2 --proto '=https'"
+  alias scurl-download='scurl --location --remote-name-all --remote-header-name'
 fi
 if hash rg &>/dev/null; then
   alias rg='rg -S'
@@ -172,9 +185,13 @@ fi
 if hash podman &>/dev/null; then
   alias docker='podman'
 fi
+if hash systemd-run &>/dev/null; then
+  alias scoped='systemd-run --user --scope -qd '
+fi
 alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
-alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
+#alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
 
+# Source host specific configuration
 if [ -r ~/.bashrc.local ]; then
   source ~/.bashrc.local
 fi

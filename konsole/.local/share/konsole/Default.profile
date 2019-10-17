@@ -28,4 +28,4 @@ ScrollBarPosition=2
 
 [Terminal Features]
 BlinkingCursorEnabled=true
-BlinkingTextEnabled=false
+BlinkingTextEnabled=true

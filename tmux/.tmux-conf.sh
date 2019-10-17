@@ -31,9 +31,6 @@ if [ "$COLORTERM" = "truecolor" ] || [ "$COLORS" -gt 256 ]; then
 fi
 
 if [ "$COLORTERM" = "truecolor" ] || [ "$COLORS" -gt 256 ] || { [ "$COLORS" -ge 256 ] && [ -n "$NOPALETTE" ]; }; then
-  if [ "$COLORTERM" = "truecolor" ] && ! [ "$COLORS" -gt 256 ]; then
-    tmux set-option -sa terminal-overrides ",${1:-$TERM}:RGB"
-  fi
   COLOR0="#232629"
   COLOR1="#eee8d5"
   COLOR2="#31363b"

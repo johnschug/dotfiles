@@ -14,6 +14,7 @@ if [ -r "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh" ]; then
   source "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/plugins.zsh"
 fi
 
+# Environment Variables - Interactive Commands
 export PAGER='less'
 export LESS='-FRJgij4'
 export LESSHISTFILE='-'
@@ -22,14 +23,14 @@ if (( $+commands[nvim] )); then
   export EDITOR='nvim'
   export MERGE='nvim -d'
 else
-  export MANPAGER="env MAN_PN=1 MANPATH=\"$MANPATH\" vim -M +MANPAGER -"
+  export MANPAGER="env MANPATH=\"$MANPATH\" vim +MANPAGER -"
   export EDITOR='vim'
   export MERGE='vimdiff'
 fi
 export VISUAL="$EDITOR"
 export SUDO_EDITOR='vim'
 
-# Options
+# Shell Options
 setopt append_create
 setopt auto_cd
 setopt auto_pushd
@@ -61,33 +62,35 @@ fi
 # Bindings
 export KEYTIMEOUT=5
 bindkey -v
-bindkey '^b' beginning-of-line
-bindkey '^a' beginning-of-line
-bindkey '^e' end-of-line
-bindkey '^h' backward-delete-char
-bindkey '^?' backward-delete-char
-bindkey '^w' backward-kill-word
-bindkey '^u' backward-kill-line
-bindkey '^f' edit-command-line
-bindkey '^k' insert-composed-char
-bindkey '^v' insert-unicode-char
-bindkey '^p' history-beginning-search-backward-end
-bindkey '^n' history-beginning-search-forward-end
-bindkey '^t' cd-parent
-bindkey '^o' cd-back
-bindkey '^xo' insert-files
-bindkey '^[s' toggle-sudo
-bindkey "^['" toggle-quoted
-bindkey -M vicmd '^f' edit-command-line
-bindkey -M vicmd 'v' edit-command-line
+bindkey '\C-b' beginning-of-line
+bindkey '\C-a' beginning-of-line
+bindkey '\C-e' end-of-line
+bindkey '\C-h' backward-delete-char
+bindkey '\C-?' backward-delete-char
+bindkey '\C-w' backward-kill-word
+bindkey '\C-u' backward-kill-line
+bindkey '\C-k' insert-composed-char
+bindkey '\C-v' insert-unicode-char
+bindkey '\C-p' history-beginning-search-backward-end
+bindkey '\C-n' history-beginning-search-forward-end
+bindkey '\C-t' cd-parent
+bindkey '\C-o' cd-back
+bindkey '\el' list-choices
+bindkey '\eh' run-help
+bindkey '\ee' edit-command-line
+bindkey '\ev' edit-command-line
+bindkey '\es' toggle-sudo
+bindkey "\e'" toggle-quoted
+bindkey '\e#' pound-insert
+bindkey -M vicmd '\C-f' edit-command-line
 bindkey -M vicmd 'q' push-input
 bindkey -M vicmd 'u' undo
-bindkey -M vicmd '^r' redo
+bindkey -M vicmd '\C-r' redo
 bindkey -M vicmd '~' vi-swap-case
 bindkey -M vicmd '/' history-incremental-search-backward
 bindkey -M vicmd '?' history-incremental-search-forward
-bindkey -M vicmd '^o' cd-back
-bindkey -M vicmd '^i' cd-forward
+bindkey -M vicmd '\C-o' cd-back
+bindkey -M vicmd '\C-i' cd-forward
 
 # Widgets
 autoload -Uz edit-command-line insert-composed-char insert-unicode-char history-search-end insert-files
@@ -233,12 +236,11 @@ function {
     local -A colors=(default '%F{white}' user '%F{blue}' cwd '%F{cyan}' vcs '%F{white}' fail '%F{red}')
   fi
 
-  PROMPT="${colors[default]}%1v["
-  PROMPT+="${colors[user]}%n"
-  PROMPT+="${colors[default]}:${colors[cwd]}%(4~:%-1~/…/%2~:%~)"
+  PROMPT="${colors[default]}%1v"
+  PROMPT+="${colors[cwd]}%(4~:%-1~/…/%2~:%~)"
   PROMPT+="%(2V: ${colors[vcs]}%2v:)"
-  PROMPT+="${colors[default]}]"
-  PROMPT+="%(0?::${colors[fail]}(%?%))%(!:#:$)%b%f "
+  PROMPT+="${colors[default]}"
+  PROMPT+="%(0?:: ${colors[fail]}[%?])%(!:#:$)%b%f "
 }
 
 # Aliases
@@ -265,16 +267,8 @@ alias sudop='sudo env PATH="$PATH" '
 alias strace='strace -xy '
 alias gdb='gdb -q '
 alias vi='vim'
-alias rvi='rvim'
-if ! (( $+commands[open] )); then
-  alias open='xdg-open'
-fi
-if (( $+commands[gpg2] )); then
-  alias gpg='gpg2'
-fi
 if (( $+commands[nvim] )); then
   alias vim='nvim'
-  alias rvim='nvim -Z'
   alias view='nvim -R'
   alias bvim='nvim -b'
   alias bview='nvim -Rb'
@@ -282,6 +276,16 @@ else
   alias view='vim -R'
   alias bvim='vim -b'
   alias bview='vim -Rb'
+fi
+if (( $+commands[gpg2] )); then
+  alias gpg='gpg2'
+fi
+if ! (( $+commands[open] )); then
+  alias open='xdg-open'
+fi
+if ! (( $+commands[scurl] )) && (( $+commands[curl] )); then
+  alias scurl="curl --tlsv1.2 --proto '=https'"
+  alias scurl-download='scurl --location --remote-name-all --remote-header-name'
 fi
 if (( $+commands[rg] )); then
   alias rg='rg -S'
@@ -303,9 +307,13 @@ fi
 if (( $+commands[podman] )); then
   alias docker='podman'
 fi
+if (( $+commands[systemd-run] )); then
+  alias scoped='systemd-run --user --scope -qd '
+fi
 alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
-alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
+#alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
 
+# Source host specific configuration
 if [ -r ~/.zshrc.local ]; then
   source ~/.zshrc.local
 fi

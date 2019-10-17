@@ -58,20 +58,25 @@
 	short = true
 [submodule]
 	fetchJobs = 8
-[url "git@bitbucket.org:"]
-	pushInsteadOf = bb:
-	pushInsteadOf = git://bitbucket.org/
-	pushInsteadOf = https://bitbucket.org/
+[url "https://gist.github.com/"]
+	insteadOf = gist:
+[url "https://github.com/"]
+	insteadOf = gh:
 [url "git@github.com:"]
 	pushInsteadOf = gh:
 	pushInsteadOf = git://github.com/
 	pushInsteadOf = https://github.com/
 [url "https://bitbucket.org/"]
 	insteadOf = bb:
-[url "https://gist.github.com/"]
-	insteadOf = gist:
-[url "https://github.com/"]
-	insteadOf = gh:
+[url "git@bitbucket.org:"]
+	pushInsteadOf = bb:
+	pushInsteadOf = git://bitbucket.org/
+	pushInsteadOf = https://bitbucket.org/
+[url "https://anongit.kde.org/"]
+	insteadOf = kde:
+[url "git@git.kde.org:"]
+	pushInsteadOf = kde:
+	pushInsteadOf = https://anongit.kde.org/
 [user]
 	email = john.ips.schug@gmail.com
 	name = John Schug

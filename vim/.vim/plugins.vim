@@ -111,6 +111,12 @@ scriptencoding utf-8
         \ }
 " }}}
 
+" rustfmt.vim {{{
+  if executable('rustup')
+    let g:rustfmt_options = '+nightly'
+  endif
+" }}}
+
 " signify {{{
   autocmd vimrc User Signify call lightline#update()
 
@@ -154,7 +160,7 @@ scriptencoding utf-8
     if executable('clangd')
       call lsp#register_server({
             \ 'name': 'clangd',
-            \ 'cmd': {server_info->['clangd']},
+            \ 'cmd': {server_info->['clangd', '-background-index']},
             \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
             \})
     endif
