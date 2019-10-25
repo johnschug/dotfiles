@@ -1,6 +1,7 @@
 # Defined in /tmp/fish.59lFO2/fish_prompt.fish @ line 2
 function fish_prompt --description 'Write out the prompt'
-	set -l last_status $status
+    set -l last_status $status
+    set -l color_normal $fish_color_normal
     set -l color_cwd $fish_color_cwd
     set -l suffix '$'
     switch "$USER"
@@ -18,5 +19,5 @@ function fish_prompt --description 'Write out the prompt'
 
     set -g __fish_git_prompt_showdirtystate 1
 
-    printf '%s%s%s%s%s%s ' (set_color $color_cwd) (prompt_pwd) (set_color normal) (__fish_vcs_prompt) "$prompt_status" "$suffix"
+    printf '%s%s%s%s%s%s ' (set_color $color_cwd) (prompt_pwd) (set_color $color_normal) (__fish_vcs_prompt) "$prompt_status" "$suffix"
 end
