@@ -220,20 +220,20 @@ function precmd {
 
 # Prompt
 function {
-  if [ "${terminfo[colors]}" -gt 256 ] || [ "$COLORTERM" = "truecolor" ]; then
-    local -A colors=(
-      default "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)%}"
-      user "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)%}"
-      cwd "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)%}"
-      vcs "%{$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)%}"
-      fail "%{$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)%}"
-    )
-  elif [ "${terminfo[colors]}" -eq 256 ] && [ -n "$NOPALETTE" ]; then
-    local -A colors=(default '%243F' user '%31F' cwd '%33F' vcs '%245F' fail '%160F')
-  elif [ "${terminfo[colors]}" -ge 16 ]; then
+  if [ "${terminfo[colors]}" -lt 16 ]; then
+    local -A colors=(default '%F{white}' user '%F{blue}' cwd '%F{cyan}' vcs '%F{white}' fail '%F{red}')
+  elif [ "${terminfo[colors]}" -lt 256 ]; then
     local -A colors=(default '%11F' user '%F{yellow}' cwd '%F{blue}' vcs '%12F' fail '%F{red}')
   else
-    local -A colors=(default '%F{white}' user '%F{blue}' cwd '%F{cyan}' vcs '%F{white}' fail '%F{red}')
+    [[ $COLORTERM = *(24bit|truecolor)* ]] || zmodload zsh/nearcolor
+
+    local -A colors=(
+      default '%F{#657b83}'
+      user '%F{#2980b9}'
+      cwd '%F{#3daee9}'
+      vcs '%F{#7f8c8d}'
+      fail '%F{#da4453}'
+    )
   fi
 
   PROMPT="${colors[default]}%1v"

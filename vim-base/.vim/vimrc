@@ -126,7 +126,7 @@ endif
   set wildignore&
   set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
   set suffixes&
-  set suffixes+=.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
+  set suffixes+=.lock$,.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
 
   set guicursor=
   if has('gui_running')
@@ -150,7 +150,6 @@ endif
   endif
   syntax enable
   try
-    let g:breeze_use_palette = !$NOPALETTE
     colorscheme breeze
   catch /^Vim\%((\a\+)\)\=:E185/
     colorscheme slate

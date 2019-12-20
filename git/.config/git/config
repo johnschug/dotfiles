@@ -21,6 +21,8 @@
 [core]
 	autocrlf = input
 	untrackedCache = true
+[credential]
+	helper = libsecret
 [diff]
 	algorithm = histogram
 	compactionHeuristic = true
@@ -29,12 +31,12 @@
 	tool = vimdiff
 [difftool]
 	prompt = false
+[feature]
+	manyFiles = true
 [fetch]
 	prune = true
 [gpg]
 	program = gpg2
-[include]
-	path = ~/.config/git/local.conf
 [log]
 	decorate = auto
 	follow = true
@@ -81,3 +83,5 @@
 	email = john.ips.schug@gmail.com
 	name = John Schug
 	signingkey = A7D81D8297B90E18
+[include]
+	path = ~/.config/git/local.conf

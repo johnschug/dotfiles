@@ -6,22 +6,22 @@
 "
 " Colors {{{
 let g:breeze_colors = {
-      \ 'red': { 'gui': '#dc322f', 'cterm256': 160, 'cterm16': 1 },
+      \ 'red': { 'gui': '#da4453', 'cterm256': 160, 'cterm16': 1 },
       \ 'green': { 'gui':  '#27ae60', 'cterm256': 100, 'cterm16': 2 },
       \ 'blue': { 'gui': '#1d99f3', 'cterm256': 33, 'cterm16': 4 },
       \ 'magenta': { 'gui': '#9b59b6', 'cterm256': 25, 'cterm16': 5},
       \ 'cyan': { 'gui': '#27aeae', 'cterm256': 36, 'cterm16': 6},
-      \ 'orange': { 'gui': '#cb4b16', 'cterm256': 166, 'cterm16': 9 },
-      \ 'violet': { 'cterm16': 13, 'cterm256': 24, 'gui': '#8e44ad'},
-      \ 'white': { 'cterm16': 7, 'cterm256': 255, 'gui':  '#eef0f1'},
-      \ 'black': { 'cterm16': 8, 'cterm256': 235, 'gui':  '#232629'},
-      \ 'charcoal_grey': { 'cterm16': 0, 'cterm256': 237, 'gui':  '#31363b'},
-      \ 'comment_grey': { 'cterm16': 10, 'cterm256': 241, 'gui': '#586e75'},
-      \ 'normal': { 'cterm16': 12, 'cterm256': 245, 'gui': '#7f8c8d'},
-      \ 'search': { 'gui': '#2980b9', 'cterm256': 31, 'cterm16': 3 },
-      \ 'inactive': { 'cterm16': 11, 'cterm256': 243, 'gui': '#657b83'},
-      \ 'base1': { 'cterm16': 15, 'cterm256': 247, 'gui': '#95a5a6'},
-      \ 'visual': { 'gui': '#2d5c76', 'cterm256': '244', 'cterm16': 4 }
+      \ 'orange': { 'gui': '#f67400', 'cterm256': 166, 'cterm16': 9 },
+      \ 'violet': { 'gui': '#8e44ad', 'cterm16': 13, 'cterm256': 24 },
+      \ 'white': { 'gui': '#eef0f1', 'cterm16': 7, 'cterm256': 255 },
+      \ 'black': { 'gui':  '#232629', 'cterm16': 8, 'cterm256': 235 },
+      \ 'charcoal_grey': { 'gui':  '#31363b', 'cterm16': 0, 'cterm256': 237 },
+      \ 'comment_grey': { 'gui': '#586e75', 'cterm16': 10, 'cterm256': 241 },
+      \ 'normal': { 'gui': '#7f8c8d', 'cterm256': 245, 'cterm16': 12 },
+      \ 'search': { 'gui': '#3daee9', 'cterm256': 31, 'cterm16': 3 },
+      \ 'inactive': { 'gui': '#657b83', 'cterm16': 11, 'cterm256': 243 },
+      \ 'base1': { 'gui': '#95a5a6', 'cterm16': 15, 'cterm256': 247 },
+      \ 'visual': { 'gui': '#2980b9', 'cterm256': '244', 'cterm16': 4 }
       \}
 let s:red = g:breeze_colors.red
 let s:green = g:breeze_colors.green
@@ -49,7 +49,7 @@ endif
 let g:colors_name = 'breeze'
 
 let s:termcolors = (min([get(g:, 'breeze_termcolors', 256), &t_Co]) < 256)?16:256
-let s:italics = get(g:, "breeze_italics", 1)
+let s:italics = get(g:, 'breeze_italics', 1)
 
 function! s:h(group, style) abort
   if s:italics == 0

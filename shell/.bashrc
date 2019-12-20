@@ -93,10 +93,9 @@ function __prompt_cmd {
     local -A colors=(
       [default]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x65 0x7b 0x83)\\]"
       [user]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x29 0x80 0xb9)\\]"
-      [idk1]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x34 0x49 0x5e)\\]"
-      [cwd]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x1d 0x99 0xf3)\\]"
+      [cwd]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x3d 0xae 0xe9)\\]"
       [vcs]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0x7f 0x8c 0x8d)\\]"
-      [fail]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0xdc 0x32 0x2f)\\]"
+      [fail]="\\[$(printf '\e[38;2;%lu;%lu;%lum' 0xda 0x44 0x53)\\]"
       [reset]="\\[$(tput sgr0)\\]"
     )
   else
