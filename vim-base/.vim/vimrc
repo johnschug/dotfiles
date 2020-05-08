@@ -349,6 +349,7 @@ endif
   let g:load_doxygen_syntax = 1
   let g:c_gnu = 1
   let g:rust_fold = 1
+  let g:man_hardwrap = 1
 
   if !exists(':Man')
     runtime! ftplugin/man.vim

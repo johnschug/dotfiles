@@ -48,6 +48,8 @@
 	prompt = false
 [pretty]
 	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
+[protocol]
+	version = 2
 [pull]
 	ff = only
 [push]

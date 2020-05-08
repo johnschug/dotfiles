@@ -1,4 +1,4 @@
-# Defined in /tmp/fish.59lFO2/fish_prompt.fish @ line 2
+# Defined in /tmp/fish.yKeIBa/fish_prompt.fish @ line 2
 function fish_prompt --description 'Write out the prompt'
     set -l last_status $status
     set -l color_normal $fish_color_normal
@@ -18,6 +18,10 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     set -g __fish_git_prompt_showdirtystate 1
+    set -g __fish_git_prompt_showuntrackedfiles 1
+    set -g __fish_git_prompt_showupstream informative
+    set -g __fish_git_prompt_describe_style branch
+    set -g __fish_git_prompt_char_untrackedfiles '…'
 
     printf '%s%s%s%s%s%s ' (set_color $color_cwd) (prompt_pwd) (set_color $color_normal) (__fish_vcs_prompt) "$prompt_status" "$suffix"
 end

@@ -7,6 +7,7 @@ SETUVAR --export LC_MEASUREMENT:en_CA\x2eUTF\x2d8
 SETUVAR __fish_init_2_39_8:\x1d
 SETUVAR __fish_init_2_3_0:\x1d
 SETUVAR __fish_init_3_x:\x1d
+SETUVAR __fish_initialized:3100
 SETUVAR fish_color_autosuggestion:586e75
 SETUVAR fish_color_cancel:\x2dr
 SETUVAR fish_color_command:3daee9\x1eblue
@@ -19,6 +20,7 @@ SETUVAR fish_color_escape:00a6b2\x1ecyan
 SETUVAR fish_color_hg_added:2ecc71\x1egreen
 SETUVAR fish_color_history_current:\x2d\x2dbold
 SETUVAR fish_color_host:normal
+SETUVAR fish_color_host_remote:yellow
 SETUVAR fish_color_match:\x2d\x2dbackground\x3dbrblue
 SETUVAR fish_color_normal:657b83\x1ewhite
 SETUVAR fish_color_operator:00a6b2\x1ecyan

@@ -1,12 +1,6 @@
 if status is-login
     umask 077
 
-    # These paths are added in /etc/profile on Fedora
-    # which fish doesn't read... 🙁
-    _path_add start /usr/local/bin
-    _path_add end /usr/local/sbin
-    _path_add end /usr/sbin
-
     set -q XDG_BIN_HOME
     or set -l XDG_BIN_HOME "$HOME/.local/bin"
     _path_add start "$XDG_BIN_HOME"
@@ -45,11 +39,11 @@ if status is-interactive
     set -gx LESS '-FRJgij4'
     set -gx LESSHISTFILE '-'
     if command -sq nvim
-        set -gx MANPAGER "env MANPATH=\"$MANPATH\" nvim -c 'set ft=man' -"
+        set -gx MANPAGER "nvim +Man!"
         set -gx EDITOR nvim
         set -gx MERGE 'nvim -d'
     else
-        set -gx MANPAGER "env MANPATH=\"$MANPATH\" vim +MANPAGER -"
+        set -gx MANPAGER "vim -M +MANPAGER -"
         set -gx EDITOR vim
         set -gx MERGE vimdiff
     end
@@ -121,6 +115,9 @@ if status is-interactive
     if command -sq podman
         alias docker podman
     end
+    if command -sq systemctl
+        alias userctl 'systemctl --user'
+    end
     if command -sq systemd-run
         alias scoped 'systemd-run --user --scope -qd '
     end
@@ -128,5 +125,5 @@ if status is-interactive
 end
 
 if test -r "$__fish_config_dir/local.fish"
-  source "$__fish_config_dir/local.fish"
+    source "$__fish_config_dir/local.fish"
 end

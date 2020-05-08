@@ -1,12 +1,3 @@
-[submodule ".zsh/plugins/zsh-syntax-highlighting"]
-	path = zsh/.local/share/zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule ".zsh/plugins/zsh-completions"]
-	path = zsh/.local/share/zsh/plugins/zsh-completions
-	url = https://github.com/zsh-users/zsh-completions.git
-[submodule ".zsh/plugins/zsh-autosuggestions"]
-	path = zsh/.local/share/zsh/plugins/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions
 [submodule "neofetch/neofetch"]
 	path = neofetch/neofetch
 	url = https://github.com/dylanaraps/neofetch.git
@@ -16,12 +7,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-fugitive"]
 	path = vim/.vim/pack/bundle/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
-[submodule "vim/.vim/pack/bundle/start/ultisnips"]
-	path = vim/.vim/pack/bundle/start/ultisnips
-	url = https://github.com/SirVer/ultisnips
-[submodule "vim/.vim/pack/bundle/start/vim-snippets"]
-	path = vim/.vim/pack/bundle/start/vim-snippets
-	url = https://github.com/honza/vim-snippets
 [submodule "vim/.vim/pack/bundle/start/unicode.vim"]
 	path = vim/.vim/pack/bundle/start/unicode.vim
 	url = https://github.com/chrisbra/unicode.vim
@@ -49,9 +34,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-vagrant"]
 	path = vim/.vim/pack/bundle/start/vim-vagrant
 	url = https://github.com/hashivim/vim-vagrant
-[submodule "vim/.vim/pack/bundle/start/vim-diff-enhanced"]
-	path = vim/.vim/pack/bundle/start/vim-diff-enhanced
-	url = https://github.com/chrisbra/vim-diff-enhanced
 [submodule "vim/.vim/pack/bundle/start/rust.vim"]
 	path = vim/.vim/pack/bundle/start/rust.vim
 	url = https://github.com/rust-lang/rust.vim
@@ -91,9 +73,6 @@
 [submodule "vim/.vim/pack/bundle/start/asyncomplete-lsp.vim"]
 	path = vim/.vim/pack/bundle/start/asyncomplete-lsp.vim
 	url = https://github.com/prabirshrestha/asyncomplete-lsp.vim.git
-[submodule "vim/.vim/pack/bundle/start/asyncomplete-ultisnips.vim"]
-	path = vim/.vim/pack/bundle/start/asyncomplete-ultisnips.vim
-	url = https://github.com/prabirshrestha/asyncomplete-ultisnips.vim.git
 [submodule "vim/.vim/pack/bundle/start/asyncomplete-file.vim"]
 	path = vim/.vim/pack/bundle/start/asyncomplete-file.vim
 	url = https://github.com/prabirshrestha/asyncomplete-file.vim.git
@@ -103,3 +82,9 @@
 [submodule "vim/.vim/pack/bundle/start/vim-emoji-ab"]
 	path = vim/.vim/pack/bundle/start/vim-emoji-ab
 	url = https://gitlab.com/gi1242/vim-emoji-ab.git
+[submodule "vim/.vim/pack/bundle/start/vim-vsnip"]
+	path = vim/.vim/pack/bundle/start/vim-vsnip
+	url = https://github.com/hrsh7th/vim-vsnip.git
+[submodule "vim/.vim/pack/bundle/start/vim-vsnip-integ"]
+	path = vim/.vim/pack/bundle/start/vim-vsnip-integ
+	url = https://github.com/hrsh7th/vim-vsnip-integ.git

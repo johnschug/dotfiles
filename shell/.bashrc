@@ -22,7 +22,7 @@ fi
 # Start tmux
 if hash tmux &>/dev/null && [ -z "$TMUX" ]; then
   if [ -n "$SSH_CONNECTION" ]; then
-    read -rsk '?Press any key to continue...'
+    read -rsn 1 -p 'Press any key to continue...'
   fi
   if hash systemd-run &>/dev/null; then
     systemd-run --scope --user -qG tmux new -d -s DEFAULT &>/dev/null
