@@ -122,6 +122,10 @@ if status is-interactive
         alias scoped 'systemd-run --user --scope -qd '
     end
     #alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
+
+    if command -sq gpg-connect-agent
+        gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+    end
 end
 
 if test -r "$__fish_config_dir/local.fish"

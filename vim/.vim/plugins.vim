@@ -13,31 +13,14 @@ function! StatusLineError() abort
         \ 'l:symbols[v:val].l:counts[v:val]'))
 endfunction
 
-" Ale {{{
-  autocmd vimrc User ALELint call lightline#update()
-
-  let g:ale_virtualtext_cursor = 1
-  let g:ale_sign_warning = 'W>'
-  let g:ale_sign_error = 'E>'
-  let g:ale_linters = {
-        \ 'markdown': ['proselint', 'vale'],
-        \ 'text': ['proselint', 'vale'],
-        \ }
-
-  nmap <silent> [e <Plug>(ale_previous_wrap)
-  nmap <silent> ]e <Plug>(ale_next_wrap)
-
-  let g:diagnostic_functions['ale'] = {-> ale#statusline#Count(bufnr('')) }
-" }}}
-
 " asyncomplete {{{
   let g:asyncomplete_smart_completion = 1
   let g:asyncomplete_remove_duplicates = 1
 
-  imap <C-Space> <Plug>(asyncomplete_force_refresh)
-  inoremap <expr> <CR> pumvisible() ? "\<C-y>\<CR>" : "\<CR>"
+  imap <silent> <C-Space> <Plug>(asyncomplete_force_refresh)
+  inoremap <silent> <expr> <CR> pumvisible() ? "\<C-y>\<CR>" : "\<C-g>u\<CR>"
 
-  function! s:RegisterAsyncSources() abort
+  function! s:register_async_sources() abort
     call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
           \ 'name': 'file',
           \ 'whitelist': ['*'],
@@ -52,7 +35,7 @@ endfunction
           \  }))
   endfunction
 
-  autocmd vimrc User asyncomplete_setup call s:RegisterAsyncSources()
+  autocmd vimrc User asyncomplete_setup call s:register_async_sources()
   autocmd vimrc CompleteDone * if pumvisible() == 0 | pclose | endif
 " }}}
 
@@ -136,44 +119,45 @@ endfunction
 " }}}
 
 " vim-lsp {{{
-  if has('nvim')
-    let g:lsp_diagnostics_float_cursor = 1
-  endif
-
   let g:diagnostic_functions['lsp'] = function('lsp#get_buffer_diagnostics_counts')
 
-  function! s:RegisterLspServers() abort
-    if executable('rust-analyzer')
+  let g:lsp_diagnostics_float_cursor = 1
+  let g:lsp_highlight_references_enabled = 1
+
+  function! s:register_lsp_servers() abort
+    if executable('ocamllsp')
       call lsp#register_server({
-            \ 'name': 'rust-analyzer',
-            \ 'cmd': {server_info->['rust-analyzer']},
-            \ 'whitelist': ['rust'],
-            \})
-    elseif executable('rls')
-      call lsp#register_server({
-            \ 'name': 'rls',
-            \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
-            \ 'whitelist': ['rust'],
-            \})
-    endif
-    if executable('clangd')
-      call lsp#register_server({
-            \ 'name': 'clangd',
-            \ 'cmd': {server_info->['clangd']},
-            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+            \ 'name': 'ocaml-lsp',
+            \ 'cmd': {server_info->['ocamllsp']},
+            \ 'whitelist': ['ocaml'],
             \})
     endif
   endfunction
-  function! s:EnableLspForBuffer() abort
+  function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
     setlocal keywordprg=:LspHover
-    nmap <buffer> gd <plug>(lsp-definition)
+    if exists('+tagfunc')
+      setlocal tagfunc=lsp#tagfunc
+    endif
+    nmap <silent> <buffer> gd <plug>(lsp-definition)
+    nmap <silent> <buffer> gD <plug>(lsp-declaration)
+    nmap <silent> <buffer> gs <plug>(lsp-workspace-symbol)
+    nmap <silent> <buffer> g? <plug>(lsp-references)
+    nmap <silent> <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <silent> <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <silent> <buffer> gy <plug>(lsp-code-action)
   endfunction
-  autocmd vimrc User lsp_setup call s:RegisterLspServers()
-  autocmd vimrc User lsp_buffer_enabled call s:EnableLspForBuffer()
+  autocmd vimrc User lsp_setup call s:register_lsp_servers()
+  autocmd vimrc User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
   autocmd vimrc User lsp_diagnostics_updated call lightline#update()
 " }}}
 
+" vim-lsp-settings {{{
+  let g:lsp_settings = { 'efm-langserver': { 'disabled': 0 } }
+" }}}
+
 " vim-vsnip {{{
+  let g:vsnip_snippet_dir = g:vimconf . '/vsnip'
   imap <expr> <C-j> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-j>'
   smap <expr> <C-j> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-j>'
   imap <expr> <C-k> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'

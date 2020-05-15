@@ -78,8 +78,6 @@ endif
   set listchars=tab:▸\ ,nbsp:␣,trail:•,precedes:…,extends:…
   set number
   set relativenumber
-  set cursorline
-  set cursorcolumn
   set colorcolumn=+1
   set showcmd
   set noshowmode
@@ -157,13 +155,6 @@ endif
 
   autocmd vimrc InsertEnter * set norelativenumber
   autocmd vimrc InsertLeave * set relativenumber
-  autocmd vimrc WinEnter * if exists('w:cursor')
-        \ | let [&cursorline, &cursorcolumn] = w:cursor
-        \ | elseif &buftype ==# 'terminal'
-        \ | setlocal nocursorcolumn nocursorline
-        \ | endif
-  autocmd vimrc WinLeave * let w:cursor = [&cursorline, &cursorcolumn]
-        \ | setlocal nocursorline nocursorcolumn
   autocmd vimrc BufWinEnter * if &buftype ==# 'help' | wincmd L | endif
   autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn
         \ | nnoremap <silent> <buffer> q <C-W>c
@@ -207,13 +198,8 @@ endif
 " }}}
 
 " Commands {{{
-  if executable('xclip')
-    command! -bar -range Copy <line1>,<line2>write !xclip -f -sel clip
-    command! -bar Paste read !xclip -o -sel clip
-  endif
-
-  command! -bar -nargs=+ SplitNonEmpty call <SID>SplitNonEmpty(<q-mods>, <q-args>)
-  function! s:SplitNonEmpty(mods, args) abort
+  command! -bar -nargs=+ SplitNonEmpty call <SID>split_non_empty(<q-mods>, <q-args>)
+  function! s:split_non_empty(mods, args) abort
     let l:cmd = 'split'
     if !&modified && (line('$') == 1) && empty(getline(1))
       let l:cmd = 'edit'
@@ -221,8 +207,8 @@ endif
     execute a:mods.' '.l:cmd.' '.a:args
   endfunction
 
-  command! -bar -nargs=+ EditConfig call <SID>EditConfig(<q-mods>, <f-args>)
-  function! s:EditConfig(mods, what, ...) abort
+  command! -bar -nargs=+ EditConfig call <SID>edit_config(<q-mods>, <f-args>)
+  function! s:edit_config(mods, what, ...) abort
     let l:type = get(a:000, 0, &filetype)
     if empty(l:type)
       return
@@ -232,11 +218,11 @@ endif
           \ (!filewritable(g:vimconf.'/'.l:path) && findfile(l:path, &runtimepath) !=# '')
       let l:path = 'after/'.l:path
     endif
-    call s:SplitNonEmpty(a:mods, g:vimconf.'/'.l:path)
+    call s:split_non_empty(a:mods, g:vimconf.'/'.l:path)
   endfunction
 
-  command! -bar StripTrailingWhitespace call <SID>StripTrailingWhitespace()
-  function! s:StripTrailingWhitespace() abort
+  command! -bar StripTrailingWhitespace call <SID>strip_trailing_whitespace()
+  function! s:strip_trailing_whitespace() abort
     if &l:modifiable && !&l:binary
       let l:view = winsaveview()
       try
@@ -279,9 +265,6 @@ endif
 
     nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
     nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-
-    nnoremap <C-]> g<C-]>
-    nnoremap g<C-]> <C-]>
 
     if has('nvim')
       tnoremap <C-W>. <C-W>
@@ -335,6 +318,7 @@ endif
   nnoremap <silent> <Leader>es :vertical EditConfig syntax<CR>
   nnoremap <silent> <Leader>ss :syntax sync fromstart<CR>
 
+  inoremap <CR> <C-G>u<CR>
   inoremap <C-W> <C-G>u<C-W>
   inoremap <C-U> <C-G>u<C-U>
 

@@ -46,9 +46,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-lion"]
 	path = vim/.vim/pack/bundle/start/vim-lion
 	url = https://github.com/tommcdo/vim-lion
-[submodule "vim/.vim/pack/bundle/start/ale"]
-	path = vim/.vim/pack/bundle/start/ale
-	url = https://github.com/w0rp/ale.git
 [submodule "vim/.vim/pack/bundle/start/ListToggle"]
 	path = vim/.vim/pack/bundle/start/ListToggle
 	url = https://github.com/Valloric/ListToggle.git
@@ -88,3 +85,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-vsnip-integ"]
 	path = vim/.vim/pack/bundle/start/vim-vsnip-integ
 	url = https://github.com/hrsh7th/vim-vsnip-integ.git
+[submodule "vim/.vim/pack/bundle/start/vim-lsp-settings"]
+	path = vim/.vim/pack/bundle/start/vim-lsp-settings
+	url = https://github.com/mattn/vim-lsp-settings.git
