@@ -18,25 +18,24 @@ endfunction
   let g:asyncomplete_remove_duplicates = 1
 
   imap <silent> <C-Space> <Plug>(asyncomplete_force_refresh)
-  inoremap <silent> <expr> <CR> pumvisible() ? "\<C-y>\<CR>" : "\<C-g>u\<CR>"
+  imap <silent> <expr> <CR> pumvisible() ? "\<C-y>\<CR>" : "\<C-g>u<Plug>delimitMateCR"
 
   function! s:register_async_sources() abort
     call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
           \ 'name': 'file',
-          \ 'whitelist': ['*'],
+          \ 'allowlist': ['*'],
           \ 'priority': 10,
           \ 'completor': function('asyncomplete#sources#file#completor')
           \ }))
     call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
           \ 'name': 'omni',
-          \ 'whitelist': ['*'],
-          \ 'blacklist': ['html'],
+          \ 'allowlist': ['*'],
+          \ 'blocklist': ['html'],
           \ 'completor': function('asyncomplete#sources#omni#completor')
           \  }))
   endfunction
 
   autocmd vimrc User asyncomplete_setup call s:register_async_sources()
-  autocmd vimrc CompleteDone * if pumvisible() == 0 | pclose | endif
 " }}}
 
 " delimitMate {{{
@@ -129,7 +128,7 @@ endfunction
       call lsp#register_server({
             \ 'name': 'ocaml-lsp',
             \ 'cmd': {server_info->['ocamllsp']},
-            \ 'whitelist': ['ocaml'],
+            \ 'allowlist': ['ocaml'],
             \})
     endif
   endfunction
@@ -142,7 +141,8 @@ endfunction
     nmap <silent> <buffer> gd <plug>(lsp-definition)
     nmap <silent> <buffer> gD <plug>(lsp-declaration)
     nmap <silent> <buffer> gs <plug>(lsp-workspace-symbol)
-    nmap <silent> <buffer> g? <plug>(lsp-references)
+    nmap <silent> <buffer> gr <plug>(lsp-references)
+    nmap <silent> <buffer> gi <plug>(lsp-implementation)
     nmap <silent> <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <silent> <buffer> ]g <plug>(lsp-next-diagnostic)
     nmap <silent> <buffer> gy <plug>(lsp-code-action)
@@ -160,8 +160,8 @@ endfunction
   let g:vsnip_snippet_dir = g:vimconf . '/vsnip'
   imap <expr> <C-j> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-j>'
   smap <expr> <C-j> vsnip#available(1) ? '<Plug>(vsnip-expand-or-jump)' : '<C-j>'
-  imap <expr> <C-k> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
-  smap <expr> <C-k> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+  imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+  smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 " }}}
 
 " vim:set sw=2 ts=2 et fdm=marker:

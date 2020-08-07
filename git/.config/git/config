@@ -37,6 +37,8 @@
 	prune = true
 [gpg]
 	program = gpg2
+[init]
+	defaultBranch = main
 [log]
 	decorate = auto
 	follow = true

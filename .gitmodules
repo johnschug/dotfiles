@@ -58,9 +58,6 @@
 [submodule "vim/.vim/pack/bundle/start/vim-sandwich"]
 	path = vim/.vim/pack/bundle/start/vim-sandwich
 	url = https://github.com/machakann/vim-sandwich.git
-[submodule "vim/.vim/pack/bundle/start/async.vim"]
-	path = vim/.vim/pack/bundle/start/async.vim
-	url = https://github.com/prabirshrestha/async.vim.git
 [submodule "vim/.vim/pack/bundle/start/vim-lsp"]
 	path = vim/.vim/pack/bundle/start/vim-lsp
 	url = https://github.com/prabirshrestha/vim-lsp.git
@@ -79,12 +76,15 @@
 [submodule "vim/.vim/pack/bundle/start/vim-emoji-ab"]
 	path = vim/.vim/pack/bundle/start/vim-emoji-ab
 	url = https://gitlab.com/gi1242/vim-emoji-ab.git
+[submodule "vim/.vim/pack/bundle/start/vim-lsp-settings"]
+	path = vim/.vim/pack/bundle/start/vim-lsp-settings
+	url = https://github.com/mattn/vim-lsp-settings.git
+[submodule "vim/.vim/pack/bundle/start/vim-sleuth"]
+	path = vim/.vim/pack/bundle/start/vim-sleuth
+	url = https://github.com/tpope/vim-sleuth.git
 [submodule "vim/.vim/pack/bundle/start/vim-vsnip"]
 	path = vim/.vim/pack/bundle/start/vim-vsnip
 	url = https://github.com/hrsh7th/vim-vsnip.git
 [submodule "vim/.vim/pack/bundle/start/vim-vsnip-integ"]
 	path = vim/.vim/pack/bundle/start/vim-vsnip-integ
 	url = https://github.com/hrsh7th/vim-vsnip-integ.git
-[submodule "vim/.vim/pack/bundle/start/vim-lsp-settings"]
-	path = vim/.vim/pack/bundle/start/vim-lsp-settings
-	url = https://github.com/mattn/vim-lsp-settings.git

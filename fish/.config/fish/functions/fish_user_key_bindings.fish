@@ -1,4 +1,4 @@
-# Defined in /tmp/fish.Px6O3w/fish_user_key_bindings.fish @ line 2
+# Defined in /tmp/fish.y1v3PI/fish_user_key_bindings.fish @ line 2
 function fish_user_key_bindings
     bind -M insert \ca beginning-of-line
     bind -M insert \ce end-of-line
