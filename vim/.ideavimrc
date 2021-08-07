@@ -1,3 +1,5 @@
+set commentary
+set ideajoin
 set ignorecase
 set incsearch
 set matchpairs+=<:>,[:]
@@ -13,9 +15,6 @@ set wrapscan
 
 vnoremap ae gg0oG$
 
-vnoremap gc :action CommentByLineComment<CR>
-nnoremap gcc :action CommentByLineComment<CR>
-
 nnoremap [b :prev<CR>
 nnoremap ]b :next<CR>
 nnoremap [B :first<CR>
@@ -24,5 +23,9 @@ nnoremap [e :action GotoPreviousError<CR>
 nnoremap ]e :action GotoNextError<CR>
 nnoremap <C-P> :action GotoFile<CR>
 
+nnoremap <Leader>d  :action CloseContent<CR>
 nnoremap <Leader>sv :source ~/.ideavimrc<CR>
 nnoremap <Leader>ev :vsplit ~/.ideavimrc<CR>
+
+nnoremap gd :action GotoDeclaration<CR>
+

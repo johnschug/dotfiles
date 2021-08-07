@@ -62,7 +62,7 @@ endfunction
         \ 'active': {
         \   'left': [['mode', 'paste'],
         \             ['fugitive', 'hunks'],
-        \             ['readonly', 'filename']],
+        \             ['readonly', 'filename', 'lsp_progress']],
         \   'right': [['errors', 'lineinfo'],
         \              ['percent'],
         \              ['filetype', 'fileencoding', 'fileformat'],
@@ -79,6 +79,7 @@ endfunction
         \ },
         \ 'component_function': {
         \   'hunks': 'StatusLineHunks',
+        \   'lsp_progress': 'StatusLineLspProgress',
         \ },
         \ 'component_visible_condition': {
         \   'fugitive': '(exists("*fugitive#head") && !empty(fugitive#head(7)))',
@@ -91,7 +92,7 @@ endfunction
 
 " rustfmt.vim {{{
   if executable('rustup')
-    let g:rustfmt_options = '+nightly'
+    let g:rustfmt_command = 'rustfmt +nightly'
   endif
 " }}}
 
@@ -121,7 +122,7 @@ endfunction
   let g:diagnostic_functions['lsp'] = function('lsp#get_buffer_diagnostics_counts')
 
   let g:lsp_diagnostics_float_cursor = 1
-  let g:lsp_highlight_references_enabled = 1
+  let g:lsp_work_done_progress_enabled = 1
 
   function! s:register_lsp_servers() abort
     if executable('ocamllsp')
@@ -140,20 +141,39 @@ endfunction
     endif
     nmap <silent> <buffer> gd <plug>(lsp-definition)
     nmap <silent> <buffer> gD <plug>(lsp-declaration)
-    nmap <silent> <buffer> gs <plug>(lsp-workspace-symbol)
+    nmap <silent> <buffer> gs <plug>(lsp-workspace-symbol-search)
     nmap <silent> <buffer> gr <plug>(lsp-references)
     nmap <silent> <buffer> gi <plug>(lsp-implementation)
     nmap <silent> <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <silent> <buffer> ]g <plug>(lsp-next-diagnostic)
     nmap <silent> <buffer> gy <plug>(lsp-code-action)
   endfunction
+  function! StatusLineLspProgress() abort
+    if !exists('*lsp#get_progress')
+      return ''
+    endif
+    let l:progress = lsp#get_progress()
+    if empty(l:progress)
+      return ''
+    endif
+
+    let l:progress = l:progress[len(l:progress) - 1]
+    let l:percent = get(l:progress, 'percentage', '')
+    if index([v:t_number, v:t_float], type(l:percent)) >= 0
+      let l:percent = ' '.string(abs(round(l:percent*10))/10).'%'
+    else
+      let l:percent = ''
+    endif
+    return l:progress['server'].': '.l:progress['title'].' '.l:progress['message'].l:percent
+  endfunction
   autocmd vimrc User lsp_setup call s:register_lsp_servers()
   autocmd vimrc User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
   autocmd vimrc User lsp_diagnostics_updated call lightline#update()
+  autocmd vimrc User lsp_progress_updated call lightline#update()
 " }}}
 
 " vim-lsp-settings {{{
-  let g:lsp_settings = { 'efm-langserver': { 'disabled': 0 } }
+  let g:lsp_settings = { 'efm-langserver': { 'disabled': 1 } }
 " }}}
 
 " vim-vsnip {{{
