@@ -88,3 +88,28 @@
 [submodule "vim/.vim/pack/bundle/start/vim-vsnip-integ"]
 	path = vim/.vim/pack/bundle/start/vim-vsnip-integ
 	url = https://github.com/hrsh7th/vim-vsnip-integ.git
+[submodule "neovim/.config/nvim/pack/bundle/start/nvim-lspconfig"]
+	path = neovim/.config/nvim/pack/bundle/start/nvim-lspconfig
+	url = https://github.com/neovim/nvim-lspconfig.git
+[submodule "neovim/.config/nvim/pack/bundle/start/nvim-compe"]
+	path = neovim/.config/nvim/pack/bundle/start/nvim-compe
+	url = https://github.com/hrsh7th/nvim-compe
+[submodule "neovim/.config/nvim/pack/bundle/start/telescope.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/telescope.nvim
+	url = https://github.com/nvim-telescope/telescope.nvim
+[submodule "neovim/.config/nvim/pack/bundle/plenary.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/plenary.nvim
+	url = https://github.com/nvim-lua/plenary.nvim
+[submodule "neovim/.config/nvim/pack/bundle/start/lualine.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/lualine.nvim
+	url = https://github.com/hoob3rt/lualine.nvim
+[submodule "neovim/.config/nvim/pack/bundle/nvim-treesitter"]
+	path = neovim/.config/nvim/pack/bundle/start/nvim-treesitter
+	url = https://github.com/nvim-treesitter/nvim-treesitter
+	branch = 0.5-compat
+[submodule "neovim/.config/nvim/pack/bundle/start/nvim-lspinstall"]
+	path = neovim/.config/nvim/pack/bundle/start/nvim-lspinstall
+	url = https://github.com/kabouzeid/nvim-lspinstall
+[submodule "neovim/.config/nvim/pack/bundle/start/lua-dev.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/lua-dev.nvim
+	url = https://github.com/folke/lua-dev.nvim
