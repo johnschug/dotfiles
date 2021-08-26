@@ -1,1 +1,381 @@
-../../vim-base/.vim/vimrc
+" Early Setup {{{
+if has('vim_starting') && &encoding !=# 'utf-8'
+   set encoding=utf-8
+endif
+scriptencoding utf-8
+
+if exists('*stdpath')
+  let g:vimconf = stdpath('config')
+  let g:vimdata = stdpath('data')
+else
+  let g:vimconf = split(&runtimepath, ',')[0]
+  if has('win32') || has('win64')
+    let g:vimdata = !empty($LOCALAPPDATA)? expand($LOCALAPPDATA.'/vim') : g:vimconf
+  else
+    let g:vimdata = expand(!empty($XDG_DATA_HOME)? $XDG_DATA_HOME : '~/.local/share/vim')
+  endif
+endif
+
+augroup vimrc
+  autocmd!
+augroup END
+
+runtime local.vim
+
+if has('gui_running')
+  set guioptions-=m guioptions+=M
+endif
+" }}}
+
+" General {{{
+  filetype plugin indent on
+  set autoread
+  set hidden
+  set path& path+=**
+  set fileformats=unix,dos,mac
+  silent! set shortmess+=a
+  set nomodeline
+  set viminfo&
+  set viminfo='100,s10,<0,/0,:0,@0,h
+  set viminfo+=r/tmp,r/dev/shm,r/var/run,r/run
+  let &viminfo .= ',n'.g:vimdata.'/info'
+
+  set backupskip& backupskip+=*/tmp/*,/dev/shm/*,/var/run/*,/run/*
+  let &backupdir = g:vimdata.'/backup'
+  if !isdirectory(&backupdir)
+    call mkdir(&backupdir, 'p')
+  endif
+
+  let &directory = g:vimdata.'/swap//'
+  if !isdirectory(&directory)
+    call mkdir(&directory, 'p')
+  endif
+
+  let &undodir = g:vimdata.'/undo'
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, 'p')
+  endif
+  set undofile
+
+  autocmd vimrc FocusGained,BufEnter,CursorHold,CursorHoldI * silent! checktime
+  autocmd vimrc BufWritePre /tmp/*,*/tmp/*,/dev/shm/*,/var/run/*,/run/* setlocal noundofile
+  autocmd vimrc BufRead /tmp/*,*/tmp/*,/dev/shm/*,/var/run/*,/run/* setlocal noswapfile
+  autocmd vimrc BufReadPost *
+        \ if line("'\"") >= 1 && line("'\"") <= line('$') && &ft !~# 'commit'
+        \ | execute "normal! g`\""
+        \ | endif
+" }}}
+
+" Interface {{{
+  set titlestring=%t
+  set title
+  set ttyfast
+  set lazyredraw
+  set scrolloff=5
+  set sidescroll=1
+  set sidescrolloff=10
+  set list
+  set listchars=tab:▸\ ,nbsp:␣,trail:•,precedes:…,extends:…
+  set number
+  set relativenumber
+  set colorcolumn=+1
+  set showcmd
+  set noshowmode
+  set display+=lastline
+  set laststatus=2
+  set statusline=
+  set statusline+=%{&paste?'[PASTE]\ ':''}
+  set statusline+=%(%R\ \|\ %)%f%(\ %M%)%=
+  set statusline+=%{&spell?&spelllang.'\ ':''}
+  set statusline+=%{!empty(&ft)?&ft:'no\ ft'}
+  set statusline+=\ \|\ %{strlen(&fenc)?&fenc:&enc}
+  set statusline+=\ \|\ %{&ff}
+  set statusline+=\ :\ %3p%%\ :%3l:%-2v
+
+  autocmd vimrc WinEnter * setlocal statusline<
+  autocmd vimrc WinLeave * setlocal statusline=%f%(\ %M%)%=%3p%%\ :%3l:%-2v
+        \ | let &ro=&ro
+
+  set splitbelow splitright
+  set winminheight=0
+  set previewheight=7
+
+  set nowrap
+  set linebreak
+  set breakindent
+  let &showbreak='↪ '
+
+  set nofoldenable
+  set foldmethod=syntax
+  set foldcolumn=1
+  set foldminlines=5
+  set foldopen+=insert
+  set fillchars=diff:⎼,vert:│,fold:·
+
+  set wrapscan
+  set hlsearch
+  set incsearch
+  set ignorecase
+  set smartcase
+
+  set wildmenu
+  set wildignorecase
+  set wildmode=longest:full,full
+  set wildignore&
+  set wildignore+=[._]*.s[a-z][a-z],*.bak,.DS_Store,._*,*~
+  set suffixes&
+  set suffixes+=.lock$,.pyc$,.class$,.jar$,.rlib$,.o$,.a$,.so$.lib$,.dll$,.pdb$,.exe,,
+
+  set guicursor=
+  if has('gui_running')
+    if has('gui_win32')
+      if exists('&renderoptions')
+        set renderoptions=type:directx,geom:1,renmode:5,taamode:1
+      endif
+      set guifont^=Source_Code_Pro:h10,Noto_Mono:h10,DejaVu_Sans_Mono:h10,Courier_New:h10
+    else
+      set guifont^=Source\ Code\ Pro\ 10,Noto\ Mono\ 10,DejaVu\ Sans\ Mono\ 10
+    endif
+    set guioptions-=r guioptions-=R guioptions-=l guioptions-=L guioptions-=T guioptions+=c
+    set browsedir=buffer
+  endif
+
+  if exists('&termguicolors')
+        \ && (&t_Co > 256 || $COLORTERM =~# '^\%(truecolor\|24bit\)$')
+    let &t_8f = "\e[38;2;%lu;%lu;%lum"
+    let &t_8b = "\e[48;2;%lu;%lu;%lum"
+    set termguicolors
+  endif
+  syntax enable
+  try
+    colorscheme breeze
+  catch /^Vim\%((\a\+)\)\=:E185/
+    colorscheme slate
+  endtry
+
+  autocmd vimrc InsertEnter * set norelativenumber
+  autocmd vimrc InsertLeave * set relativenumber
+  autocmd vimrc BufWinEnter * if &buftype ==# 'help' | wincmd L | endif
+  autocmd vimrc FileType qf,netrw setlocal cursorline nocursorcolumn
+        \ | nnoremap <silent> <buffer> q <C-W>c
+  autocmd vimrc FileType netrw setlocal bufhidden=wipe
+" }}}
+
+" Editing {{{
+  set smarttab
+  set expandtab
+  set shiftwidth=2
+  set softtabstop=-1
+
+  set confirm
+  set nostartofline
+  set matchpairs+=<:>
+  set formatoptions+=jl1
+  set backspace=indent,eol,start
+  set virtualedit=block
+  set autoindent
+  set copyindent
+  set preserveindent
+  set complete+=kspell
+  set completeopt+=menuone
+  set spelllang=en_us
+  set dictionary^=spell
+  if filereadable('/usr/share/dict/words')
+    set dictionary+=/usr/share/dict/words
+  endif
+  set diffopt+=iwhite
+  if index(split(&diffopt, ','), 'internal') >= 0
+    set diffopt+=indent-heuristic,algorithm:histogram
+  endif
+
+  if exists('&inccommand')
+    set inccommand=nosplit
+  endif
+
+  set ttimeout
+  set ttimeoutlen=100
+  set timeoutlen=500
+" }}}
+
+" Commands {{{
+  command! -bar -nargs=+ SplitNonEmpty call <SID>split_non_empty(<q-mods>, <q-args>)
+  function! s:split_non_empty(mods, args) abort
+    let l:cmd = 'split'
+    if !&modified && (line('$') == 1) && empty(getline(1))
+      let l:cmd = 'edit'
+    endif
+    execute a:mods.' '.l:cmd.' '.a:args
+  endfunction
+
+  command! -bar -nargs=+ EditConfig call <SID>edit_config(<q-mods>, <f-args>)
+  function! s:edit_config(mods, what, ...) abort
+    let l:type = get(a:000, 0, &filetype)
+    if empty(l:type)
+      return
+    endif
+    let l:path = a:what.'/'.l:type.'.vim'
+    if filewritable(g:vimconf.'/after/'.l:path) ||
+          \ (!filewritable(g:vimconf.'/'.l:path) && findfile(l:path, &runtimepath) !=# '')
+      let l:path = 'after/'.l:path
+    endif
+    call s:split_non_empty(a:mods, g:vimconf.'/'.l:path)
+  endfunction
+
+  command! -bar StripTrailingWhitespace call <SID>strip_trailing_whitespace()
+  function! s:strip_trailing_whitespace() abort
+    if &l:modifiable && !&l:binary
+      let l:view = winsaveview()
+      try
+        " vint:-ProhibitCommandWithUnintendedSideEffect -ProhibitCommandRelyOnUser
+        silent! keeppatterns %sm/\s\+$//e
+        " vint:+ProhibitCommandWithUnintendedSideEffect +ProhibitCommandRelyOnUser
+      finally
+        call winrestview(l:view)
+      endtry
+    endif
+  endfunction
+
+  autocmd vimrc BufWritePre * if !isdirectory(expand('<afile>:p:h')) |
+        \ call mkdir(expand('<afile>:p:h'), 'p') |
+        \ endif
+  autocmd vimrc BufWritePre * if get(b:, 'strip_trailing', 1) |
+        \ StripTrailingWhitespace |
+        \ endif
+  autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
+  autocmd vimrc QuickFixCmdPost    l* nested lwindow|redraw!
+
+  if executable('rg')
+    set grepprg=rg\ --vimgrep\ --no-heading\ -S
+    set grepformat^=%f:%l:%c:%m
+  elseif executable('ag')
+    set grepprg=ag\ --vimgrep
+    set grepformat^=%f:%l:%c:%m
+  else
+    set grepprg=grep\ -srnH
+  endif
+" }}}
+
+" Mappings {{{
+  " Navigation {{{
+    nnoremap <C-Space> :ls<CR>:b<SPACE>
+    nmap <C-@> <C-Space>
+    nnoremap gb <C-^>
+    nnoremap <Leader>f :find<Space>
+    nnoremap <Leader>F :sfind<Space>
+
+    nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+    nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+
+    if has('nvim')
+      tnoremap <C-W>. <C-W>
+      tnoremap <C-W>: <C-\><C-N>:
+      tnoremap <C-W>n <C-\><C-N>
+      tnoremap <C-W>q <C-\><C-N><C-W>q
+      tnoremap <C-W><C-W> <C-\><C-N><C-W><C-W>
+      tnoremap <expr> <C-W>" '<C-\><C-N>"'.nr2char(getchar()).'pi'
+    endif
+  " }}}
+  " Unimpaired mappings {{{
+    for s:cmd in [['a', ''], ['b', 'b'], ['t', 't'], ['q', 'c'], ['l', 'l']]
+      execute 'nnoremap <silent> <expr> ['.s:cmd[0]." ':<C-U>'.v:count1.'".s:cmd[1]."prev<CR>'"
+      execute 'nnoremap <silent> <expr> ]'.s:cmd[0]." ':<C-U>'.v:count1.'".s:cmd[1]."next<CR>'"
+      execute 'nnoremap <silent> ['.toupper(s:cmd[0]).' :<C-U>'.s:cmd[1].'first<CR>'
+      execute 'nnoremap <silent> ]'.toupper(s:cmd[0]).' :<C-U>'.s:cmd[1].'last<CR>'
+    endfor
+    for s:opt in [['s', 'spell'], ['et', 'expandtab'], ['w', 'wrap'], ['r', 'relativenumber'], ['l', 'list']]
+      execute 'nnoremap <silent> [o'.s:opt[0].' :setlocal '.s:opt[1].'<CR>'
+      execute 'nnoremap <silent> ]o'.s:opt[0].' :setlocal no'.s:opt[1].'<CR>'
+      execute 'nnoremap <silent> co'.s:opt[0].' :setlocal '.s:opt[1].'!<CR>'
+    endfor
+    nnoremap <silent> cost :let b:strip_trailing=!get(b:, 'strip_trailing', 1)<CR>
+    nnoremap <silent> [ts :setlocal tabstop=4<CR>
+    nnoremap <silent> ]ts :setlocal tabstop=8<CR>
+    nnoremap <silent> [od :diffthis<CR>
+    nnoremap <silent> ]od :diffoff<CR>
+    nnoremap <silent> <expr> cod (&diff?':diffoff':':diffthis').'<CR>'
+    nnoremap <silent> [oy :setlocal syntax=ON<CR>
+    nnoremap <silent> ]oy :setlocal syntax=OFF<CR>
+    nnoremap <silent> <expr> coy ':setlocal syntax='.(&l:syntax==#'OFF'?'ON':'OFF').'<CR>'
+    nnoremap <silent> [<Space> :<C-U>put! =repeat(nr2char(10), v:count1)<CR>']+1
+    nnoremap <silent> ]<Space> :<C-U>put =repeat(nr2char(10), v:count1)<CR>'[-1
+  " }}}
+  nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
+  nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
+  nnoremap <silent> <C-L> :nohlsearch<Bar>checktime<Bar>diffupdate<CR><C-L>
+  nnoremap <silent> <Leader>d :bd<CR>
+  nnoremap <silent> <Leader>w :update<CR>
+  nnoremap <silent> <Leader>$ :StripTrailingWhitespace<CR>
+  nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=2<CR>
+  nnoremap <silent> <Leader>i4e :setlocal expandtab shiftwidth=4<CR>
+  nnoremap <silent> <Leader>i4n :setlocal noexpandtab shiftwidth=4 tabstop=4<CR>
+  nnoremap <silent> <Leader>i8 :setlocal noexpandtab shiftwidth=8 tabstop=8<CR>
+  nnoremap <silent> <Leader>sv :source $MYVIMRC<CR>
+  nnoremap <silent> <Leader>ev :vertical SplitNonEmpty $MYVIMRC<CR>
+  nnoremap <silent> <expr> <Leader>el ':vertical SplitNonEmpty '.g:vimconf.'/local.vim<CR>'
+  nnoremap <silent> <expr> <Leader>ep ':vertical SplitNonEmpty '.g:vimconf.'/plugins.vim<CR>'
+  nnoremap <silent> <Leader>ec :vertical EditConfig colors <C-R>=g:colors_name<CR><CR>
+  nnoremap <silent> <Leader>ef :vertical EditConfig ftplugin<CR>
+  nnoremap <silent> <Leader>es :vertical EditConfig syntax<CR>
+  nnoremap <silent> <Leader>ss :syntax sync fromstart<CR>
+
+  inoremap <CR> <C-G>u<CR>
+  inoremap <C-W> <C-G>u<C-W>
+  inoremap <C-U> <C-G>u<C-U>
+
+  xnoremap ae gg0oG$
+  onoremap ae :<C-U>keepjumps normal! ggVG<CR>
+
+  cabbrev <expr> %% fnameescape(expand('%'))
+  cabbrev <expr> :: fnameescape(expand('%:h'))
+" }}}
+
+" File Type {{{
+  let g:load_doxygen_syntax = 1
+  let g:c_gnu = 1
+  let g:rust_fold = 1
+  let g:man_hardwrap = 1
+
+  if !exists(':Man')
+    runtime! ftplugin/man.vim
+  endif
+  autocmd vimrc FileType vim setlocal keywordprg=:help
+  autocmd vimrc FileType man setlocal nolist noexpandtab sw=8 ts=8
+  autocmd vimrc FileType gitcommit,text,markdown,pandoc,html,c,cpp,rust setlocal spell
+  if executable('hindent')
+    autocmd vimrc FileType haskell setlocal equalprg=hindent
+  endif
+" }}}
+
+" Projects {{{
+  set tagcase=smart
+  set tags=./tags;,tags
+  set sessionoptions-=curdir
+  set sessionoptions-=options
+  set sessionoptions+=localoptions,unix,sesdir
+
+  let s:gitroot = get(systemlist('git rev-parse --show-toplevel'), 0, '')
+  if v:shell_error == 0 && !empty(s:gitroot)
+    let &path .= ','.s:gitroot.'/**'
+    let &tags .= ','.s:gitroot.'/.git/tags'
+  endif
+
+  autocmd vimrc FileType * let &l:tags = &tags.','.expand(g:vimdata.'/tags/').&ft
+" }}}
+
+" Plugins {{{
+  let g:netrw_home = g:vimdata
+  let g:netrw_hide = 1
+  let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+  let g:netrw_sizestyle = 'H'
+  let g:netrw_sort_options = 'i'
+
+  if !has('nvim')
+    packadd! matchit
+  endif
+  runtime plugins.vim
+" }}}
+
+if exists('*local#finish')
+  call local#finish()
+endif
+" vim:set sw=2 ts=2 et fdm=marker:

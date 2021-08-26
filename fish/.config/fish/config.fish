@@ -36,8 +36,8 @@ if status is-interactive
 
     # Environment Variables - Interactive Commands
     set -gx PAGER less
-    set -gx LESS '-FRJgij4'
-    set -gx LESSHISTFILE '-'
+    set -gx LESS -FRJgij4
+    set -gx LESSHISTFILE -
     if command -sq nvim
         set -gx MANPAGER "nvim +Man!"
         set -gx EDITOR nvim
@@ -72,9 +72,9 @@ if status is-interactive
     alias sudop 'sudo env PATH="$PATH" '
     alias strace 'strace -xy '
     alias gdb 'gdb -q '
-    alias vi 'vim'
+    alias vi vim
     if command -sq nvim
-        alias vim 'nvim'
+        alias vim nvim
         alias rvim 'nvim -Z'
         alias view 'nvim -R'
         alias bvim 'nvim -b'
