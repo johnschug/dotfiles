@@ -48,7 +48,6 @@ if status is-interactive
         set -gx MERGE vimdiff
     end
     set -gx VISUAL "$EDITOR"
-    set -gx SUDO_EDITOR vim
 
     # Key Bindings
     set -g fish_key_bindings fish_vi_key_bindings

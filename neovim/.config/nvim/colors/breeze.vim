@@ -190,18 +190,30 @@ call s:h('TabLineSel', {'fg': s:comment_grey, 'bg': s:white, 'sp': s:normal, 'fm
 "}}}
 " Plugins {{{
   call s:h('ErrorBar', {'fg': s:red, 'fmt': 'reverse'})
+
+  call s:h('HintText', {'fmt': 'italic'})
+  hi! link InformationText HintText
+  call s:h('WarningText', {'fg': s:orange, 'fmt': 'italic'})
+  call s:h('ErrorText', {'fg': s:red, 'fmt': 'italic'})
+
+  call s:h('HintSign', {'fg': s:normal, 'bg': s:bg1, 'fmt': 'bold'})
+  call s:h('InformationSign', {'fg': s:blue, 'bg': s:bg1, 'fmt': 'bold'})
   call s:h('WarningSign', {'fg': s:orange, 'bg': s:bg1, 'fmt': 'bold'})
   call s:h('ErrorSign', {'fg': s:red, 'bg': s:bg1, 'fmt': 'bold'})
   " Lsp {{{
-  hi! link LspWarningText WarningSign
-  hi! link LspErrorText ErrorSign
-
   hi! link LspReferenceText CursorLine
   hi! link LspReferenceRead LspReferenceText
   hi! link LspReferenceWrite LspReferenceText
+
   hi! link LspDiagnosticsUnderlineError SpellBad
-  hi! link LspDiagnosticsVirtualTextWarning WarningMsg
-  hi! link LspDiagnosticsVirtualTextError ErrorMsg
+
+  hi! link LspDiagnosticsVirtualTextHint HintText
+  hi! link LspDiagnosticsVirtualTextInformation InformationText
+  hi! link LspDiagnosticsVirtualTextWarning WarningText
+  hi! link LspDiagnosticsVirtualTextError ErrorText
+
+  hi! link LspDiagnosticsSignHint HintSign
+  hi! link LspDiagnosticsSignInformation InformationSign
   hi! link LspDiagnosticsSignWarning WarningSign
   hi! link LspDiagnosticsSignError ErrorSign
   "}}}

@@ -67,9 +67,6 @@
 [submodule "neovim/.config/nvim/pack/bundle/start/nvim-lspconfig"]
 	path = neovim/.config/nvim/pack/bundle/start/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig.git
-[submodule "neovim/.config/nvim/pack/bundle/start/nvim-compe"]
-	path = neovim/.config/nvim/pack/bundle/start/nvim-compe
-	url = https://github.com/hrsh7th/nvim-compe
 [submodule "neovim/.config/nvim/pack/bundle/start/telescope.nvim"]
 	path = neovim/.config/nvim/pack/bundle/start/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim
@@ -89,3 +86,18 @@
 [submodule "neovim/.config/nvim/pack/bundle/start/lua-dev.nvim"]
 	path = neovim/.config/nvim/pack/bundle/start/lua-dev.nvim
 	url = https://github.com/folke/lua-dev.nvim
+[submodule "neovim/.config/nvim/pack/bundle/start/nvim-cmp"]
+	path = neovim/.config/nvim/pack/bundle/start/nvim-cmp
+	url = https://github.com/hrsh7th/nvim-cmp
+[submodule "neovim/.config/nvim/pack/bundle/start/cmp-vsnip"]
+	path = neovim/.config/nvim/pack/bundle/start/cmp-vsnip
+	url = https://github.com/hrsh7th/cmp-vsnip
+[submodule "neovim/.config/nvim/pack/bundle/start/cmp-nvim-lsp"]
+	path = neovim/.config/nvim/pack/bundle/start/cmp-nvim-lsp
+	url = https://github.com/hrsh7th/cmp-nvim-lsp
+[submodule "neovim/.config/nvim/pack/bundle/start/cmp-path"]
+	path = neovim/.config/nvim/pack/bundle/start/cmp-path
+	url = https://github.com/hrsh7th/cmp-path
+[submodule "neovim/.config/nvim/pack/bundle/start/cmp-buffer"]
+	path = neovim/.config/nvim/pack/bundle/start/cmp-buffer
+	url = https://github.com/hrsh7th/cmp-buffer

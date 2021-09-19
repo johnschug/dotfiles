@@ -19,3 +19,5 @@ tags
 cscope.*
 
 Session.vim
+
+nvim-lsp-settings.json

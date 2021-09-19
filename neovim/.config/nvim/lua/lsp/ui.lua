@@ -1,7 +1,36 @@
+local M = {}
+
+local function debounce(timeout, fn)
+  local timer = vim.loop.new_timer()
+  return function(...)
+    local argv = {...}
+    timer:start(timeout, 0, function()
+      timer:stop()
+      vim.schedule_wrap(fn)(unpack(argv))
+    end)
+  end
+end
+
+M.update_loclist = debounce(100, function()
+  vim.lsp.diagnostic.set_loclist({open_loclist = false})
+end)
+
+M.update_references = debounce(100, function()
+  vim.lsp.buf.clear_references()
+  vim.lsp.buf.document_highlight()
+end)
+
 local clients = {}
 local progress = {}
 
-local function progress_callback(_, _, msg, client_id)
+local function progress_callback(...)
+  local msg = select(3, ...)
+  local client_id = select(4, ...)
+  if type(client_id) ~= 'number' then
+    msg = select(2, ...)
+    client_id = select(3, ...).client_id
+  end
+
   if not clients[client_id] then
     clients[client_id] = {}
   end
@@ -34,17 +63,12 @@ local function progress_callback(_, _, msg, client_id)
   vim.cmd [[doautocmd <nomodeline> User LspProgressUpdated]]
 end
 
-local function register_progress()
+function M.register_progress()
   vim.lsp.handlers['$/progress'] = progress_callback
 end
 
-local function get_progress()
+function M.get_progress()
   return vim.deepcopy(progress)
 end
-
-local M = {
-  register_progress = register_progress,
-  get_progress = get_progress,
-}
 
 return M
