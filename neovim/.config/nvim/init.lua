@@ -2,9 +2,8 @@ local vimconf = vim.fn.stdpath 'config'
 local vimdata = vim.fn.stdpath 'data'
 
 local au = require('au')
-local vimrc = au.group('vimrc', function (g)
-  g:clear()
-end)
+local vimrc = au.group('vimrc')
+vimrc:clear()
 
 local LOCAL = (loadfile(vimconf .. '/local.lua') or function()
   return { finish = function() end }
@@ -27,9 +26,9 @@ if vim.fn.isdirectory(vim.opt.backupdir:get()[1]) == 0 then
 end
 vim.opt.undofile = true
 
-vimrc({'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI'}, 'silent! checktime')
-vimrc.BufWritePre = {{'/tmp/*', '*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}, 'setlocal noundofile'}
-vimrc.BufRead = {{'/tmp/*', '*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}, 'setlocal noswapfile'}
+vimrc[{'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI'}] = 'silent! checktime'
+vimrc.BufWritePre[{'/tmp/*', '*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}] = 'setlocal noundofile'
+vimrc.BufRead[{'/tmp/*', '*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}] = 'setlocal noswapfile'
 vimrc.BufReadPost = function()
   if vim.o.filetype == 'commit' then
     return
@@ -99,12 +98,12 @@ vimrc.BufWinEnter = function()
     vim.api.nvim_command('wincmd L')
   end
 end
-vimrc.FileType = {'netrw', 'setlocal bufhidden=wipe'}
-vimrc.FileType = {{'qf', 'netrw'}, function()
+vimrc.FileType.netrw = 'setlocal bufhidden=wipe'
+vimrc.FileType[{'qf', 'netrw'}] = function()
   vim.opt_local.cursorline = true
   vim.opt_local.cursorcolumn = false
   vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<C-W>c', { silent = true, noremap = true })
-end}
+end
 
 -- Editing
 vim.opt.timeoutlen = 500
@@ -193,10 +192,8 @@ vimrc.BufWritePre = function()
     vim.fn.mkdir(dir, 'p')
   end
 end
-vim.cmd([[
-  autocmd vimrc QuickFixCmdPost [^l]* nested botright cwindow|redraw!
-  autocmd vimrc QuickFixCmdPost    l* nested lwindow|redraw!
-]])
+vimrc.QuickFixCmdPost['[^l]*'][{nested = true}] = 'botright cwindow|redraw!'
+vimrc.QuickFixCmdPost['l*'][{nested = true}] = 'lwindow|redraw!'
 
 -- Mappings
 local function mappings(maps)
@@ -300,11 +297,11 @@ if vim.fn.executable('rustup') ~= 0 then
   vim.g.rustfmt_command = 'rustfmt +nightly'
 end
 
-vimrc.FileType = {'vim', 'setlocal keywordprg=:help'}
-vimrc.FileType = {'man', 'setlocal nolist noexpandtab sw=8 ts=8'}
-vimrc.FileType = {{'gitcommit', 'text', 'markdown', 'pandoc', 'html'}, 'setlocal spell'}
+vimrc.FileType.vim = 'setlocal keywordprg=:help'
+vimrc.FileType.man = 'setlocal nolist noexpandtab sw=8 ts=8'
+vimrc.FileType[{'gitcommit', 'text', 'markdown', 'pandoc', 'html'}] = 'setlocal spell'
 if vim.fn.executable('hindent') ~= 0 then
-  vimrc.FileType = {'haskell', 'setlocal equalprg=hindent'}
+  vimrc.FileType.haskell = 'setlocal equalprg=hindent'
 end
 
 -- Projects
@@ -379,7 +376,7 @@ require('telescope').setup {
 }
 
 -- LSP
-require('lsp.ui').register_progress()
+require('lsp-utils').register_progress()
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -424,35 +421,23 @@ local function lsp_on_attach(client, bufnr)
   set_keymap('n', '[g', '<cmd>lua vim.lsp.diagnostics.goto_prev()<CR>', opts)
   set_keymap('n', ']g', '<cmd>lua vim.lsp.diagnostics.goto_next()<CR>', opts)
 
-  vim.cmd [[
-    command! -buffer LspRename lua vim.lsp.buf.rename()
-  ]]
+  vim.cmd('command! -buffer LspRename lua vim.lsp.buf.rename()')
 
-  local lsp_au = au.group('lsp_buf')
-  lsp_au:clear('*', '<buffer>')
-  lsp_au.BufEnter = {'<buffer>', "lua require('lsp.ui').update_loclist()"}
+  local lsp_group = au.group('lsp_buf')
+  lsp_group['*']['<buffer>']:clear()
+  lsp_group.BufEnter['<buffer>'] = "lua require('lsp-utils').update_loclist()"
 
   if client.resolved_capabilities.code_lens then
-    lsp_au[{'BufEnter', 'CursorHold', 'InsertLeave'}] = {'<buffer>', 'lua vim.lsp.codelens.refresh()'}
-    -- vim.cmd [[
-    --   autocmd lsp_buf BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()
-    -- ]]
+    lsp_group[{'BufEnter', 'CursorHold', 'InsertLeave'}]['<buffer>'] = 'lua vim.lsp.codelens.refresh()'
   end
 
   if client.resolved_capabilities.document_formatting then
-    lsp_au.BufWritePre = {'<buffer>', 'lua vi.lsp.buf.formatting_seq_sync(nil, 2000)'}
-    -- vim.cmd [[
-    --   command! -buffer Format lua vim.lsp.buf.formatting()
-    --   autocmd lsp_buf BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync(nil, 2000)
-    -- ]]
+    vim.cmd('command! -buffer Format lua vim.lsp.buf.formatting()')
+    lsp_group.BufWritePre['<buffer>'] = 'lua vim.lsp.buf.formatting_seq_sync(nil, 2000)'
   end
   if client.resolved_capabilities.document_highlight then
-    lsp_au[{'InsertEnter', 'BufLeave', 'CursorMoved'}] = {'<buffer>', 'lua vim.lsp.buf.clear_references()'}
-    lsp_au[{'CursorMoved', 'CursorHold'}] = {'<buffer>', "lua require('lsp.ui').update_references()"}
-    -- vim.cmd [[
-    --   autocmd lsp_buf InsertEnter,BufLeave,CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-    --   autocmd lsp_buf CursorMoved,CursorHold <buffer> lua require('lsp.ui').update_references()
-    -- ]]
+    lsp_group[{'InsertEnter', 'BufLeave', 'CursorMoved'}]['<buffer>'] = 'lua vim.lsp.buf.clear_references()'
+    lsp_group[{'CursorMoved', 'CursorHold'}]['<buffer>'] = "lua require('lsp-utils').update_references()"
   end
 end
 
@@ -485,7 +470,7 @@ end
 setup_servers()
 
 local function status_line_progress()
-  local progress = require('lsp.ui').get_progress()
+  local progress = require('lsp-utils').get_progress()
   if vim.tbl_isempty(progress) then
     return ''
   end
@@ -524,7 +509,7 @@ require('lualine').setup {
   extensions = {'quickfix'},
 }
 
-vimrc.User = {'LspDiagnosticsChanged', 'lua require("lsp.ui").update_loclist()'}
-vimrc.User = {'LspProgressUpdated', 'redrawstatus'}
+vimrc.User.LspDiagnosticsChanged = 'lua require("lsp-utils").update_loclist()'
+vimrc.User.LspProgressUpdated = 'redrawstatus'
 
 LOCAL.finish()

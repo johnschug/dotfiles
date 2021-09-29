@@ -138,7 +138,6 @@ function! neorepl#open(...) abort
   let l:name = get(a:000, 0, '')
   let l:base = get(a:000, 1, l:name)
   let l:ft = &filetype
-  let l:repls = []
 
   if !empty(l:base)
     let l:repl = s:active.find(l:name)

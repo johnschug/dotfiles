@@ -2,102 +2,102 @@
 	path = neofetch/neofetch
 	url = https://github.com/dylanaraps/neofetch.git
 [submodule "neovim/.config/nvim/pack/bundle/start/targets.vim"]
-	path = neovim/.config/nvim/pack/bundle/start/targets.vim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/targets.vim
 	url = https://github.com/wellle/targets.vim
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-fugitive"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-fugitive
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
 [submodule "neovim/.config/nvim/pack/bundle/start/unicode.vim"]
-	path = neovim/.config/nvim/pack/bundle/start/unicode.vim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/unicode.vim
 	url = https://github.com/chrisbra/unicode.vim
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-signify"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-signify
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-signify
 	url = https://github.com/mhinz/vim-signify
 [submodule "neovim/.config/nvim/pack/bundle/start/editorconfig-vim"]
-	path = neovim/.config/nvim/pack/bundle/start/editorconfig-vim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/editorconfig-vim
 	url = https://github.com/editorconfig/editorconfig-vim
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-toml"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-toml
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-toml
 	url = https://github.com/cespare/vim-toml
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-haskell-indent"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-haskell-indent
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-haskell-indent
 	url = https://github.com/itchyny/vim-haskell-indent
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-pandoc"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-pandoc
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-pandoc
 	url = https://github.com/vim-pandoc/vim-pandoc
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-pandoc-syntax"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-pandoc-syntax
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-pandoc-syntax
 	url = https://github.com/vim-pandoc/vim-pandoc-syntax
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-vagrant"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-vagrant
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-vagrant
 	url = https://github.com/hashivim/vim-vagrant
 [submodule "neovim/.config/nvim/pack/bundle/start/rust.vim"]
-	path = neovim/.config/nvim/pack/bundle/start/rust.vim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/rust.vim
 	url = https://github.com/rust-lang/rust.vim
 [submodule "neovim/.config/nvim/pack/bundle/start/delimitMate"]
-	path = neovim/.config/nvim/pack/bundle/start/delimitMate
+	path = neovim/.local/share/nvim/site/pack/bundle/start/delimitMate
 	url = https://github.com/Raimondi/delimitMate
 [submodule "neovim/.config/nvim/pack/bundle/start/tcomment_vim"]
-	path = neovim/.config/nvim/pack/bundle/start/tcomment_vim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/tcomment_vim
 	url = https://github.com/tomtom/tcomment_vim
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-lion"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-lion
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-lion
 	url = https://github.com/tommcdo/vim-lion
 [submodule "neovim/.config/nvim/pack/bundle/start/ListToggle"]
-	path = neovim/.config/nvim/pack/bundle/start/ListToggle
+	path = neovim/.local/share/nvim/site/pack/bundle/start/ListToggle
 	url = https://github.com/Valloric/ListToggle.git
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-repeat"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-repeat
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-tmux"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-tmux
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-tmux
 	url = https://github.com/tmux-plugins/vim-tmux.git
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-sandwich"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-sandwich
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-sandwich
 	url = https://github.com/machakann/vim-sandwich.git
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-emoji-ab"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-emoji-ab
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-emoji-ab
 	url = https://gitlab.com/gi1242/vim-emoji-ab.git
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-sleuth"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-sleuth
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-vsnip"]
-	path = neovim/.config/nvim/pack/bundle/start/vim-vsnip
+	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-vsnip
 	url = https://github.com/hrsh7th/vim-vsnip.git
 [submodule "neovim/.config/nvim/pack/bundle/start/nvim-lspconfig"]
-	path = neovim/.config/nvim/pack/bundle/start/nvim-lspconfig
+	path = neovim/.local/share/nvim/site/pack/bundle/start/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig.git
 [submodule "neovim/.config/nvim/pack/bundle/start/telescope.nvim"]
-	path = neovim/.config/nvim/pack/bundle/start/telescope.nvim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim
 [submodule "neovim/.config/nvim/pack/bundle/start/plenary.nvim"]
-	path = neovim/.config/nvim/pack/bundle/start/plenary.nvim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim
 [submodule "neovim/.config/nvim/pack/bundle/start/lualine.nvim"]
-	path = neovim/.config/nvim/pack/bundle/start/lualine.nvim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/lualine.nvim
 	url = https://github.com/hoob3rt/lualine.nvim
 [submodule "neovim/.config/nvim/pack/bundle/start/nvim-treesitter"]
-	path = neovim/.config/nvim/pack/bundle/start/nvim-treesitter
+	path = neovim/.local/share/nvim/site/pack/bundle/start/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter
 	branch = 0.5-compat
 [submodule "neovim/.config/nvim/pack/bundle/start/nvim-lspinstall"]
-	path = neovim/.config/nvim/pack/bundle/start/nvim-lspinstall
+	path = neovim/.local/share/nvim/site/pack/bundle/start/nvim-lspinstall
 	url = https://github.com/kabouzeid/nvim-lspinstall
 [submodule "neovim/.config/nvim/pack/bundle/start/lua-dev.nvim"]
-	path = neovim/.config/nvim/pack/bundle/start/lua-dev.nvim
+	path = neovim/.local/share/nvim/site/pack/bundle/start/lua-dev.nvim
 	url = https://github.com/folke/lua-dev.nvim
 [submodule "neovim/.config/nvim/pack/bundle/start/nvim-cmp"]
-	path = neovim/.config/nvim/pack/bundle/start/nvim-cmp
+	path = neovim/.local/share/nvim/site/pack/bundle/start/nvim-cmp
 	url = https://github.com/hrsh7th/nvim-cmp
 [submodule "neovim/.config/nvim/pack/bundle/start/cmp-vsnip"]
-	path = neovim/.config/nvim/pack/bundle/start/cmp-vsnip
+	path = neovim/.local/share/nvim/site/pack/bundle/start/cmp-vsnip
 	url = https://github.com/hrsh7th/cmp-vsnip
 [submodule "neovim/.config/nvim/pack/bundle/start/cmp-nvim-lsp"]
-	path = neovim/.config/nvim/pack/bundle/start/cmp-nvim-lsp
+	path = neovim/.local/share/nvim/site/pack/bundle/start/cmp-nvim-lsp
 	url = https://github.com/hrsh7th/cmp-nvim-lsp
 [submodule "neovim/.config/nvim/pack/bundle/start/cmp-path"]
-	path = neovim/.config/nvim/pack/bundle/start/cmp-path
+	path = neovim/.local/share/nvim/site/pack/bundle/start/cmp-path
 	url = https://github.com/hrsh7th/cmp-path
 [submodule "neovim/.config/nvim/pack/bundle/start/cmp-buffer"]
-	path = neovim/.config/nvim/pack/bundle/start/cmp-buffer
+	path = neovim/.local/share/nvim/site/pack/bundle/start/cmp-buffer
 	url = https://github.com/hrsh7th/cmp-buffer

@@ -1,5 +1,7 @@
 local M = {}
 
+---@param timeout number
+---@param fn function
 local function debounce(timeout, fn)
   local timer = vim.loop.new_timer()
   return function(...)
