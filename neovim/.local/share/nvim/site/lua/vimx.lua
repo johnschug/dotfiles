@@ -1,17 +1,17 @@
 local api = vim.api
 
----@class vimx.Pos
+---@class vimx.pos
 ---@field [1] integer
 ---@field [2] integer
 
----@alias vimx.Attrs table<string, vimx.Attr>
+---@alias vimx.attrs table<string, vimx.attr>
 
----@class vimx.Attr
+---@class vimx.attr
 ---@field get? function
 ---@field set? function
 
----@param attrs vimx.Attrs
----@param statics vimx.Attrs
+---@param attrs vimx.attrs
+---@param statics vimx.attrs
 ---@param init function
 ---@return table
 local function make_class(attrs, statics, init)
@@ -31,7 +31,7 @@ local function make_class(attrs, statics, init)
   }
   local cls = {
     __call = function(_, ...)
-      return init(mt, ...)
+      return setmetatable(init(...), mt)
     end,
     __index = function(self, key)
       local attr = statics[key] or attrs[key]
@@ -60,7 +60,7 @@ end
 
 local M = {}
 
----@type vimx.Attrs
+---@type vimx.attrs
 local buf_attrs = {
   -- properties
   is_valid = {get = unwrap(api.nvim_buf_is_valid)},
@@ -74,6 +74,9 @@ local buf_attrs = {
         return api.nvim_buf_get_mark(buf.id, key)
       end,
     })
+  end},
+  wins = {get = function(buf)
+    return vim.tbl_map(M.win, vim.fn.win_findbuf(buf.id))
   end},
   opt = {get = function(buf)
     return vim.bo[buf.id or 0]
@@ -105,7 +108,7 @@ local buf_attrs = {
   end},
 }
 
----@class vimx.Buf
+---@class vimx.buf
 ---@field id integer
 ---@field is_valid boolean
 ---@field is_loaded boolean
@@ -115,8 +118,8 @@ local buf_attrs = {
 ---@field mark table<string, integer[]>
 ---@field opt table<string, any>
 ---@field var table<string, any>
----@field current vimx.Buf|integer
----@field list vimx.Buf[]
+---@field current vimx.buf|integer
+---@field list vimx.buf[]
 ---@field apply fun(f: function): any
 ---@field delete fun(opts: table)
 M.buf = make_class(buf_attrs, {
@@ -132,8 +135,16 @@ M.buf = make_class(buf_attrs, {
   list = {get = function()
     return vim.tbl_map(M.buf, api.nvim_list_bufs())
   end},
-}, function(mt, id)
-  return setmetatable({id = id}, mt)
+  create = {
+    get = function()
+      return function(listed, scratch)
+        local id = api.nvim_create_buf(listed, scratch)
+        return (id ~= 0) and M.buf(id) or nil
+      end
+    end,
+  },
+}, function(id)
+  return {id = id}
 end)
 
 -- ---@param ns? integer
@@ -154,7 +165,7 @@ end)
 --   api.nvim_buf_set_lines(id, line_start or 0, line_end or -1, strict or false, val)
 -- end
 
----@type vimx.Attrs
+---@type vimx.attrs
 local win_attrs = {
   -- properties
   is_valid = {get = unwrap(api.nvim_win_is_valid)},
@@ -163,6 +174,7 @@ local win_attrs = {
   cursor = {get = unwrap(api.nvim_win_get_cursor), set = unwrap(api.nvim_win_set_cursor)},
   position = {get = unwrap(api.nvim_win_get_position)},
   config = {get = unwrap(api.nvim_win_get_config), set = unwrap(api.nvim_win_set_config)},
+  type = {get = unwrap(vim.fn.win_gettype)},
   buf = {
     get = function(win)
       return M.buf(api.nvim_win_get_buf(win.id or 0))
@@ -207,19 +219,19 @@ local win_attrs = {
   end},
 }
 
----@class vimx.Win
+---@class vimx.win
 ---@field is_valid boolean
 ---@field id integer
 ---@field width integer
 ---@field height integer
----@field cursor vimx.Pos
----@field position vimx.Pos
+---@field cursor vimx.pos
+---@field position vimx.pos
 ---@field config table
----@field buf vimx.Buf|integer
+---@field buf vimx.buf|integer
 ---@field opt table<string, any>
 ---@field var table<string, any>
----@field current vimx.Win|integer
----@field list vimx.Win[]
+---@field current vimx.win|integer
+---@field list vimx.win[]
 ---@field apply fun(f: function): any
 ---@field hide fun()
 ---@field close fun(force: boolean)
@@ -236,11 +248,11 @@ M.win = make_class(win_attrs, {
   list = {get = function()
     return vim.tbl_map(M.win, api.nvim_list_wins())
   end},
-}, function(mt, id)
-  return setmetatable({id = id}, mt)
+}, function(id)
+  return {id = id}
 end)
 
----@type vimx.Attrs
+---@type vimx.attrs
 local tab_attrs = {
   -- properties
   is_valid = {get = unwrap(api.nvim_tabpage_is_valid)},
@@ -266,14 +278,14 @@ local tab_attrs = {
   end},
 }
 
----@class vimx.TabPage
+---@class vimx.tabpage
 ---@field is_valid boolean
 ---@field id integer
----@field win vimx.Win
----@field wins vimx.Win[]
+---@field win vimx.win
+---@field wins vimx.win[]
 ---@field var table<string, any>
----@field current vimx.TabPage|integer
----@field list vimx.TabPage[]
+---@field current vimx.tabpage|integer
+---@field list vimx.tabpage[]
 M.tabpage = make_class(tab_attrs, {
   current = {
     get = function()
@@ -287,8 +299,8 @@ M.tabpage = make_class(tab_attrs, {
   list = {get = function()
     return vim.tbl_map(M.tabpage, api.nvim_list_tabpages())
   end},
-}, function(mt, id)
-  return setmetatable({id = id}, mt)
+}, function(id)
+  return {id = id}
 end)
 
 return M

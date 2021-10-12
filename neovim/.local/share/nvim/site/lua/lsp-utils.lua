@@ -13,13 +13,26 @@ local function debounce(timeout, fn)
   end
 end
 
-M.update_loclist = debounce(100, function()
+local default_debounce = 600
+M.update_loclist = debounce(default_debounce, function()
   vim.lsp.diagnostic.set_loclist({open_loclist = false})
 end)
 
-M.update_references = debounce(100, function()
+M.show_references = debounce(default_debounce, function()
   vim.lsp.buf.clear_references()
   vim.lsp.buf.document_highlight()
+end)
+
+M.show_code_actions = debounce(default_debounce, function()
+  -- local context = {diagnostics = vim.lsp.diagnostic.get_line_diagnostics()}
+  -- local params = vim.lsp.util.make_range_params()
+  -- params.context = context
+  -- vim.lsp.buf_request(0, 'textDocument/codeAction', params, function(err, _, result)
+  -- end)
+end)
+
+M.show_line_diagnostics = debounce(default_debounce, function()
+  vim.lsp.diagnostic.show_line_diagnostics({focusable = false})
 end)
 
 local clients = {}

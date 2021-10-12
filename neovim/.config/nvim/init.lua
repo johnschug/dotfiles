@@ -129,6 +129,15 @@ vim.opt.inccommand = 'nosplit'
 vim.opt.diffopt:append {'iwhite', 'indent-heuristic', 'algorithm:histogram'}
 
 -- Commands
+_G.inspect = _G.inspect or function(...)
+  local objs = {}
+  for i = 1, select('#', ...) do
+    table.insert(objs, vim.inspect(select(i, ...)))
+  end
+  print(table.concat(objs, '\n'))
+  return ...
+end
+
 vim.cmd [[
   command! -bar -nargs=+ EditSplit call v:lua.EditSplit(<q-mods>, <q-args>)
   command! -bar -nargs=+ EditConfig call v:lua.EditConfig(<q-mods>, <f-args>)
@@ -196,6 +205,10 @@ vimrc.QuickFixCmdPost['[^l]*'][{nested = true}] = 'botright cwindow|redraw!'
 vimrc.QuickFixCmdPost['l*'][{nested = true}] = 'lwindow|redraw!'
 
 -- Mappings
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+vim.api.nvim_set_keymap('n', '<Space>', '<Nop>', {noremap = true})
+
 local function mappings(maps)
   local modes = { terminal = 't', normal = 'n', insert = 'i', selection = 's' }
   for mode, mappings in pairs(maps) do
@@ -224,6 +237,7 @@ mappings {
     {'j', "v:count == 0 ? 'gj' : 'j'", {noremap = true, expr = true}},
     {'k', "v:count == 0 ? 'gk' : 'k'", {noremap = true, expr = true}},
 
+    -- Manipulating options
     {'cost', "<Cmd>let b:strip_trailing=!get(b:, 'strip_trailing', 1)<CR>", {noremap = true}},
     {'[ts', '<Cmd>setlocal tabstop=4<CR>', {noremap = true}},
     {']ts', '<Cmd>setlocal tabstop=8<CR>', {noremap = true}},
@@ -236,10 +250,14 @@ mappings {
     {'[ ', "<Cmd>put! =repeat(nr2char(10), v:count1)<CR>']+1", {noremap = true}},
     {'] ', "<Cmd>put =repeat(nr2char(10), v:count1)<CR>']-1", {noremap = true}},
 
+    {'ga', '<Plug>(UnicodeGA)'},
+    {'gs', '<Cmd>Telescope grep_string<CR>', {noremap = true}},
     {'g.', "'`['.strpart(getregtype(), 0, 1).'`]'", {noremap = true, expr = true}},
-    {'gs', "'<Cmd>silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'", {noremap = true, expr = true}},
+    {'z=', '<Cmd>Telescope spell_suggest<CR>', {noremap = true}},
     {'<C-L>', '<Cmd>nohlsearch|checktime|diffupdate<CR><C-L>', {noremap = true}},
-    {'<Leader>d', '<Cmd>bd<CR>', {noremap = true}},
+
+    -- Leader mappings
+    {'<Leader>c', '<Cmd>bd<CR>', {noremap = true}},
     {'<Leader>w', '<Cmd>update<CR>', {noremap = true}},
     {'<Leader>sv', '<Cmd>source $MYVIMRC<CR>', {noremap = true}},
     {'<Leader>ev', '<Cmd>vertical EditSplit $MYVIMRC<CR>', {noremap = true}},
@@ -247,9 +265,7 @@ mappings {
     {'<Leader>ec', "'<Cmd>vertical EditConfig colors '.g:colors_name.'<CR>'", {noremap = true, expr = true}},
     {'<Leader>ef', '<Cmd>vertical EditConfig ftplugin<CR>', {noremap = true}},
     {'<Leader>es', '<Cmd>vertical EditConfig syntax<CR>', {noremap = true}},
-    {'<Leader>ss', '<Cmd>syntax sync fromstart<CR>', {noremap = true}},
-
-    {'ga', '<Plug>(UnicodeGA)'},
+    {'<Leader>ss', '<Cmd>SymbolsOutline<CR>', {noremap = true}},
     {'<Leader>gs', '<Cmd>Gstatus<CR>', {noremap = true}},
     {'<Leader>gb', '<Cmd>leftabove Gblame<CR><C-W>p', {noremap = true}},
     {'<Leader>gl', '<Cmd>Gllog!<CR>', {noremap = true}},
@@ -373,9 +389,15 @@ end
 -- Telescope
 require('telescope').setup {
   defaults = require('telescope.themes').get_ivy({}),
+  pickers = {
+    buffers = {
+      sort_mru = true,
+    },
+  },
 }
 
 -- LSP
+require('lsp-projs').setup()
 require('lsp-utils').register_progress()
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
@@ -409,35 +431,44 @@ local function lsp_on_attach(client, bufnr)
   -- endif
 
   local opts = {noremap = true}
-  set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  set_keymap('n', 'gd', "<cmd>lua require('telescope.builtin').lsp_definitions()<CR>", opts)
-  set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  set_keymap('n', 'gi', "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>", opts)
-  set_keymap('n', 'gr', "<cmd>lua require('telescope.builtin').lsp_references()<CR>", opts)
-  set_keymap('n', 'gs', "<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>", opts)
-  set_keymap('n', 'gy', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  set_keymap('n', 'gY', '<cmd>lua vim.lsp.codelens.run()<CR>', opts)
-  set_keymap('n', '[g', '<cmd>lua vim.lsp.diagnostics.goto_prev()<CR>', opts)
-  set_keymap('n', ']g', '<cmd>lua vim.lsp.diagnostics.goto_next()<CR>', opts)
+  set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  set_keymap('n', 'gd', "<Cmd>lua require('telescope.builtin').lsp_definitions()<CR>", opts)
+  set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  set_keymap('n', 'gi', "<Cmd>lua require('telescope.builtin').lsp_implementations()<CR>", opts)
+  set_keymap('n', 'gr', "<Cmd>lua require('telescope.builtin').lsp_references()<CR>", opts)
+  set_keymap('n', 'gs', "<Cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>", opts)
+  set_keymap('n', 'gy', "<Cmd>lua require('telescope.builtin').lsp_code_actions()<CR>", opts)
+  set_keymap('v', 'gy', "<Cmd>lua require('telescope.builtin').lsp_range_code_actions()<CR>", opts)
+  set_keymap('n', 'gY', '<Cmd>lua vim.lsp.codelens.run()<CR>', opts)
+  set_keymap('n', '[g', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  set_keymap('n', ']g', '<Cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  set_keymap('n', '<Leader>wl', '<Cmd>lua print(vim.lsp.buf.list_workspace_folders())<CR>', opts)
 
   vim.cmd('command! -buffer LspRename lua vim.lsp.buf.rename()')
 
   local lsp_group = au.group('lsp_buf')
   lsp_group['*']['<buffer>']:clear()
   lsp_group.BufEnter['<buffer>'] = "lua require('lsp-utils').update_loclist()"
+  lsp_group[{'CursorMoved', 'CursorHold'}] = function()
+    local utils = require('lsp-utils')
+    utils.show_line_diagnostics()
+    utils.show_code_actions()
+  end
 
   if client.resolved_capabilities.code_lens then
     lsp_group[{'BufEnter', 'CursorHold', 'InsertLeave'}]['<buffer>'] = 'lua vim.lsp.codelens.refresh()'
   end
-
   if client.resolved_capabilities.document_formatting then
     vim.cmd('command! -buffer Format lua vim.lsp.buf.formatting()')
     lsp_group.BufWritePre['<buffer>'] = 'lua vim.lsp.buf.formatting_seq_sync(nil, 2000)'
   end
   if client.resolved_capabilities.document_highlight then
     lsp_group[{'InsertEnter', 'BufLeave', 'CursorMoved'}]['<buffer>'] = 'lua vim.lsp.buf.clear_references()'
-    lsp_group[{'CursorMoved', 'CursorHold'}]['<buffer>'] = "lua require('lsp-utils').update_references()"
+    lsp_group[{'CursorMoved', 'CursorHold'}]['<buffer>'] = "lua require('lsp-utils').show_references()"
   end
 end
 
@@ -457,9 +488,6 @@ local function setup_servers()
     local config = server_configs[server] or {}
     config.capabilities = lsp_capabilities
     config.on_attach = lsp_on_attach
-    config.on_init = function(client)
-      require('lsp-projects').update_client_settings(client)
-    end
     lsp_config[server].setup(config)
   end
 end
@@ -486,6 +514,57 @@ require('nvim-treesitter.configs').setup {
   ensure_installed = 'maintained',
   highlight = {
     enable = true,
+  },
+  incremental_selection = {
+    enable = true,
+  },
+  textobjects = {
+    select = {
+      enable = true,
+      lookahead = true,
+      keymaps = {
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
+        ['ip'] = '@parameter.inner',
+      },
+    },
+    swap = {
+      enable = true,
+      swap_next = {
+        ['<Leader>swp'] = '@parameter.inner',
+        ['<Leader>sws'] = '@statement.outer',
+      },
+      swap_previous = {
+        ['<Leader>swP'] = '@parameter.inner',
+        ['<Leader>swS'] = '@statement.outer',
+      },
+    },
+    move = {
+      enable = true,
+      set_jumps = true,
+      goto_next_start = {
+        [']m'] = '@function.outer',
+        [']]'] = '@class.outer',
+        [']p'] = '@parameter.inner',
+      },
+      goto_next_end = {
+        [']M'] = '@function.outer',
+        [']['] = '@class.outer',
+        [']P'] = '@parameter.inner',
+      },
+      goto_previous_start = {
+        ['[m'] = '@function.outer',
+        ['[['] = '@class.outer',
+        ['[p'] = '@parameter.inner',
+      },
+      goto_previous_end = {
+        ['[M'] = '@function.outer',
+        ['[]'] = '@class.outer',
+        ['[P'] = '@parameter.inner',
+      },
+    },
   },
 }
 

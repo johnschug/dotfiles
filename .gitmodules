@@ -1,9 +1,6 @@
 [submodule "neofetch/neofetch"]
 	path = neofetch/neofetch
 	url = https://github.com/dylanaraps/neofetch.git
-[submodule "neovim/.config/nvim/pack/bundle/start/targets.vim"]
-	path = neovim/.local/share/nvim/site/pack/bundle/start/targets.vim
-	url = https://github.com/wellle/targets.vim
 [submodule "neovim/.config/nvim/pack/bundle/start/vim-fugitive"]
 	path = neovim/.local/share/nvim/site/pack/bundle/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
@@ -101,3 +98,10 @@
 [submodule "neovim/.config/nvim/pack/bundle/start/cmp-buffer"]
 	path = neovim/.local/share/nvim/site/pack/bundle/start/cmp-buffer
 	url = https://github.com/hrsh7th/cmp-buffer
+[submodule "neovim/.local/share/nvim/site/pack/bundle/start/symbols-outline.nvim"]
+	path = neovim/.local/share/nvim/site/pack/bundle/start/symbols-outline.nvim
+	url = https://github.com/simrat39/symbols-outline.nvim
+[submodule "neovim/.local/share/nvim/site/pack/bundle/start/nvim-treesitter-textobjects"]
+	path = neovim/.local/share/nvim/site/pack/bundle/start/nvim-treesitter-textobjects
+	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
+	branch = 0.5-compat
