@@ -3,14 +3,14 @@ if status is-login
 
     set -q XDG_BIN_HOME
     or set -l XDG_BIN_HOME "$HOME/.local/bin"
-    _path_add start "$XDG_BIN_HOME"
+    fish_add_path -Pm "$XDG_BIN_HOME"
 
     set -q XDG_DATA_HOME
     or set -l XDG_DATA_HOME "$HOME/.local/share"
     _path_add start "$XDG_DATA_HOME/man" MANPATH
     _path_add end "" MANPATH
 
-    _path_add start "$HOME/.cargo/bin"
+    fish_add_path -P "$HOME/.cargo/bin"
 
     if command -sq gpgconf
         and test -S (gpgconf --list-dirs agent-ssh-socket)
@@ -73,6 +73,7 @@ if status is-interactive
     alias gdb 'gdb -q '
     alias vi vim
     if command -sq nvim
+        and not fish_is_root_user
         alias vim nvim
         alias rvim 'nvim -Z'
         alias view 'nvim -R'
