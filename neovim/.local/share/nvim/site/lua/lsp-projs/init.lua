@@ -15,9 +15,11 @@ function M.update_project_settings(root_dir)
   end
 
   local decoded = util.readjson(root_dir..config.settings_file)
-  rawset(M.settings, root_dir, decoded)
-  vim.notify('Loaded project lsp settings.', vim.log.levels.INFO)
-  return decoded
+  rawset(M.settings, root_dir, decoded or {})
+  if decoded then
+    vim.notify('Loaded project lsp settings.', vim.log.levels.INFO)
+  end
+  return decoded or {}
 end
 
 ---@param client table
@@ -56,7 +58,7 @@ local function trust_manager_wrapper(_make_config)
     end
 
     if not M.trust.check(root_dir) then
-      vim.notify('Blocked starting lsp server: file is untrusted.', vim.log.levels.WARN)
+      vim.notify('Blocked starting lsp server: workspace directory is untrusted.', vim.log.levels.WARN)
       return
     end
 
@@ -70,7 +72,7 @@ local function on_init(client)
   M.update_client_settings(client)
 end
 
----@param opts? table
+---@param opts? LspProjsConfig
 function M.setup(opts)
   config.update(opts)
 
@@ -78,16 +80,18 @@ function M.setup(opts)
     lspconfig.util.server_per_root_dir_manager = trust_manager_wrapper
   end
 
-  lspconfig.util.add_hook_before(lspconfig.util.on_setup, function(cfg)
+  lspconfig.util.on_setup = lspconfig.util.add_hook_before(lspconfig.util.on_setup, function(cfg)
     if cfg.on_init ~= on_init then
       cfg.on_init = lspconfig.util.add_hook_after(cfg.on_init, on_init)
     end
   end)
 end
 
-vim.api.nvim_command[[command! LspProjTrustEdit lua require('lsp-projs.edit').open()]]
-vim.api.nvim_command[[command! LspProjTrustReload lua require('lsp-projs').trust.load()]]
-vim.api.nvim_command[[command! LspProjTrustClear lua require('lsp-projs').trust.clear()]]
-vim.api.nvim_command[[command! -nargs=? -complete=dir LspProjTrustAdd lua require('lsp-projs').trust.add(<f-args>)]]
+vim.api.nvim_command[[command! LspTrustEdit lua require('lsp-projs.editor').open()]]
+vim.api.nvim_command[[command! LspTrustStatus lua require('lsp-projs.bufeditor').open()]]
+vim.api.nvim_command[[command! LspTrustReload lua require('lsp-projs').trust.load()]]
+vim.api.nvim_command[[command! LspTrustClear lua require('lsp-projs').trust.clear()]]
+vim.api.nvim_command[[command! -nargs=+ -complete=dir LspTrustAdd lua require('lsp-projs').trust.add(<f-args>)]]
+vim.api.nvim_command[[command! -nargs=+ -complete=dir LspTrustRemove lua require('lsp-projs').trust.remove(<f-args>)]]
 
 return M

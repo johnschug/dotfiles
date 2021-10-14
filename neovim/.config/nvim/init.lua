@@ -156,20 +156,22 @@ function EditConfig(mods, what, typ)
     return
   end
 
+  local writeable = vim.fn.filewritable
+
   local path = what..'/'..typ
-  if vim.fn.filewritable(vimconf..'/after/'..path..'.lua') ~= 0 then
+  if writeable(vimconf..'/after/'..path..'.lua') ~= 0 then
     EditSplit(mods, vimconf..'/after/'..path..'.lua')
-  elseif vim.fn.filewritable(vimconf..'/after/'..path..'.vim') ~= 0 then
+  elseif writeable(vimconf..'/after/'..path..'.vim') ~= 0 then
     EditSplit(mods, vimconf..'/after/'..path..'.vim')
-  elseif (vim.fn.filewritable(vimconf..'/'..path..'.lua') == 0)
-    and (vim.fn.filewritable(vimconf..'/'..path..'.vim') == 0)
-    and ((not vim.tbl_isempty(vim.api.nvim_get_runtime_file(path..'.lua', false)))
+  elseif writeable(vimdata..'/site/'..path..'.lua') ~= 0 then
+    EditSplit(mods, vimdata..'/site/'..path..'.lua')
+  elseif writeable(vimdata..'/site/'..path..'.vim') ~= 0 then
+    EditSplit(mods, vimdata..'/site/'..path..'.vim')
+  elseif ((not vim.tbl_isempty(vim.api.nvim_get_runtime_file(path..'.lua', false)))
     or  (not vim.tbl_isempty(vim.api.nvim_get_runtime_file(path..'.vim', false)))) then
     EditSplit(mods, vimconf..'/after/'..path..'.lua')
-  elseif vim.fn.filewritable(vimconf..'/'..path..'.vim') ~= 0 then
-    EditSplit(mods, vimconf..'/'..path..'.vim')
   else
-    EditSplit(mods, vimconf..'/'..path..'.lua')
+    EditSplit(mods, vimdata..'/site/'..path..'.lua')
   end
 end
 

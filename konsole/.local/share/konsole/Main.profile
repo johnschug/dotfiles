@@ -10,10 +10,11 @@ CursorShape=2
 [General]
 Environment=TERM=konsole-256color,COLORTERM=truecolor
 LocalTabTitleFormat=%w
-Name=Default
+Name=Main
 Parent=FALLBACK/
 RemoteTabTitleFormat=(%u) %h
 ShowTerminalSizeHint=true
+TerminalMargin=0
 
 [Interaction Options]
 OpenLinksByDirectClickEnabled=true

@@ -140,14 +140,14 @@ call s:h('Directory', {'fg': s:blue})
 call s:h('Search', {'fg': s:search, 'fmt': 'reverse'})
 call s:h('IncSearch', {'fg': s:orange, 'fmt': 'standout'})
 call s:h('Question', {'fg': s:cyan, 'fmt': 'bold'})
-call s:h('VertSplit', {'fg': s:bg1, 'bg': s:bg1})
+call s:h('VertSplit', {'fg': s:bg0, 'bg': s:bg0})
 call s:h('Title', {'fg': s:orange, 'fmt': 'bold'})
 call s:h('Folded', {'fg': s:normal, 'bg': s:bg1, 'sp': s:bg0, 'fmt': 'underline,bold'})
 
-call s:h('DiffAdd', {'fg': s:green, 'bg': s:bg1, 'fmt': 'bold'})
-call s:h('DiffChange', {'fg': s:search, 'bg': s:bg1, 'fmt': 'bold'})
-call s:h('DiffDelete', {'fg': s:red, 'bg': s:bg1, 'fmt': 'bold'})
-call s:h('DiffText', {'fg': s:blue, 'bg': s:bg1, 'fmt': 'bold'})
+call s:h('DiffAdd', {'fg': s:green, 'fmt': 'bold'})
+call s:h('DiffChange', {'fg': s:search, 'fmt': 'bold'})
+call s:h('DiffDelete', {'fg': s:red, 'fmt': 'bold'})
+call s:h('DiffText', {'fg': s:blue, 'fmt': 'bold'})
 
 call s:h('Conceal', {'fg': s:blue})
 call s:h('SpellBad', {'sp': s:red, 'fmt': 'undercurl'})
@@ -165,17 +165,17 @@ hi! link lCursor Cursor
 
 call s:h('Visual', {'fg': s:bg0, 'bg': s:visual})
 call s:h('VisualNOS', {'bg': s:bg1, 'fmt': 'standout,reverse'})
-call s:h('StatusLine', {'fg': s:base1, 'bg': s:bg1})
-call s:h('StatusLineNC', {'fg': s:inactive, 'bg': s:bg1})
+call s:h('StatusLine', {'fg': s:base1})
+call s:h('StatusLineNC', {'fg': s:inactive})
 
-call s:h('LineNr', {'fg': s:comment_grey, 'bg': s:bg1})
-call s:h('SignColumn', {'fg': s:normal, 'bg': s:bg1})
+call s:h('LineNr', {'fg': s:comment_grey})
+call s:h('SignColumn', {'fg': s:normal})
 hi! link FoldColumn SignColumn
 
 call s:h('ColorColumn', {'bg': s:bg2})
 hi! link CursorColumn CursorLine
 hi! link CursorLine ColorColumn
-call s:h('CursorLineNr', {'bg': s:bg1, 'fmt': 'bold'})
+call s:h('CursorLineNr', {'fmt': 'bold'})
 hi! link QuickFixLine CursorLine
 
 call s:h('Pmenu', {'fg': s:normal, 'bg': s:bg1})
@@ -184,24 +184,36 @@ call s:h('PmenuSbar', {'bg': s:bg2})
 call s:h('PmenuThumb', {'bg': s:white})
 call s:h('WildMenu', {'fg': s:white, 'bg': s:bg1, 'fmt': 'reverse'})
 
-call s:h('TabLine', {'fg': s:normal, 'bg': s:bg1, 'sp': s:normal, 'fmt': 'underline'})
+call s:h('TabLine', {'fg': s:normal, 'sp': s:normal, 'fmt': 'underline'})
 hi! link TabLineFill TabLine
 call s:h('TabLineSel', {'fg': s:comment_grey, 'bg': s:white, 'sp': s:normal, 'fmt': 'reverse,underline'})
 "}}}
 " Plugins {{{
   call s:h('ErrorBar', {'fg': s:red, 'fmt': 'reverse'})
-  call s:h('WarningSign', {'fg': s:orange, 'bg': s:bg1, 'fmt': 'bold'})
-  call s:h('ErrorSign', {'fg': s:red, 'bg': s:bg1, 'fmt': 'bold'})
-  " Lsp {{{
-  hi! link LspWarningText WarningSign
-  hi! link LspErrorText ErrorSign
 
+  call s:h('HintText', {'fmt': 'italic'})
+  hi! link InformationText HintText
+  call s:h('WarningText', {'fg': s:orange, 'fmt': 'italic'})
+  call s:h('ErrorText', {'fg': s:red, 'fmt': 'italic'})
+
+  call s:h('HintSign', {'fg': s:normal, 'fmt': 'bold'})
+  call s:h('InformationSign', {'fg': s:blue, 'fmt': 'bold'})
+  call s:h('WarningSign', {'fg': s:orange, 'fmt': 'bold'})
+  call s:h('ErrorSign', {'fg': s:red, 'fmt': 'bold'})
+  " Lsp {{{
   hi! link LspReferenceText CursorLine
   hi! link LspReferenceRead LspReferenceText
   hi! link LspReferenceWrite LspReferenceText
+
   hi! link LspDiagnosticsUnderlineError SpellBad
-  hi! link LspDiagnosticsVirtualTextWarning WarningMsg
-  hi! link LspDiagnosticsVirtualTextError ErrorMsg
+
+  hi! link LspDiagnosticsVirtualTextHint HintText
+  hi! link LspDiagnosticsVirtualTextInformation InformationText
+  hi! link LspDiagnosticsVirtualTextWarning WarningText
+  hi! link LspDiagnosticsVirtualTextError ErrorText
+
+  hi! link LspDiagnosticsSignHint HintSign
+  hi! link LspDiagnosticsSignInformation InformationSign
   hi! link LspDiagnosticsSignWarning WarningSign
   hi! link LspDiagnosticsSignError ErrorSign
   "}}}

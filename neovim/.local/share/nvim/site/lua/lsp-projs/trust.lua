@@ -4,110 +4,144 @@ local util = require('lsp-projs.util')
 
 local M = {}
 
-local get_trusted
-do
-  ---@type table<string, boolean>
-  local trusted = {}
-  local trust_loaded = false
+local trust_store = {
+  loaded = false,
+  dirty = false,
+  paths = {},
+}
 
-  function M.load()
-    local db = config.trust_store
-    local decoded = util.readjson(db) or {}
-    if not vim.tbl_islist(decoded) then
-      return
-    end
-    trusted = util.make_set(decoded)
-    trust_loaded = true
-  end
-
-  function M.clear()
-    trusted = {}
-    M.save()
-  end
-
-  function get_trusted()
-    if not trust_loaded then
-      M.load()
-    end
-    return trusted
+function trust_store:ensure_loaded()
+  if not self.loaded then
+    self:load()
   end
 end
 
-function M.save()
+function trust_store:get()
+  self:ensure_loaded()
+  return self.paths
+end
+
+function trust_store:clear()
+  self:ensure_loaded()
+  if not vim.tbl_isempty(self.paths) then
+    self.paths = {}
+    self.dirty = true
+  end
+end
+
+function trust_store:add(path)
+  self:ensure_loaded()
+  path = vim.loop.fs_realpath(path)
+  if path and not self.paths[path] then
+    self.paths[path] = true
+    self.dirty = true
+  end
+end
+
+function trust_store:remove(path)
+  self:ensure_loaded()
+  if path and self.paths[path] then
+    self.paths[path] = nil
+    self.dirty = true
+  end
+
+  path = vim.loop.fs_realpath(path)
+  if path and self.paths[path] then
+    self.paths[path] = nil
+    self.dirty = true
+  end
+end
+
+function trust_store:load()
   local db = config.trust_store
-  local list = vim.tbl_keys(get_trusted())
-  table.sort(list)
-  util.writejson(db, list)
+  local decoded = util.readjson(db) or {}
+  if not vim.tbl_islist(decoded) then
+    return
+  end
+  self.paths = util.make_set(decoded)
+  self.loaded = true
+  self.dirty = false
 end
 
----@param paths string|string[]|nil
-function M.add(paths)
-  if not paths then
-    paths = {vim.fn.expand('%:p:h')}
-  elseif type(paths) == 'string' then
-    paths = {paths}
+function trust_store:save(force)
+  self:ensure_loaded()
+  if not self.dirty and not force then
+    return
   end
-  assert(vim.tbl_islist(paths))
 
-  local dirty = false
-  local trusted = get_trusted()
+  local db = config.trust_store
+  local trusted = vim.tbl_keys(self.paths)
+  table.sort(trusted)
+  util.writejson(db, trusted)
+  self.dirty = false
+
+  vim.notify('Trusted directories updated.', vim.log.levels.INFO)
+end
+
+M.load = function() trust_store:load() end
+M.save = function(force) trust_store:save(force) end
+
+function M.clear()
+  trust_store:clear()
+  M.save()
+end
+
+---@vararg string|string[]
+function M.add(...)
+  local paths = vim.tbl_flatten({...})
   for _, path in ipairs(paths) do
-    path = vim.loop.fs_realpath(path)
-    if path and not trusted[path] then
-      trusted[path] = true
-      dirty = true
-    end
+    trust_store:add(path)
   end
-  if dirty then
-    M.save()
-    vim.notify('Marked new directories as trusted.', vim.log.levels.INFO)
-  end
+  M.save()
 end
 
----@param paths string|string[]
-function M.update(paths)
-  if type(paths) == 'string' then
-    paths = {paths}
+---@vararg string|string[]
+function M.remove(...)
+  local paths = vim.tbl_flatten({...})
+  for _, path in ipairs(paths) do
+    trust_store:remove(path)
   end
-  assert(vim.tbl_islist(paths))
-  paths = util.make_set(vim.tbl_map(vim.loop.fs_realpath, paths))
+  M.save()
+end
 
-  local dirty = false
-  local trusted = get_trusted()
+---@vararg string|string[]
+function M.update(...)
+  local paths = vim.tbl_flatten({...})
+  paths = util.make_set(vim.tbl_map(vim.loop.fs_realpath, paths))
+  local trusted = trust_store:get()
   for path, _ in pairs(trusted) do
     if not paths[path] then
       trusted[path] = nil
-      dirty = true
+      trust_store.dirty = true
     end
   end
   for path, _ in pairs(paths) do
-    if not trusted[path] then
+    if path and not trusted[path] then
       trusted[path] = true
-      dirty = true
+      trust_store.dirty = true
     end
   end
-  if dirty then
-    M.save()
-    vim.notify('Updated trusted directories.', vim.log.levels.INFO)
-  end
+  M.save()
 end
 
 ---@return string[]
 function M.list()
-  local trusted = get_trusted()
-  local result = vim.tbl_keys(trusted)
+  local result = vim.tbl_keys(trust_store:get())
   table.sort(result)
   return result
 end
 
----@param path string|nil
+---@param path string
 function M.is_trusted(path)
   if not config.trust_enabled then
     return true
   end
-  path = util.get_base_path(path)
+  path = vim.loop.fs_realpath(path)
+  if not path then
+    return false
+  end
 
-  local trusted = get_trusted()
+  local trusted = trust_store:get()
   return lspconfig.util.search_ancestors(path, function(p)
     return trusted[p] == true
   end) ~= nil
@@ -120,8 +154,8 @@ function M.check(path)
     return true
   end
 
-  path = util.get_base_path(path)
-  if trust_asked[path] then
+  path = vim.loop.fs_realpath(path)
+  if not path or trust_asked[path] then
     return false
   end
 

@@ -1,3 +1,5 @@
+local api = vim.api
+
 local M = {}
 
 ---@generic T
@@ -13,16 +15,19 @@ function M.make_set(list)
   return result
 end
 
----@param path string|nil
----@return string|nil
-function M.get_base_path(path)
-  if path then
-    return assert(vim.loop.fs_realpath(path))
-  else
-    local result = vim.fn.expand('%:p:h')
-    if #result ~= 0 then
-      return result
-    end
+do
+  local cmap = {
+    {['%'] = '%%', ['\n'] = '%\\n'},
+    {['%%'] = '%', ['%\\n'] = '\n'},
+  }
+  M.escape = function(str)
+    local res = str:gsub('.', cmap[1])
+    return res
+  end
+
+  M.unescape = function(str)
+    local res = str:gsub('%%.', cmap[2])
+    return res
   end
 end
 
@@ -64,7 +69,7 @@ function M.writefile(path, contents)
 
   local file = assert(io.open(path, 'w'))
   local ok, err = file:write(contents)
-  file:close()
+  assert(file:close())
   assert(ok, err)
 end
 
@@ -72,6 +77,24 @@ end
 ---@param contents table
 function M.writejson(path, contents)
   M.writefile(path, vim.fn.json_encode(contents))
+end
+
+---@param bufnr number
+---@param events string|string[]
+---@param cmd string
+function M.buf_set_autocmd(bufnr, events, cmd)
+  events = type(events) == 'table' and events or {events}
+  events = table.concat(vim.tbl_flatten(events), ',')
+  api.nvim_command(string.format('autocmd %s <buffer=%d> %s', events, bufnr, cmd))
+end
+
+function M.input(opts, on_confirm)
+  if vim.ui and vim.ui.input then
+    return vim.ui.input(opts, on_confirm)
+  end
+  vim.validate {on_confirm = {on_confirm, 'c'}}
+
+  on_confirm(vim.fn.input(opts))
 end
 
 return M

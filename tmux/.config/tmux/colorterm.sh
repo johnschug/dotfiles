@@ -52,7 +52,7 @@ elif [ "$colors" -lt 256 ]; then
 else
   bg="#232629"
   fg="#eef0f1"
-  status="#31363b"
+  status="$bg"
   normal="#95a5a6"
   active="#27ae60"
   search="#1d99f3"

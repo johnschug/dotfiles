@@ -15,6 +15,7 @@ local M = {}
 ---@type LspProjsConfig
 M.defaults = vim.deepcopy(defaults)
 
+---@param cfg? LspProjsConfig
 function M.update(cfg)
   if type(cfg) ~= 'table' then
     return

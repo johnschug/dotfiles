@@ -1,21 +1,18 @@
 local api = vim.api
 local trust = require('lsp-projs.trust')
+local util = require('lsp-projs.util')
 
 local M = {}
 
 local buf
-
-local function buf_set_autocmd(bufnr, event, cmd)
-  api.nvim_command(string.format('autocmd %s <buffer=%d> %s', event, bufnr, cmd))
-end
 
 function M.open()
   if not buf or buf == 0 then
     buf = api.nvim_create_buf(false, false)
     assert(buf ~= 0, 'buffer creation failed')
 
-    buf_set_autocmd(buf, 'BufReadCmd', "lua require('lsp-projs.edit').update(true)")
-    buf_set_autocmd(buf, 'BufWriteCmd', "lua require('lsp-projs.edit').save()")
+    util.buf_set_autocmd(buf, 'BufReadCmd', "lua require('lsp-projs.editor').update(true)")
+    util.buf_set_autocmd(buf, 'BufWriteCmd', "lua require('lsp-projs.editor').save()")
 
     api.nvim_buf_set_option(buf, 'buftype', 'acwrite')
     api.nvim_buf_set_option(buf, 'modeline', false)
@@ -27,22 +24,6 @@ function M.open()
   M.update()
 end
 
-local escape, unescape
-do
-  local cmap = {
-    {['%'] = '%%', ['\n'] = '%\\n'},
-    {['%%'] = '%', ['%\\n'] = '\n'},
-  }
-  escape = function(str)
-    local res = str:gsub('.', cmap[1])
-    return res
-  end
-
-  unescape = function(str)
-    local res = str:gsub('%%.', cmap[2])
-    return res
-  end
-end
 
 ---@param force boolean|nil
 function M.update(force)
@@ -54,7 +35,7 @@ function M.update(force)
   end
 
   api.nvim_buf_set_option(buf, 'undolevels', -1)
-  api.nvim_buf_set_lines(buf, 0, -1, false, vim.tbl_map(escape, trust.list()))
+  api.nvim_buf_set_lines(buf, 0, -1, false, vim.tbl_map(util.escape, trust.list()))
   api.nvim_buf_set_option(buf, 'modified', false)
   -- BUG(neovim#14670, neovim#15587): the neovim api sets the wrong value when clearing a buf/win local option
   -- use the default unset value as a workaround
@@ -68,7 +49,7 @@ function M.save()
   end
 
   local paths = api.nvim_buf_get_lines(buf, 0, -1, false)
-  paths = vim.tbl_map(unescape, paths)
+  paths = vim.tbl_map(util.unescape, paths)
   trust.update(paths)
 
   api.nvim_buf_set_option(buf, 'modified', false)
