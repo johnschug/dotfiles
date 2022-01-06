@@ -256,6 +256,8 @@ endif
 " }}}
 
 " Mappings {{{
+  let g:mapleader = ' '
+  let g:maplocalleader = ' '
   " Navigation {{{
     nnoremap <C-Space> :ls<CR>:b<SPACE>
     nmap <C-@> <C-Space>
@@ -302,7 +304,7 @@ endif
   nnoremap <expr> g. '`['.strpart(getregtype(), 0, 1).'`]'
   nnoremap <silent> <expr> gs ':silent! grep! -w -F '.shellescape(expand('<cword>'), 1).'<CR>'
   nnoremap <silent> <C-L> :nohlsearch<Bar>checktime<Bar>diffupdate<CR><C-L>
-  nnoremap <silent> <Leader>d :bd<CR>
+  nnoremap <silent> <Leader>c :bd<CR>
   nnoremap <silent> <Leader>w :update<CR>
   nnoremap <silent> <Leader>$ :StripTrailingWhitespace<CR>
   nnoremap <silent> <Leader>i2 :setlocal expandtab shiftwidth=2<CR>

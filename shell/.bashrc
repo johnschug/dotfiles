@@ -1,3 +1,7 @@
+if [ -r /etc/bashrc ]; then
+  source /etc/bashrc
+fi
+
 umask 077
 
 export LANG='en_US.UTF-8'
@@ -30,17 +34,13 @@ if hash tmux &>/dev/null && [ -z "$TMUX" ]; then
   exec tmux new -A -s DEFAULT
 fi
 
-if [ -r /etc/bashrc ]; then
-  source /etc/bashrc
-fi
-
 # Environment Variables - Interactive Commands
 export PAGER='less'
 export LESS='-FRJgij4'
 export LESSHISTFILE='-'
 
 if hash nvim &>/dev/null; then
-  export MANPAGER="env MANPATH=\"$MANPATH\" nvim -c 'set ft=man' -"
+  export MANPAGER="env MANPATH=\"$MANPATH\" nvim +Man!"
   export EDITOR='nvim'
   export MERGE='nvim -d'
 else
@@ -187,8 +187,6 @@ fi
 if hash systemd-run &>/dev/null; then
   alias scoped='systemd-run --user --scope -qd '
 fi
-alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" $(tput cols)) | tr " " ='
-#alias dfm='git --git-dir="$HOME/.dotfiles" --work-tree="$HOME"'
 
 # Source host specific configuration
 if [ -r ~/.bashrc.local ]; then

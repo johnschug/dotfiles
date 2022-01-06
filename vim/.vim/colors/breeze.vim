@@ -188,35 +188,29 @@ call s:h('TabLine', {'fg': s:normal, 'sp': s:normal, 'fmt': 'underline'})
 hi! link TabLineFill TabLine
 call s:h('TabLineSel', {'fg': s:comment_grey, 'bg': s:white, 'sp': s:normal, 'fmt': 'reverse,underline'})
 "}}}
-" Plugins {{{
-  call s:h('ErrorBar', {'fg': s:red, 'fmt': 'reverse'})
+" Diagnostics {{{
+  call s:h('DiagnosticHint', {'fg': s:comment_grey})
+  call s:h('DiagnosticInfo', {'fg': s:blue})
+  call s:h('DiagnosticWarn', {'fg': s:orange})
+  call s:h('DiagnosticError', {'fg': s:red})
 
-  call s:h('HintText', {'fmt': 'italic'})
-  hi! link InformationText HintText
-  call s:h('WarningText', {'fg': s:orange, 'fmt': 'italic'})
-  call s:h('ErrorText', {'fg': s:red, 'fmt': 'italic'})
+  call s:h('DiagnosticSignHint', {'fg': s:comment_grey, 'fmt': 'bold'})
+  call s:h('DiagnosticSignInfo', {'fg': s:blue, 'fmt': 'bold'})
+  call s:h('DiagnosticSignWarn', {'fg': s:orange, 'fmt': 'bold'})
+  call s:h('DiagnosticSignError', {'fg': s:red, 'fmt': 'bold'})
 
-  call s:h('HintSign', {'fg': s:normal, 'fmt': 'bold'})
-  call s:h('InformationSign', {'fg': s:blue, 'fmt': 'bold'})
-  call s:h('WarningSign', {'fg': s:orange, 'fmt': 'bold'})
-  call s:h('ErrorSign', {'fg': s:red, 'fmt': 'bold'})
-  " Lsp {{{
-  hi! link LspReferenceText CursorLine
-  hi! link LspReferenceRead LspReferenceText
-  hi! link LspReferenceWrite LspReferenceText
+  call s:h('DiagnosticVirtualTextHint', {'fg': s:comment_grey, 'fmt': 'italic'})
+  call s:h('DiagnosticVirtualTextInfo', {'fg': s:blue, 'fmt': 'italic'})
+  call s:h('DiagnosticVirtualTextWarn', {'fg': s:orange, 'fmt': 'italic'})
+  call s:h('DiagnosticVirtualTextError', {'fg': s:red, 'fmt': 'italic'})
 
-  hi! link LspDiagnosticsUnderlineError SpellBad
-
-  hi! link LspDiagnosticsVirtualTextHint HintText
-  hi! link LspDiagnosticsVirtualTextInformation InformationText
-  hi! link LspDiagnosticsVirtualTextWarning WarningText
-  hi! link LspDiagnosticsVirtualTextError ErrorText
-
-  hi! link LspDiagnosticsSignHint HintSign
-  hi! link LspDiagnosticsSignInformation InformationSign
-  hi! link LspDiagnosticsSignWarning WarningSign
-  hi! link LspDiagnosticsSignError ErrorSign
-  "}}}
+  call s:h('DiagnosticStatusWarn', {'fg': s:orange, 'fmt': 'reverse'})
+  call s:h('DiagnosticStatusError', {'fg': s:red, 'fmt': 'reverse'})
+"}}}
+" Lsp {{{
+call s:h('LspReferenceText', {'fmt': 'italic,bold'})
+hi! link LspReferenceRead LspReferenceText
+hi! link LspReferenceWrite LspReferenceText
 "}}}
 set background=dark
 " vim:set sw=2 ts=2 et tw=78 fdm=marker fdl=0:

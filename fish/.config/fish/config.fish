@@ -39,6 +39,7 @@ if status is-interactive
     set -gx LESS -FRJgij4
     set -gx LESSHISTFILE -
     if command -sq nvim
+        and not fish_is_root_user
         set -gx MANPAGER "nvim +Man!"
         set -gx EDITOR nvim
         set -gx MERGE 'nvim -d'
@@ -121,7 +122,6 @@ if status is-interactive
     if command -sq systemd-run
         alias scoped 'systemd-run --user --scope -qd '
     end
-    #alias hr='printf $(printf "\e[$(shuf -i 91-97 -n 1);1m%%%ds\e[0m\n" ${terminfo[cols]}) | tr " " ='
 
     if command -sq gpg-connect-agent
         gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1

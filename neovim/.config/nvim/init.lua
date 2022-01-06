@@ -1,7 +1,6 @@
-local vimconf = vim.fn.stdpath 'config'
-local vimdata = vim.fn.stdpath 'data'
+local vimconf = vim.fn.stdpath('config')
 
-local au = require('au')
+local au = require('me.au')
 local vimrc = au.group('vimrc')
 vimrc:clear()
 
@@ -10,21 +9,14 @@ local LOCAL = (loadfile(vimconf .. '/local.lua') or function()
 end)()
 
 -- General
-vim.opt.hidden = true
-vim.opt.path = vim.api.nvim_get_option_info('path').default
 vim.opt.path:append {'**'}
 vim.opt.fileformats = {'unix', 'dos', 'mac'}
 vim.opt.modeline = false
-vim.opt.viminfo = vim.api.nvim_get_option_info('viminfo').default
-vim.opt.viminfo = "'100,s10,<0,/0,:0,@0,h,r/tmp,r/dev/shm,r/var/run,r/run,n" .. vimdata .. '/info'
+vim.opt.shada = "'100,s10,<0,@0,h,r/tmp,r/dev/shm,r/var/run,r/run"
 
-vim.opt.backupskip = vim.api.nvim_get_option_info('backupskip').default
-vim.opt.backupskip:append {'*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}
-vim.opt.backupdir = vimdata..'/backup'
-if vim.fn.isdirectory(vim.opt.backupdir:get()[1]) == 0 then
-  vim.fn.mkdir(vim.opt.backupdir:get()[1], 'p')
-end
 vim.opt.undofile = true
+vim.opt.backupdir:remove('.')
+vim.opt.backupskip:append {'/tmp/*', '*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}
 
 vimrc[{'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI'}] = 'silent! checktime'
 vimrc.BufWritePre[{'/tmp/*', '*/tmp/*', '/dev/shm/*', '/var/run/*', '/run/*'}] = 'setlocal noundofile'
@@ -76,15 +68,13 @@ vim.opt.smartcase = true
 
 vim.opt.wildignorecase = true
 vim.opt.wildmode = {'longest:full', 'full'}
-vim.opt.wildignore = vim.api.nvim_get_option_info('wildignore').default
 vim.opt.wildignore:append {'[._]*.s[a-z][a-z]', '*.bak', '.DS_Store', '._*', '*~'}
-vim.opt.suffixes = vim.api.nvim_get_option_info('suffixes').default
 vim.opt.suffixes:append {
   '.lock$', '.pyc$', '.class$', '.jar$', '.rlib$', '.o$', '.a$', '.so$', '.lib$',
   '.dll$', '.pdb$', '.exe', ''
 }
 
-vim.opt.guicursor = 'a:hor5-blinkon500-blinkoff500'
+vim.opt.guicursor = ''
 if vim.env['COLORTERM'] == 'truecolor' then
   vim.opt.termguicolors = true
 end
@@ -111,6 +101,7 @@ vim.opt.timeoutlen = 500
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = -1
+vim.opt.joinspaces = false
 
 vim.opt.confirm = true
 vim.opt.matchpairs:append {'<:>'}
@@ -125,7 +116,6 @@ vim.opt.dictionary:prepend 'spell'
 if vim.fn.filereadable('/usr/share/dict/words') > 0 then
   vim.opt.dictionary:append '/usr/share/dict/words'
 end
-vim.opt.inccommand = 'nosplit'
 vim.opt.diffopt:append {'iwhite', 'indent-heuristic', 'algorithm:histogram'}
 
 -- Commands
@@ -156,22 +146,21 @@ function EditConfig(mods, what, typ)
     return
   end
 
-  local writeable = vim.fn.filewritable
-
   local path = what..'/'..typ
+  local writeable = vim.fn.filewritable
   if writeable(vimconf..'/after/'..path..'.lua') ~= 0 then
     EditSplit(mods, vimconf..'/after/'..path..'.lua')
   elseif writeable(vimconf..'/after/'..path..'.vim') ~= 0 then
     EditSplit(mods, vimconf..'/after/'..path..'.vim')
-  elseif writeable(vimdata..'/site/'..path..'.lua') ~= 0 then
-    EditSplit(mods, vimdata..'/site/'..path..'.lua')
-  elseif writeable(vimdata..'/site/'..path..'.vim') ~= 0 then
-    EditSplit(mods, vimdata..'/site/'..path..'.vim')
+  elseif writeable(vimconf..'/'..path..'.lua') ~= 0 then
+    EditSplit(mods, vimconf..'/'..path..'.lua')
+  elseif writeable(vimconf..'/'..path..'.vim') ~= 0 then
+    EditSplit(mods, vimconf..'/'..path..'.vim')
   elseif ((not vim.tbl_isempty(vim.api.nvim_get_runtime_file(path..'.lua', false)))
     or  (not vim.tbl_isempty(vim.api.nvim_get_runtime_file(path..'.vim', false)))) then
     EditSplit(mods, vimconf..'/after/'..path..'.lua')
   else
-    EditSplit(mods, vimdata..'/site/'..path..'.lua')
+    EditSplit(mods, vimconf..'/'..path..'.lua')
   end
 end
 
@@ -238,6 +227,8 @@ mappings {
     {'<Leader>F', '<Cmd>Telescope oldfiles<CR>', {noremap = true}},
     {'j', "v:count == 0 ? 'gj' : 'j'", {noremap = true, expr = true}},
     {'k', "v:count == 0 ? 'gk' : 'k'", {noremap = true, expr = true}},
+    {'[g', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', {noremap = true}},
+    {']g', '<Cmd>lua vim.diagnostic.goto_next()<CR>', {noremap = true}},
 
     -- Manipulating options
     {'cost', "<Cmd>let b:strip_trailing=!get(b:, 'strip_trailing', 1)<CR>", {noremap = true}},
@@ -276,8 +267,6 @@ mappings {
   },
   insert = {
     {'<CR>', '<C-G>u<CR>', {noremap = true}},
-    {'<C-W>', '<C-G>u<C-W>', {noremap = true}},
-    {'<C-U>', '<C-G>u<C-U>', {noremap = true}},
 
     {'<C-j>', "vsnip#available(1)?'<Plug>(vsnip-expand-or-jump)':'<C-j>'", {expr = true}},
     {'<C-k>', "vsnip#jumpable(-1)?'<Plug>(vsnip-jump-prev)':'<C-k>'", {expr = true}},
@@ -326,7 +315,7 @@ end
 vim.opt.tagcase = 'smart'
 vim.opt.tags = {'./tags;', 'tags'}
 vim.opt.sessionoptions:remove {'curdir', 'options'}
-vim.opt.sessionoptions:append {'localoptions', 'unix', 'sesdir'}
+vim.opt.sessionoptions:append {'localoptions', 'sesdir'}
 
 local gitroot = vim.fn.systemlist('git rev-parse --show-toplevel')[1] or ''
 if vim.v.shell_error == 0 and string.len(gitroot) > 0 then
@@ -343,7 +332,6 @@ vim.g.delimitMate_jump_expansion = 1
 
 vim.g.EditorConfig_disable_rules = {'trim_trailing_whitespace'}
 
-vim.g.netrw_home = vimdata
 vim.g.netrw_hide = 1
 vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]
 vim.g.netrw_sizestyle = 'H'
@@ -353,6 +341,19 @@ vim.g.signify_priority = 5
 vim.g.signify_vcs_list = {'git'}
 
 vim.g.vsnip_snippet_dir = vimconf..'/vsnip'
+
+-- Diagnostics
+vim.diagnostic.config({
+  severity_sort = true,
+  virtual_text = {
+    format = function(diag)
+      return string.format('● %s', diag.message)
+    end,
+  },
+})
+
+vimrc.DiagnosticChanged['*'] = "lua require('me.utils').update_loclist()"
+vimrc[{'CursorMoved', 'CursorHold'}]['*'] = "lua require('me.utils').show_line_diagnostics()"
 
 -- Completion
 do
@@ -366,26 +367,36 @@ do
     mapping = {
       ['<C-p>'] = cmp.mapping.select_prev_item(),
       ['<C-n>'] = cmp.mapping.select_next_item(),
-      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.abort(),
-      ['<C-y>'] = cmp.mapping.confirm({
-        behavior = cmp.ConfirmBehavior.Insert,
-        select = true,
+      ['<C-e>'] = cmp.mapping({
+        i = cmp.mapping.abort(),
+        c = cmp.mapping.close(),
       }),
-      ['<CR>'] = cmp.mapping.confirm({
-        behavior = cmp.ConfirmBehavior.Insert,
-        select = true,
-      }),
+      ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }),
     },
-    sources = {
+    sources = cmp.config.sources({
       { name = 'vsnip' },
       { name = 'nvim_lsp' },
       { name = 'buffer' },
       { name = 'path' },
-    },
+    }),
   }
+
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' },
+    },
+  })
+
+  cmp.setup.cmdline(':', {
+    sources = {
+      { name = 'path' },
+      { name = 'cmdline' },
+    },
+  })
 end
 
 -- Telescope
@@ -400,25 +411,6 @@ require('telescope').setup {
 
 -- LSP
 require('lsp-projs').setup()
-require('lsp-utils').register_progress()
-
-vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-  virtual_text = {
-    prefix = '●',
-  },
-})
-
-local server_configs = {
-  lua = require 'lua-dev'.setup({}),
-  efm = {
-    init_options = {
-      documentFormatting = true,
-      codeAction = true,
-    },
-    filetypes = {'vim', 'sh', 'markdown', 'yaml', 'fish'},
-  },
-}
 
 local function lsp_on_attach(client, bufnr)
   local function set_option(...)
@@ -427,10 +419,10 @@ local function lsp_on_attach(client, bufnr)
   local function set_keymap(...)
     vim.api.nvim_buf_set_keymap(bufnr, ...)
   end
+
   set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-  -- if exists('+tagfunc')
-  --   setlocal tagfunc=lsp#tagfunc
-  -- endif
+  set_option('tagfunc', 'v:lua.vim.lsp.tagfunc')
+  set_option('formatexpr', 'v:lua.vim.lsp.formatexpr')
 
   local opts = {noremap = true}
   set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -443,73 +435,52 @@ local function lsp_on_attach(client, bufnr)
   set_keymap('n', 'gy', "<Cmd>lua require('telescope.builtin').lsp_code_actions()<CR>", opts)
   set_keymap('v', 'gy', "<Cmd>lua require('telescope.builtin').lsp_range_code_actions()<CR>", opts)
   set_keymap('n', 'gY', '<Cmd>lua vim.lsp.codelens.run()<CR>', opts)
-  set_keymap('n', '[g', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  set_keymap('n', ']g', '<Cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
   set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
   set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  set_keymap('n', '<Leader>wl', '<Cmd>lua print(vim.lsp.buf.list_workspace_folders())<CR>', opts)
+  set_keymap('n', '<Leader>wl', '<Cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
 
   vim.cmd('command! -buffer LspRename lua vim.lsp.buf.rename()')
 
-  local lsp_group = au.group('lsp_buf')
+  local lsp_group = au.group('vimrc_lsp')
   lsp_group['*']['<buffer>']:clear()
-  lsp_group.BufEnter['<buffer>'] = "lua require('lsp-utils').update_loclist()"
-  lsp_group[{'CursorMoved', 'CursorHold'}] = function()
-    local utils = require('lsp-utils')
-    utils.show_line_diagnostics()
-    utils.show_code_actions()
-  end
+  lsp_group.BufEnter['<buffer>'] = "lua require('me.utils').update_loclist()"
+  lsp_group[{'CursorMoved', 'CursorHold'}] = "lua require('me.utils').show_code_actions()"
 
   if client.resolved_capabilities.code_lens then
     lsp_group[{'BufEnter', 'CursorHold', 'InsertLeave'}]['<buffer>'] = 'lua vim.lsp.codelens.refresh()'
   end
   if client.resolved_capabilities.document_formatting then
-    vim.cmd('command! -buffer Format lua vim.lsp.buf.formatting()')
     lsp_group.BufWritePre['<buffer>'] = 'lua vim.lsp.buf.formatting_seq_sync(nil, 2000)'
   end
   if client.resolved_capabilities.document_highlight then
     lsp_group[{'InsertEnter', 'BufLeave', 'CursorMoved'}]['<buffer>'] = 'lua vim.lsp.buf.clear_references()'
-    lsp_group[{'CursorMoved', 'CursorHold'}]['<buffer>'] = "lua require('lsp-utils').show_references()"
+    lsp_group[{'CursorMoved', 'CursorHold'}]['<buffer>'] = "lua require('me.utils').show_references()"
   end
 end
 
-local function setup_servers()
-  require('lspinstall').setup()
+local server_configs = {
+  lua = require 'lua-dev'.setup({}),
+  efm = {
+    filetypes = {'vim', 'sh', 'markdown', 'yaml', 'fish'},
+    init_options = {
+      documentFormatting = true,
+      codeAction = true,
+    },
+  },
+}
 
-  local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
-  lsp_capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_capabilities)
+require('nvim-lsp-installer').on_server_ready(function(server)
+  local caps = vim.lsp.protocol.make_client_capabilities()
+  caps = require('cmp_nvim_lsp').update_capabilities(caps)
 
-  local servers = require('lspinstall').installed_servers()
-  table.insert(servers, 'rust_analyzer')
-  table.insert(servers, 'clangd')
-  table.insert(servers, 'efm')
+  local config = server_configs[server.name] or {}
+  config.capabilities = caps
+  config.on_attach = lsp_on_attach
+  server:setup(config)
+end)
 
-  local lsp_config = require('lspconfig')
-  for _, server in pairs(servers) do
-    local config = server_configs[server] or {}
-    config.capabilities = lsp_capabilities
-    config.on_attach = lsp_on_attach
-    lsp_config[server].setup(config)
-  end
-end
-
-require('lspinstall').post_install_hook = function()
-  setup_servers()
-end
-setup_servers()
-
-local function status_line_progress()
-  local progress = require('lsp-utils').get_progress()
-  if vim.tbl_isempty(progress) then
-    return ''
-  end
-
-  progress = progress[#progress]
-  local message = (progress.message and (' '..progress.message)) or ''
-  local percent = (progress.percentage and (' '..progress.percentage..'%%')) or ''
-  return string.format('%%<%s: %s%s%s', progress.server, progress.title, message, percent)
-end
+vimrc.User.LspProgressUpdate = "lua require('me.utils').update_progress()"
 
 -- Treesitter
 require('nvim-treesitter.configs').setup {
@@ -571,6 +542,20 @@ require('nvim-treesitter.configs').setup {
 }
 
 -- lualine
+local function status_line_progress()
+  local progress = require('me.utils').get_progress()
+  if vim.tbl_isempty(progress) then
+    return ''
+  end
+
+  local result = {}
+  for name, msg in pairs(progress) do
+    result[#result+1] = string.format('[%s] %s', name, msg)
+  end
+
+  return '%<'..table.concat(result, '; ')
+end
+
 require('lualine').setup {
   options = {
     icons_enabled = false,
@@ -585,12 +570,16 @@ require('lualine').setup {
     lualine_x = {{'bo:spelllang', condition = function() return vim.o.spell end},
                   'filetype', 'encoding', 'fileformat'},
     lualine_y = {'progress'},
-    lualine_z = {{'location'}, {'diagnostics', sources = {'nvim_lsp'}, sections = {'error', 'warn'}, color = 'ErrorBar'}},
+    lualine_z = {{'location', separator = ''}, {
+      'diagnostics',
+      sections = {'error', 'warn'},
+      diagnostics_color = {
+        error = 'DiagnosticStatusError',
+        warn = 'DiagnosticStatusWarn',
+      },
+    }},
   },
   extensions = {'quickfix'},
 }
-
-vimrc.User.LspDiagnosticsChanged = 'lua require("lsp-utils").update_loclist()'
-vimrc.User.LspProgressUpdated = 'redrawstatus'
 
 LOCAL.finish()

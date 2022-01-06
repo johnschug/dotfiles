@@ -1,5 +1,7 @@
 local cmd = vim.api.nvim_command
 
+local mod_name = ...
+
 ---@type table<string, function>
 local callbacks = {}
 
@@ -8,7 +10,7 @@ local callbacks = {}
 local function register(fn)
   local id = string.format('%p', fn)
   callbacks[id] = fn
-  return string.format("lua require('au').run('%s')", id)
+  return string.format("lua require('%s').run('%s')", mod_name, id)
 end
 
 local function autocmd(group, events, patterns, opts, action)

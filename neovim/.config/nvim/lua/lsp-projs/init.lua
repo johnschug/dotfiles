@@ -52,17 +52,13 @@ local original_manager = lspconfig.util.server_per_root_dir_manager
 local function trust_manager_wrapper(_make_config)
   local inner = original_manager(_make_config)
   local orig_add = inner.add
-  function inner.add(root_dir)
-    if not root_dir or not lspconfig.util.path.is_dir(root_dir) then
-      return
-    end
-
+  function inner.add(root_dir, single_file)
     if not M.trust.check(root_dir) then
       vim.notify('Blocked starting lsp server: workspace directory is untrusted.', vim.log.levels.WARN)
       return
     end
 
-    return orig_add(root_dir)
+    return orig_add(root_dir, single_file)
   end
   return inner
 end

@@ -56,7 +56,7 @@ function M.readjson(path)
     return
   end
 
-  local ok, decoded = pcall(vim.fn.json_decode, contents)
+  local ok, decoded = pcall(vim.json.decode, contents)
   return ok and decoded or nil
 end
 
@@ -76,7 +76,7 @@ end
 ---@param path string
 ---@param contents table
 function M.writejson(path, contents)
-  M.writefile(path, vim.fn.json_encode(contents))
+  M.writefile(path, vim.json.encode(contents))
 end
 
 ---@param bufnr number
@@ -86,15 +86,6 @@ function M.buf_set_autocmd(bufnr, events, cmd)
   events = type(events) == 'table' and events or {events}
   events = table.concat(vim.tbl_flatten(events), ',')
   api.nvim_command(string.format('autocmd %s <buffer=%d> %s', events, bufnr, cmd))
-end
-
-function M.input(opts, on_confirm)
-  if vim.ui and vim.ui.input then
-    return vim.ui.input(opts, on_confirm)
-  end
-  vim.validate {on_confirm = {on_confirm, 'c'}}
-
-  on_confirm(vim.fn.input(opts))
 end
 
 return M

@@ -28,7 +28,7 @@ if [ "$COLORTERM" = "truecolor" ] || [ "$colors" -gt 256 ]; then
   if infocmp tmux-direct >/dev/null 2>&1; then
     tmux set-option -g default-terminal tmux-direct
   fi
-  tmux set-option -sa terminal-overrides ",${1:-$TERM}:RGB"
+  tmux set-option -sa terminal-features ",${1:-$TERM}:RGB"
 fi
 
 if [ "$colors" -lt 16 ]; then
