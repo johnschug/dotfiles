@@ -3,7 +3,6 @@
 SETUVAR --export CFLAGS:\x2dmarch\x3dnative
 SETUVAR --export CXXFLAGS:\x2dmarch\x3dnative
 SETUVAR --export LANG:en_US\x2eUTF\x2d8
-SETUVAR --export LC_MEASUREMENT:en_CA\x2eUTF\x2d8
 SETUVAR __fish_init_2_39_8:\x1d
 SETUVAR __fish_init_2_3_0:\x1d
 SETUVAR __fish_init_3_x:\x1d

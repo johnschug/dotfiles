@@ -1,5 +1,6 @@
 local vimconf = vim.fn.stdpath('config')
 
+local shim = require('me.shim')
 local au = require('me.au')
 local vimrc = au.group('vimrc')
 vimrc:clear()
@@ -198,82 +199,81 @@ vimrc.QuickFixCmdPost['l*'][{nested = true}] = 'lwindow|redraw!'
 -- Mappings
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.api.nvim_set_keymap('n', '<Space>', '<Nop>', {noremap = true})
+shim.keymap.set('n', '<Space>', '<Nop>')
 
 local function mappings(maps)
   local modes = { terminal = 't', normal = 'n', insert = 'i', selection = 's' }
   for mode, mappings in pairs(maps) do
     for _, mapping in ipairs(mappings) do
-      mapping[3] = mapping[3] or {}
-      vim.api.nvim_set_keymap(modes[mode], unpack(mapping))
+      shim.keymap.set(modes[mode], unpack(mapping))
     end
   end
 end
 
 mappings {
   terminal = {
-      {'<C-W>.', '<C-W>', {noremap = true}},
-      {'<C-W>:', '<C-\\><C-N>:', {noremap = true}},
-      {'<C-W>n', '<C-\\><C-N>', {noremap = true}},
-      {'<C-W>q', '<C-\\><C-N><C-W>q', {noremap = true}},
-      {'<C-W><C-W>', '<C-\\><C-N><C-W><C-W>', {noremap = true}},
-      {'<C-W>"', "<C-\\><C-N>\"'.nr2char(getchar()).'pi'", {noremap = true, expr = true}},
+      {'<C-W>.', '<C-W>'},
+      {'<C-W>:', '<C-\\><C-N>:'},
+      {'<C-W>n', '<C-\\><C-N>'},
+      {'<C-W>q', '<C-\\><C-N><C-W>q'},
+      {'<C-W><C-W>', '<C-\\><C-N><C-W><C-W>'},
+      {'<C-W>"', "<C-\\><C-N>\"'.nr2char(getchar()).'pi'", {expr = true}},
   },
   normal = {
     -- Navigation
-    {'gb', '<C-^>', {noremap = true}},
-    {'<C-Space>', '<Cmd>Telescope buffers<CR>', {noremap = true}},
-    {'<Leader>f', '<Cmd>Telescope find_files<CR>', {noremap = true}},
-    {'<Leader>F', '<Cmd>Telescope oldfiles<CR>', {noremap = true}},
-    {'j', "v:count == 0 ? 'gj' : 'j'", {noremap = true, expr = true}},
-    {'k', "v:count == 0 ? 'gk' : 'k'", {noremap = true, expr = true}},
-    {'[g', '<Cmd>lua vim.diagnostic.goto_prev()<CR>', {noremap = true}},
-    {']g', '<Cmd>lua vim.diagnostic.goto_next()<CR>', {noremap = true}},
+    {'gb', '<C-^>'},
+    {'<C-Space>', '<Cmd>Telescope buffers<CR>'},
+    {'<Leader>f', '<Cmd>Telescope find_files<CR>'},
+    {'<Leader>F', '<Cmd>Telescope oldfiles<CR>'},
+    {'j', "v:count == 0 ? 'gj' : 'j'", {expr = true}},
+    {'k', "v:count == 0 ? 'gk' : 'k'", {expr = true}},
+    {'[g', '<Cmd>lua vim.diagnostic.goto_prev()<CR>'},
+    {']g', '<Cmd>lua vim.diagnostic.goto_next()<CR>'},
 
     -- Manipulating options
-    {'cost', "<Cmd>let b:strip_trailing=!get(b:, 'strip_trailing', 1)<CR>", {noremap = true}},
-    {'[ts', '<Cmd>setlocal tabstop=4<CR>', {noremap = true}},
-    {']ts', '<Cmd>setlocal tabstop=8<CR>', {noremap = true}},
-    {'[od', '<Cmd>diffthis<CR>', {noremap = true}},
-    {']od', '<Cmd>diffoff<CR>', {noremap = true}},
-    {'cod', "'<Cmd>'.(&diff?'diffoff':'diffthis').'<CR>'", {noremap = true, expr = true}},
-    {'[oy', '<Cmd>setlocal syntax=ON<CR>', {noremap = true}},
-    {']oy', '<Cmd>setlocal syntax=OFF<CR>', {noremap = true}},
-    {'coy', "'<Cmd>setlocal syntax='.(&l:syntax==#'OFF'?'ON':'OFF').'<CR>'", {noremap = true, expr = true}},
-    {'[ ', "<Cmd>put! =repeat(nr2char(10), v:count1)<CR>']+1", {noremap = true}},
-    {'] ', "<Cmd>put =repeat(nr2char(10), v:count1)<CR>']-1", {noremap = true}},
+    {'cost', "<Cmd>let b:strip_trailing=!get(b:, 'strip_trailing', 1)<CR>"},
+    {'[ts', '<Cmd>setlocal tabstop=4<CR>'},
+    {']ts', '<Cmd>setlocal tabstop=8<CR>'},
+    {'[od', '<Cmd>diffthis<CR>'},
+    {']od', '<Cmd>diffoff<CR>'},
+    {'cod', "'<Cmd>'.(&diff?'diffoff':'diffthis').'<CR>'", {expr = true}},
+    {'[oy', '<Cmd>setlocal syntax=ON<CR>'},
+    {']oy', '<Cmd>setlocal syntax=OFF<CR>'},
+    {'coy', "'<Cmd>setlocal syntax='.(&l:syntax==#'OFF'?'ON':'OFF').'<CR>'", {expr = true}},
+    {'[ ', "<Cmd>put! =repeat(nr2char(10), v:count1)<CR>']+1"},
+    {'] ', "<Cmd>put =repeat(nr2char(10), v:count1)<CR>']-1"},
 
     {'ga', '<Plug>(UnicodeGA)'},
-    {'gs', '<Cmd>Telescope grep_string<CR>', {noremap = true}},
-    {'g.', "'`['.strpart(getregtype(), 0, 1).'`]'", {noremap = true, expr = true}},
-    {'z=', '<Cmd>Telescope spell_suggest<CR>', {noremap = true}},
-    {'<C-L>', '<Cmd>nohlsearch|checktime|diffupdate<CR><C-L>', {noremap = true}},
+    {'gs', '<Cmd>Telescope grep_string<CR>'},
+    {'g.', "'`['.strpart(getregtype(), 0, 1).'`]'", {expr = true}},
+    {'z=', '<Cmd>Telescope spell_suggest<CR>'},
+    {'<C-L>', '<Cmd>nohlsearch|checktime|diffupdate<CR><C-L>'},
 
     -- Leader mappings
-    {'<Leader>c', '<Cmd>bd<CR>', {noremap = true}},
-    {'<Leader>w', '<Cmd>update<CR>', {noremap = true}},
-    {'<Leader>sv', '<Cmd>source $MYVIMRC<CR>', {noremap = true}},
-    {'<Leader>ev', '<Cmd>vertical EditSplit $MYVIMRC<CR>', {noremap = true}},
-    {'<Leader>el', '<Cmd>vertical EditSplit '..vimconf..'/local.lua<CR>', {noremap = true}},
-    {'<Leader>ec', "'<Cmd>vertical EditConfig colors '.g:colors_name.'<CR>'", {noremap = true, expr = true}},
-    {'<Leader>ef', '<Cmd>vertical EditConfig ftplugin<CR>', {noremap = true}},
-    {'<Leader>es', '<Cmd>vertical EditConfig syntax<CR>', {noremap = true}},
-    {'<Leader>ss', '<Cmd>SymbolsOutline<CR>', {noremap = true}},
-    {'<Leader>gs', '<Cmd>Gstatus<CR>', {noremap = true}},
-    {'<Leader>gb', '<Cmd>leftabove Gblame<CR><C-W>p', {noremap = true}},
-    {'<Leader>gl', '<Cmd>Gllog!<CR>', {noremap = true}},
-    {'<Leader>gd', '<Cmd>Gvdiff<CR>', {noremap = true}},
-    {'<Leader>gw', '<Cmd>Gwrite<CR>', {noremap = true}},
+    {'<Leader>c', '<Cmd>bd<CR>'},
+    {'<Leader>w', '<Cmd>update<CR>'},
+    {'<Leader>sv', '<Cmd>source $MYVIMRC<CR>'},
+    {'<Leader>ev', '<Cmd>vertical EditSplit $MYVIMRC<CR>'},
+    {'<Leader>el', '<Cmd>vertical EditSplit '..vimconf..'/local.lua<CR>'},
+    {'<Leader>ec', "'<Cmd>vertical EditConfig colors '.g:colors_name.'<CR>'", {expr = true}},
+    {'<Leader>ef', '<Cmd>vertical EditConfig ftplugin<CR>'},
+    {'<Leader>es', '<Cmd>vertical EditConfig syntax<CR>'},
+    {'<Leader>ss', '<Cmd>SymbolsOutline<CR>'},
+    {'<Leader>gs', '<Cmd>Gstatus<CR>'},
+    {'<Leader>gb', '<Cmd>leftabove Gblame<CR><C-W>p'},
+    {'<Leader>gl', '<Cmd>Gllog!<CR>'},
+    {'<Leader>gd', '<Cmd>Gvdiff<CR>'},
+    {'<Leader>gw', '<Cmd>Gwrite<CR>'},
   },
   insert = {
-    {'<CR>', '<C-G>u<CR>', {noremap = true}},
+    {'<CR>', '<C-G>u<CR>'},
 
-    {'<C-j>', "vsnip#available(1)?'<Plug>(vsnip-expand-or-jump)':'<C-j>'", {expr = true}},
-    {'<C-k>', "vsnip#jumpable(-1)?'<Plug>(vsnip-jump-prev)':'<C-k>'", {expr = true}},
+    {'<C-j>', "vsnip#available(1)?'<Plug>(vsnip-expand-or-jump)':'<C-j>'"},
+    {'<C-k>', "vsnip#jumpable(-1)?'<Plug>(vsnip-jump-prev)':'<C-k>'"},
   },
   selection = {
-    {'<C-j>', "vsnip#available(1)?'<Plug>(vsnip-expand-or-jump)':'<C-j>'", {expr = true}},
-    {'<C-k>', "vsnip#jumpable(-1)?'<Plug>(vsnip-jump-prev)':'<C-k>'", {expr = true}},
+    {'<C-j>', "vsnip#available(1)?'<Plug>(vsnip-expand-or-jump)':'<C-j>'"},
+    {'<C-k>', "vsnip#jumpable(-1)?'<Plug>(vsnip-jump-prev)':'<C-k>'"},
   },
 }
 
@@ -283,15 +283,15 @@ vim.cmd [[
 ]]
 
 for k, c in pairs({a = '', b = 'b', t = 't', q = 'c', l = 'l'}) do
-  vim.api.nvim_set_keymap('n', '['..k, "'<Cmd>'.v:count1.'"..c.."prev<CR>'", {noremap = true, expr = true})
-  vim.api.nvim_set_keymap('n', ']'..k, "'<Cmd>'.v:count1.'"..c.."next<CR>'", {noremap = true, expr = true})
-  vim.api.nvim_set_keymap('n', '['..k:upper(), '<Cmd>'..c..'first<CR>', {noremap = true})
-  vim.api.nvim_set_keymap('n', ']'..k:upper(), '<Cmd>'..c..'last<CR>', {noremap = true})
+  shim.keymap.set('n', '['..k, "'<Cmd>'.v:count1.'"..c.."prev<CR>'", {expr = true})
+  shim.keymap.set('n', ']'..k, "'<Cmd>'.v:count1.'"..c.."next<CR>'", {expr = true})
+  shim.keymap.set('n', '['..k:upper(), '<Cmd>'..c..'first<CR>')
+  shim.keymap.set('n', ']'..k:upper(), '<Cmd>'..c..'last<CR>')
 end
 for k, o in pairs({s = 'spell', et = 'expandtab', w = 'wrap', r = 'relativenumber', l = 'list'}) do
-  vim.api.nvim_set_keymap('n', '[o'..k, '<Cmd>setlocal '..o..'<CR>', {noremap = true})
-  vim.api.nvim_set_keymap('n', ']o'..k, '<Cmd>setlocal no'..o..'<CR>', {noremap = true})
-  vim.api.nvim_set_keymap('n', 'co'..k, '<Cmd>setlocal '..o..'!<CR>', {noremap = true})
+  shim.keymap.set('n', '[o'..k, '<Cmd>setlocal '..o..'<CR>')
+  shim.keymap.set('n', ']o'..k, '<Cmd>setlocal no'..o..'<CR>')
+  shim.keymap.set('n', 'co'..k, '<Cmd>setlocal '..o..'!<CR>')
 end
 
 -- File Types
@@ -345,11 +345,6 @@ vim.g.vsnip_snippet_dir = vimconf..'/vsnip'
 -- Diagnostics
 vim.diagnostic.config({
   severity_sort = true,
-  virtual_text = {
-    format = function(diag)
-      return string.format('● %s', diag.message)
-    end,
-  },
 })
 
 vimrc.DiagnosticChanged['*'] = "lua require('me.utils').update_loclist()"
@@ -416,29 +411,29 @@ local function lsp_on_attach(client, bufnr)
   local function set_option(...)
     vim.api.nvim_buf_set_option(bufnr, ...)
   end
-  local function set_keymap(...)
-    vim.api.nvim_buf_set_keymap(bufnr, ...)
+  local function set_keymap(modes, lhs, rhs, opts)
+    opts = vim.tbl_extend('force', {buffer = bufnr}, opts or {})
+    shim.keymap.set(modes, lhs, rhs, opts)
   end
 
   set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
   set_option('tagfunc', 'v:lua.vim.lsp.tagfunc')
   set_option('formatexpr', 'v:lua.vim.lsp.formatexpr')
 
-  local opts = {noremap = true}
-  set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  set_keymap('n', 'gd', "<Cmd>lua require('telescope.builtin').lsp_definitions()<CR>", opts)
-  set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  set_keymap('n', 'gi', "<Cmd>lua require('telescope.builtin').lsp_implementations()<CR>", opts)
-  set_keymap('n', 'gr', "<Cmd>lua require('telescope.builtin').lsp_references()<CR>", opts)
-  set_keymap('n', 'gs', "<Cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>", opts)
-  set_keymap('n', 'gy', "<Cmd>lua require('telescope.builtin').lsp_code_actions()<CR>", opts)
-  set_keymap('v', 'gy', "<Cmd>lua require('telescope.builtin').lsp_range_code_actions()<CR>", opts)
-  set_keymap('n', 'gY', '<Cmd>lua vim.lsp.codelens.run()<CR>', opts)
-  set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  set_keymap('n', '<Leader>wl', '<Cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>')
+  set_keymap('n', '<C-k>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>')
+  set_keymap('n', 'gd', "<Cmd>lua require('telescope.builtin').lsp_definitions()<CR>")
+  set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>')
+  set_keymap('n', 'gi', "<Cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
+  set_keymap('n', 'gr', "<Cmd>lua require('telescope.builtin').lsp_references()<CR>")
+  set_keymap('n', 'gs', "<Cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
+  set_keymap('n', 'gy', "<Cmd>lua require('telescope.builtin').lsp_code_actions()<CR>")
+  set_keymap('v', 'gy', "<Cmd>lua require('telescope.builtin').lsp_range_code_actions()<CR>")
+  set_keymap('n', 'gY', '<Cmd>lua vim.lsp.codelens.run()<CR>')
+  set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>')
+  set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.add_workspace_folder()<CR>')
+  set_keymap('n', '<Leader>wa', '<Cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>')
+  set_keymap('n', '<Leader>wl', '<Cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>')
 
   vim.cmd('command! -buffer LspRename lua vim.lsp.buf.rename()')
 
@@ -460,7 +455,7 @@ local function lsp_on_attach(client, bufnr)
 end
 
 local server_configs = {
-  lua = require 'lua-dev'.setup({}),
+  sumneko_lua = require 'lua-dev'.setup({}),
   efm = {
     filetypes = {'vim', 'sh', 'markdown', 'yaml', 'fish'},
     init_options = {
@@ -490,6 +485,11 @@ require('nvim-treesitter.configs').setup {
   },
   incremental_selection = {
     enable = true,
+    keymaps = {
+      init_selection = '<CR>',
+      node_incremental = '<CR>',
+      node_decremental = '<BS>',
+    },
   },
   textobjects = {
     select = {

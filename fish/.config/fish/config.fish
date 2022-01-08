@@ -25,15 +25,6 @@ if status is-login
 end
 
 if status is-interactive
-    # Start tmux
-    if command -sq tmux
-        and not set -q TMUX
-        if command -sq systemd-run
-            systemd-run --scope --user -qG tmux new -d -s DEFAULT >/dev/null 2>&1
-        end
-        exec tmux new -A -s DEFAULT
-    end
-
     # Environment Variables - Interactive Commands
     set -gx PAGER less
     set -gx LESS -FRJgij4
@@ -80,6 +71,7 @@ if status is-interactive
         alias view 'nvim -R'
         alias bvim 'nvim -b'
         alias bview 'nvim -Rb'
+        alias vimdiff 'nvim -d'
     else
         alias view 'vim -R'
         alias bvim 'vim -b'

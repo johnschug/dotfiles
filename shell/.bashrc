@@ -4,9 +4,6 @@ fi
 
 umask 077
 
-export LANG='en_US.UTF-8'
-export LC_MEASUREMENT='en_CA.UTF-8'
-
 export PATH=${XDG_BIN_HOME:-$HOME/.local/bin}:$PATH
 export MANPATH=${XDG_DATA_HOME:-$HOME/.local/share}/man:$MANPATH:
 
@@ -22,17 +19,6 @@ fi
 
 # If not running interactively, don't do anything
 [[ $- =~ i ]] || return
-
-# Start tmux
-if hash tmux &>/dev/null && [ -z "$TMUX" ]; then
-  if [ -n "$SSH_CONNECTION" ]; then
-    read -rsn 1 -p 'Press any key to continue...'
-  fi
-  if hash systemd-run &>/dev/null; then
-    systemd-run --scope --user -qG tmux new -d -s DEFAULT &>/dev/null
-  fi
-  exec tmux new -A -s DEFAULT
-fi
 
 # Environment Variables - Interactive Commands
 export PAGER='less'
@@ -149,6 +135,7 @@ if hash nvim &>/dev/null; then
   alias view='nvim -R'
   alias bvim='nvim -b'
   alias bview='nvim -Rb'
+  alias vimdiff='nvim -d'
 else
   alias view='vim -R'
   alias bvim='vim -b'

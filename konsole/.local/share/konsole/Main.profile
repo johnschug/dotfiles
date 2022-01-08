@@ -8,6 +8,7 @@ UseFontLineChararacters=true
 CursorShape=2
 
 [General]
+Command=/usr/bin/tmux new -A -s main
 Environment=TERM=konsole-256color,COLORTERM=truecolor
 LocalTabTitleFormat=%w
 Name=Main
