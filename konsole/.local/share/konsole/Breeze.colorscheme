@@ -89,8 +89,12 @@ Color=220,230,231
 Color=252,252,252
 
 [General]
+Anchor=0.5,0.5
 Blur=true
 ColorRandomization=false
 Description=Breeze
+FillStyle=Tile
 Opacity=0.85
 Wallpaper=
+WallpaperFlipType=NoFlip
+WallpaperOpacity=1

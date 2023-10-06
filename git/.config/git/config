@@ -1,3 +1,4 @@
+# Updated for git v2.38
 [alias]
 	aliases = config --get-regexp alias
 	amend = commit --amend -C HEAD
@@ -14,26 +15,31 @@
 	tree-log = log --pretty=compact --graph
 	type = cat-file -t
 	unassume = update-index --no-assume-unchanged --
-[color]
-	ui = auto
+[blame]
+	date = auto:human-local
+[checkout]
+	workers = 0
 [commit]
 	template = ~/.config/git/commit-template
 [core]
 	autocrlf = input
-	untrackedCache = true
+	editor = code --wait
 [credential]
 	helper = libsecret
 [diff]
 	algorithm = histogram
-	compactionHeuristic = true
+	colorMoved = true
 	mnemonicPrefix = true
 	renames = copies
-	tool = vimdiff
+	tool = vscode
 [difftool]
 	prompt = false
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
 [feature]
 	manyFiles = true
 [fetch]
+	parallel = 0
 	prune = true
 [gpg]
 	program = gpg2
@@ -42,28 +48,28 @@
 [log]
 	decorate = auto
 	follow = true
-	mailmap = true
 	date = auto:human-local
 [merge]
-	tool = vimdiff
+	tool = vscode
 [mergetool]
 	prompt = false
+[mergetool "vscode"]
+	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 [pretty]
 	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
-[protocol]
-	version = 2
 [pull]
 	ff = only
 [push]
-	default = upstream
 	followTags = true
 	recurseSubmodules = on-demand
 [rebase]
 	autoStash = true
+	updateRefs = true
 [status]
 	short = true
+	showStash = true
 [submodule]
-	fetchJobs = 8
+	fetchJobs = 0
 [url "https://gist.github.com/"]
 	insteadOf = gist:
 [url "https://github.com/"]

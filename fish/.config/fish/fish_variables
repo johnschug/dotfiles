@@ -3,10 +3,18 @@
 SETUVAR --export CFLAGS:\x2dmarch\x3dnative
 SETUVAR --export CXXFLAGS:\x2dmarch\x3dnative
 SETUVAR --export LANG:en_US\x2eUTF\x2d8
+SETUVAR --export LESS:\x2dFRJgij4
+SETUVAR --export LESSHISTFILE:\x2d
+SETUVAR --export PAGER:less
+SETUVAR __fish_git_prompt_char_untrackedfiles:\x3f
+SETUVAR __fish_git_prompt_describe_style:branch
+SETUVAR __fish_git_prompt_showdirtystate:1
+SETUVAR __fish_git_prompt_showuntrackedfiles:1
+SETUVAR __fish_git_prompt_showupstream:informative
 SETUVAR __fish_init_2_39_8:\x1d
 SETUVAR __fish_init_2_3_0:\x1d
 SETUVAR __fish_init_3_x:\x1d
-SETUVAR __fish_initialized:3100
+SETUVAR __fish_initialized:3400
 SETUVAR fish_color_autosuggestion:586e75
 SETUVAR fish_color_cancel:\x2dr
 SETUVAR fish_color_command:3daee9\x1eblue
@@ -16,7 +24,6 @@ SETUVAR fish_color_cwd_root:3daee9\x1ebrblue
 SETUVAR fish_color_end:93a1a1\x1e\x2d\x2ddim
 SETUVAR fish_color_error:da4453\x1ered\x1e\x2d\x2dbold
 SETUVAR fish_color_escape:00a6b2\x1ecyan
-SETUVAR fish_color_hg_added:2ecc71\x1egreen
 SETUVAR fish_color_history_current:\x2d\x2dbold
 SETUVAR fish_color_host:normal
 SETUVAR fish_color_host_remote:yellow
@@ -24,7 +31,7 @@ SETUVAR fish_color_match:\x2d\x2dbackground\x3dbrblue
 SETUVAR fish_color_normal:657b83\x1ewhite
 SETUVAR fish_color_operator:00a6b2\x1ecyan
 SETUVAR fish_color_param:839496
-SETUVAR fish_color_quote:27ae60
+SETUVAR fish_color_quote:27ae60\x1egreen
 SETUVAR fish_color_redirection:6c71c4\x1emagenta
 SETUVAR fish_color_search_match:\x2d\x2dbackground\x3dblack
 SETUVAR fish_color_selection:\x2d\x2dbackground\x3d2d5c76
@@ -37,3 +44,4 @@ SETUVAR fish_pager_color_completion:00a6b2\x1ecyan
 SETUVAR fish_pager_color_description:00a6b2\x1ecyan
 SETUVAR fish_pager_color_prefix:6c71c4\x1emagenta\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:00a6b2\x1ecyan\x1e\x2d\x2dreverse
+SETUVAR fish_pager_color_selected_background:\x2d\x2dreverse

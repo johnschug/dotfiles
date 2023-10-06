@@ -142,7 +142,7 @@ call s:h('IncSearch', {'fg': s:orange, 'fmt': 'standout'})
 call s:h('Question', {'fg': s:cyan, 'fmt': 'bold'})
 call s:h('VertSplit', {'fg': s:bg0, 'bg': s:bg0})
 call s:h('Title', {'fg': s:orange, 'fmt': 'bold'})
-call s:h('Folded', {'fg': s:normal, 'bg': s:bg1, 'sp': s:bg0, 'fmt': 'underline,bold'})
+call s:h('Folded', {'fg': s:comment_grey, 'fmt': 'italic,bold'})
 
 call s:h('DiffAdd', {'fg': s:green, 'fmt': 'bold'})
 call s:h('DiffChange', {'fg': s:search, 'fmt': 'bold'})

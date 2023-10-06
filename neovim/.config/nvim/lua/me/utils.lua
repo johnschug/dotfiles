@@ -1,11 +1,11 @@
 local M = {}
 
----@param timeout number
 ---@param fn function
+---@param timeout? number
 local function debounce(fn, timeout)
   local timer = vim.loop.new_timer()
   return function(...)
-    local argv = {...}
+    local argv = { ... }
     timer:start(timeout or 600, 0, function()
       timer:stop()
       vim.schedule_wrap(fn)(unpack(argv))
@@ -14,11 +14,11 @@ local function debounce(fn, timeout)
 end
 
 M.update_loclist = debounce(function()
-  vim.diagnostic.setloclist({open = false})
+  vim.diagnostic.setloclist({ open = false })
 end)
 
 M.show_line_diagnostics = debounce(function()
-  vim.diagnostic.open_float(0, {focusable = false})
+  vim.diagnostic.open_float({ focusable = false })
 end)
 
 M.show_references = debounce(function()
@@ -43,11 +43,11 @@ function M.update_progress()
     if msg.progress then
       local contents = { msg.title }
       if msg.message then
-        contents[#contents+1] = msg.message
+        contents[#contents + 1] = msg.message
       end
 
       if msg.percentage and msg.percentage > 0 then
-        contents[#contents+1] = string.format('(%s%%%%)', math.ceil(msg.percentage))
+        contents[#contents + 1] = string.format('(%s%%%%)', math.ceil(msg.percentage))
       end
 
       if msg.done then
@@ -60,7 +60,7 @@ function M.update_progress()
     end
   end
   progress_cache = msgs
-  vim.api.nvim_command('redrawstatus')
+  vim.cmd.redrawstatus()
 end
 
 function M.get_progress()

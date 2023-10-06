@@ -67,6 +67,7 @@
 [submodule "neovim/.config/nvim/pack/bundle/start/telescope.nvim"]
 	path = neovim/.config/nvim/pack/bundle/start/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim.git
+	branch = 0.1.x
 [submodule "neovim/.config/nvim/pack/bundle/start/plenary.nvim"]
 	path = neovim/.config/nvim/pack/bundle/start/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim.git
@@ -80,7 +81,7 @@
 	path = neovim/.config/nvim/pack/bundle/start/nvim-treesitter-textobjects
 	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
 [submodule "neovim/.config/nvim/pack/bundle/start/lua-dev.nvim"]
-	path = neovim/.config/nvim/pack/bundle/start/lua-dev.nvim
+	path = neovim/.config/nvim/pack/bundle/start/neodev.nvim
 	url = https://github.com/folke/lua-dev.nvim.git
 [submodule "neovim/.config/nvim/pack/bundle/start/nvim-cmp"]
 	path = neovim/.config/nvim/pack/bundle/start/nvim-cmp
@@ -100,9 +101,15 @@
 [submodule "neovim/.config/nvim/pack/bundle/start/cmp-cmdline"]
 	path = neovim/.config/nvim/pack/bundle/start/cmp-cmdline
 	url = https://github.com/hrsh7th/cmp-cmdline.git
-[submodule "neovim/.config/nvim/pack/bundle/start/symbols-outline.nvim"]
-	path = neovim/.config/nvim/pack/bundle/start/symbols-outline.nvim
-	url = https://github.com/simrat39/symbols-outline.nvim.git
-[submodule "neovim/.config/nvim/pack/bundle/start/nvim-lsp-installer"]
-	path = neovim/.config/nvim/pack/bundle/start/nvim-lsp-installer
-	url = https://github.com/williamboman/nvim-lsp-installer.git
+[submodule "neovim/.config/nvim/pack/bundle/start/nvim-dap"]
+	path = neovim/.config/nvim/pack/bundle/start/nvim-dap
+	url = https://github.com/mfussenegger/nvim-dap.git
+[submodule "neovim/.config/nvim/pack/bundle/start/aerial.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/aerial.nvim
+	url = https://github.com/stevearc/aerial.nvim.git
+[submodule "neovim/.config/nvim/pack/bundle/start/mason.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/mason.nvim
+	url = https://github.com/williamboman/mason.nvim.git
+[submodule "neovim/.config/nvim/pack/bundle/start/mason-lspconfig.nvim"]
+	path = neovim/.config/nvim/pack/bundle/start/mason-lspconfig.nvim
+	url = https://github.com/williamboman/mason-lspconfig.nvim.git
