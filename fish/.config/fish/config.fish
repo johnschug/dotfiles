@@ -13,7 +13,6 @@ if status is-login
     fish_add_path -P $HOME/.cargo/bin
 
     if command -q gpgconf
-        and test -S (gpgconf --list-dirs agent-ssh-socket)
         set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
         set -ge SSH_AGENT_PID
         set -ge SSH_ASKPASS

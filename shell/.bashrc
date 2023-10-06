@@ -7,7 +7,7 @@ umask 077
 export PATH=${XDG_BIN_HOME:-$HOME/.local/bin}:$PATH
 export MANPATH=${XDG_DATA_HOME:-$HOME/.local/share}/man:$MANPATH:
 
-if hash gpgconf &>/dev/null && [ -S "$(gpgconf --list-dirs agent-ssh-socket)" ]; then
+if hash gpgconf &>/dev/null; then
   export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
   unset SSH_AGENT_PID
   unset SSH_ASKPASS
@@ -25,14 +25,23 @@ export PAGER='less'
 export LESS='-FRJgij4'
 export LESSHISTFILE='-'
 
-if hash nvim &>/dev/null; then
+if hash code &>/dev/null; then
+  export EDITOR='code --wait'
+  export MERGE="$EDITOR --merge"
+
+  alias edit='code'
+elif hash nvim &>/dev/null; then
   export MANPAGER="env MANPATH=\"$MANPATH\" nvim +Man!"
   export EDITOR='nvim'
   export MERGE='nvim -d'
+
+  alias edit='nvim'
 else
   export MANPAGER="env MAN_PN=1 MANPATH=\"$MANPATH\" vim -M +MANPAGER -"
   export EDITOR='vim'
   export MERGE='vimdiff'
+
+  alias edit='vim'
 fi
 
 export VISUAL="$EDITOR"
@@ -170,6 +179,9 @@ else
 fi
 if hash podman &>/dev/null; then
   alias docker='podman'
+fi
+if hash systemctl &>/dev/null; then
+  alias userctl='systemctl --user '
 fi
 if hash systemd-run &>/dev/null; then
   alias scoped='systemd-run --user --scope -qd '
