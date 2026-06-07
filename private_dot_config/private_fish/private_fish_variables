@@ -1,0 +1,18 @@
+# This file contains fish universal variable definitions.
+# VERSION: 3.0
+SETUVAR --export CFLAGS:\x2dmarch\x3dnative
+SETUVAR --export CXXFLAGS:\x2dmarch\x3dnative
+SETUVAR --export LANG:en_US\x2eUTF\x2d8
+SETUVAR --export LESS:\x2dFRJgij4
+SETUVAR --export LESSHISTFILE:\x2d
+SETUVAR --export PAGER:less
+SETUVAR __fish_git_prompt_char_untrackedfiles:\x3f
+SETUVAR __fish_git_prompt_describe_style:branch
+SETUVAR __fish_git_prompt_showdirtystate:1
+SETUVAR __fish_git_prompt_showuntrackedfiles:1
+SETUVAR __fish_git_prompt_showupstream:informative
+SETUVAR __fish_init_2_39_8:\x1d
+SETUVAR __fish_init_2_3_0:\x1d
+SETUVAR __fish_init_3_x:\x1d
+SETUVAR __fish_initialized:4300
+SETUVAR fish_greeting:\x1d
