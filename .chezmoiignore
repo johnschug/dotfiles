@@ -5,4 +5,8 @@
 .termux/
 {{- end }}
 {{- if ne .chezmoi.os "windows" }}
+AppData
+private_AppData
+Documents
+private_Documents
 {{- end }}
