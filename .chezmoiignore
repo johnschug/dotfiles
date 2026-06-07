@@ -1,0 +1,8 @@
+{{- if eq .chezmoi.os "windows" }}
+.config/
+{{- end }}
+{{- if ne .chezmoi.os "android" }}
+.termux/
+{{- end }}
+{{- if ne .chezmoi.os "windows" }}
+{{- end }}
