@@ -24,6 +24,10 @@ if status is-login
 end
 
 if status is-interactive
+    set -g fish_key_bindings fish_vi_key_bindings
+
+    fish_config theme choose breeze
+
     # Environment Variables - Interactive Commands
     if command -sq nvim
         and not fish_is_root_user
@@ -82,7 +86,7 @@ if status is-interactive
         alias flatpak 'flatpak-spawn --host flatpak'
     end
     if command -q gpg2
-        alias gpg gpg2
+       alias gpg gpg2
     end
     if not command -q scurl
         and command -q curl
