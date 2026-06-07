@@ -83,7 +83,7 @@
 	pushInsteadOf = git://github.com/
 	pushInsteadOf = https://github.com/
 [url "https://codeberg.org/"]
-	insteadOf cb:
+	insteadOf = cb:
 [url "git@codeberg.org:"]
 	pushInsteadOf = cb:
 	pushInsteadOf = git://codeberg.org/
