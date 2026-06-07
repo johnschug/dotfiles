@@ -31,13 +31,9 @@
 	colorMoved = true
 	mnemonicPrefix = true
 	renames = copies
-	tool = nvim
+	tool = nvimdiff
 [difftool]
 	prompt = false
-[difftool "nvim"]
-	cmd = nvim -d $LOCAL $REMOTE
-[difftool "vscode"]
-	cmd = code --wait --diff $LOCAL $REMOTE
 [feature]
 	manyFiles = true
 [fetch]
@@ -52,13 +48,10 @@
 	follow = true
 	date = auto:human-local
 [merge]
-	tool = nvim
+	tool = nvimdiff
 [mergetool]
 	prompt = false
-[mergetool "nvim"]
-	cmd = nvim -d $REMOTE $LOCAL $BASE $MERGED
-[mergetool "vscode"]
-	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+	trustExitCode = true
 [pretty]
 	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
 [pull]
@@ -100,7 +93,7 @@
 	pushInsteadOf = kde:
 	pushInsteadOf = https://anongit.kde.org/
 [user]
-	email = john.ips.schug@gmail.com
+	email = me@jschug.dev
 	name = John Schug
 	signingkey = A7D81D8297B90E18
 [include]
