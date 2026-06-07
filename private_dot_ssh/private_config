@@ -1,0 +1,15 @@
+UseRoaming no
+HashKnownHosts yes
+UpdateHostKeys ask
+VerifyHostKeyDNS yes
+Include local.conf
+
+Host github.com
+    ControlPath none
+
+Host *
+    ControlMaster auto
+    # ControlPath ~/.ssh/conn/%C
+    ControlPath /run/user/%i/ssh-%C
+    ControlPersist 10m
+    SendEnv COLORTERM

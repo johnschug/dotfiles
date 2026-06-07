@@ -1,0 +1,97 @@
+# Updated for git v2.38
+[alias]
+	aliases = config --get-regexp alias
+	amend = commit --amend -C HEAD
+	assume = update-index --assume-unchanged --
+	assumed = !git ls-files -v | grep ^h | cut -c 3-
+	br = branch -av
+	clog = log --pretty=compact
+	compact-log = log --pretty=compact
+	dump = cat-file -p
+	ignore = !echo "$1" >>.gitignore
+	pushf = push --force-with-lease
+	st = status
+	tlog = log --pretty=compact --graph
+	tree-log = log --pretty=compact --graph
+	type = cat-file -t
+	unassume = update-index --no-assume-unchanged --
+[blame]
+	date = auto:human-local
+[checkout]
+	workers = 0
+[commit]
+	template = ~/.config/git/commit-template
+[core]
+	autocrlf = input
+	editor = code --wait
+[credential]
+	helper = libsecret
+[diff]
+	algorithm = histogram
+	colorMoved = true
+	mnemonicPrefix = true
+	renames = copies
+	tool = vscode
+[difftool]
+	prompt = false
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+[feature]
+	manyFiles = true
+[fetch]
+	parallel = 0
+	prune = true
+[gpg]
+	program = gpg2
+[init]
+	defaultBranch = main
+[log]
+	decorate = auto
+	follow = true
+	date = auto:human-local
+[merge]
+	tool = vscode
+[mergetool]
+	prompt = false
+[mergetool "vscode"]
+	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+[pretty]
+	compact = format:%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%aN>%Creset
+[pull]
+	ff = only
+[push]
+	followTags = true
+	recurseSubmodules = on-demand
+[rebase]
+	autoStash = true
+	updateRefs = true
+[status]
+	short = true
+	showStash = true
+[submodule]
+	fetchJobs = 0
+[url "https://gist.github.com/"]
+	insteadOf = gist:
+[url "https://github.com/"]
+	insteadOf = gh:
+[url "git@github.com:"]
+	pushInsteadOf = gh:
+	pushInsteadOf = git://github.com/
+	pushInsteadOf = https://github.com/
+[url "https://bitbucket.org/"]
+	insteadOf = bb:
+[url "git@bitbucket.org:"]
+	pushInsteadOf = bb:
+	pushInsteadOf = git://bitbucket.org/
+	pushInsteadOf = https://bitbucket.org/
+[url "https://anongit.kde.org/"]
+	insteadOf = kde:
+[url "git@git.kde.org:"]
+	pushInsteadOf = kde:
+	pushInsteadOf = https://anongit.kde.org/
+[user]
+	email = john.ips.schug@gmail.com
+	name = John Schug
+	signingkey = A7D81D8297B90E18
+[include]
+	path = ~/.config/git/local.conf
