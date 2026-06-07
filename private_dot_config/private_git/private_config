@@ -23,7 +23,7 @@
 	template = ~/.config/git/commit-template
 [core]
 	autocrlf = input
-	editor = code --wait
+	editor = nvim
 [credential]
 	helper = libsecret
 [diff]
@@ -31,9 +31,11 @@
 	colorMoved = true
 	mnemonicPrefix = true
 	renames = copies
-	tool = vscode
+	tool = nvim
 [difftool]
 	prompt = false
+[difftool "nvim"]
+	cmd = nvim -d $LOCAL $REMOTE
 [difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 [feature]
@@ -50,9 +52,11 @@
 	follow = true
 	date = auto:human-local
 [merge]
-	tool = vscode
+	tool = nvim
 [mergetool]
 	prompt = false
+[mergetool "nvim"]
+	cmd = nvim -d $REMOTE $LOCAL $BASE $MERGED
 [mergetool "vscode"]
 	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 [pretty]
@@ -78,6 +82,12 @@
 	pushInsteadOf = gh:
 	pushInsteadOf = git://github.com/
 	pushInsteadOf = https://github.com/
+[url "https://codeberg.org/"]
+	insteadOf cb:
+[url "git@codeberg.org:"]
+	pushInsteadOf = cb:
+	pushInsteadOf = git://codeberg.org/
+	pushInsteadOf = https://codeberg.org/
 [url "https://bitbucket.org/"]
 	insteadOf = bb:
 [url "git@bitbucket.org:"]
