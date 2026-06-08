@@ -26,11 +26,7 @@
 	workers = 0
 [commit]
 	verbose = true
-{{- if eq .chezmoi.os "windows" }}
-	template = ~/AppData/Local/git/commit-template
-{{- else }}
 	template = ~/.config/git/commit-template
-{{- end }}
 [core]
 	autocrlf = input
 	editor = nvim
@@ -134,8 +130,4 @@
 	name = John Schug
 	signingkey = A7D81D8297B90E18
 [include]
-{{- if eq .chezmoi.os "windows" }}
-	template = ~/AppData/Local/git/local.conf
-{{- else }}
 	path = ~/.config/git/local.conf
-{{- end }}

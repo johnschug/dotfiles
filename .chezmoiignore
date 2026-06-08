@@ -1,12 +1,11 @@
 {{- if eq .chezmoi.os "windows" }}
-.config/
+.config/*
+!.config/git
 {{- end }}
 {{- if ne .chezmoi.os "android" }}
 .termux/
 {{- end }}
 {{- if ne .chezmoi.os "windows" }}
-AppData
-private_AppData
-Documents
-private_Documents
+AppData/
+Documents/
 {{- end }}

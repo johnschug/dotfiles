@@ -6,6 +6,10 @@
 
 !.travis.yml
 !.appveyor.yml
+!.woodpecker/
+
+!.github/
+!.forgejo/
 
 ehthumbs.db
 Thumbs.db
