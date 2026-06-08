@@ -5,29 +5,37 @@ $env:DOCUMENTS = [Environment]::GetFolderPath('mydocuments')
 $env:EDITOR = 'nvim'
 
 Set-PSReadLineOption -EditMode Vi
-Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -ViModeIndicator Cursor
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin
 Set-PSReadLineOption -ShowToolTips
 Set-PSReadLineOption -BellStyle None
 Set-PSReadLineKeyHandler -Chord Tab -Function MenuComplete
 Set-PSReadLineKeyHandler -Chord Ctrl+w -Function BackwardKillWord
-Set-PSReadLineKeyHandler -Chord Ctrl+p -Function HistorySearchBackward
-Set-PSReadLineKeyHandler -Chord Ctrl+n -Function HistorySearchForward
 Set-PSReadLineKeyHandler -Chord Ctrl+a -Function BeginningOfLine
 Set-PSReadLineKeyHandler -Chord Ctrl+e -Function EndOfLine
-Set-PSReadLineKeyHandler -Chord Alt+r -Function AcceptSuggestion
-Set-PSReadLineKeyHandler -Chord Alt+t -Description 'Moves to parent directory' -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord Ctrl+n -Function AcceptSuggestion
+Set-PSReadLineKeyHandler -Chord Alt+f -Function AcceptNextSuggestionWord
+Set-PSReadLineKeyHandler -Chord Alt+Shift+k -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Chord Alt+Shift+j -Function HistorySearchForward
+Set-PSReadLineKeyHandler -Chord Alt+e -Function ViEditVisually
+Set-PSReadLineKeyHandler -Chord Alt+v -Function ViEditVisually
+Set-PSReadLineKeyHandler -Chord Alt+h -Function ShowCommandHelp
+Set-PSReadLineKeyHandler -Chord Alt+h -Function ShowCommandHelp -ViMode Command
+Set-PSReadLineKeyHandler -Chord Alt+? -Function ShowParameterHelp
+Set-PSReadLineKeyHandler -Chord Alt+? -Function ShowParameterHelp -ViMode Command
+Set-PSReadLineKeyHandler -Chord Alt+t -BriefDescription CdParent -Description 'Moves to parent directory' -ScriptBlock {
   Set-Location ../
   [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
-Set-PSReadLineKeyHandler -Chord Alt+o -Description 'Moves to previous directory' -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord Alt+o -BriefDescription CdPrev -Description 'Moves to previous directory' -ScriptBlock {
   Set-Location -
   [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
-Set-PSReadLineKeyHandler -Chord Alt+l -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord Alt+l -BriefDescription ShowDirContents -Description 'Lists the contents of the current directory' -ScriptBlock {
   Get-ChildItem ./ | Out-Default
   [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
 }
-Set-PSReadLineKeyHandler -Chord Alt+s -Description 'Changes current command to run in an elevated context' -ScriptBlock {
+Set-PSReadLineKeyHandler -Chord Alt+s -BriefDescription InvokeElevated -Description 'Changes current command to run in an elevated context' -ScriptBlock {
   # TODO: Parse AST
   $current = $null
   $cursor = 0
@@ -42,8 +50,9 @@ Set-PSReadLineKeyHandler -Chord Alt+s -Description 'Changes current command to r
   }
 }
 
+# Inform terminal of new CWD using OSC 9;9
 $ExecutionContext.InvokeCommand.LocationChangedAction += {
-  $loc = $_.newPath
+  $loc = Convert-Path $_.newPath
   Write-Host -NoNewline "`e]9;9;`"$loc`"`a"
 }
 
