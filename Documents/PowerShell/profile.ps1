@@ -2,7 +2,7 @@ $OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 
 $env:DOCUMENTS = [Environment]::GetFolderPath('mydocuments')
-$env:EDITOR = 'code --wait --new-window'
+$env:EDITOR = 'nvim'
 
 Set-PSReadLineOption -EditMode Vi
 Set-PSReadLineOption -PredictionSource History
