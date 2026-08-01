@@ -110,15 +110,6 @@ Set-Alias df Get-Volume
 Set-Alias trash Remove-ItemSafely
 Set-Alias tracepath Test-NetConnection
 
-if ($null -ne $env:NVIM) {
-  $env:EDITOR = "nvim --cmd 'let g:flatten_wait=1'"
-  function Invoke-Nvim {
-    $cmd = (Get-Command -commandType Application "nvim")[0].Source
-    & "$cmd" --cmd 'let g:flatten_wait=1' $args
-  }
-  Set-Alias -Force nvim Invoke-Nvim
-}
-
 function settings {
   Start-Process ms-setttings:
 }
